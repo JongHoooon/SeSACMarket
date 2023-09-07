@@ -32,8 +32,6 @@ final class TabBarCoordinator: CoordinatorProtocol,
     
     func start() {
         let tabBarController = dependencies.makeTabBarController()
-        tabBarController.tabBar.tintColor = .label
-        tabBarController.tabBar.backgroundColor = .systemBackground
         
         let searchSceneNavigationController = TabBarEnum.search.configureTabBarItem(navigationController: UINavigationController())
         

@@ -21,7 +21,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     ) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
-        window?.backgroundColor = .systemBackground
+        window?.backgroundColor = .mainBackgroundColor
+        window?.tintColor = .mainTintColor
         
         appFlowCoordinator = AppFlowCoordinator(appDIContainer: appDIContainer)
         appFlowCoordinator?.start()
