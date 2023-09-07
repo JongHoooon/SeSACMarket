@@ -26,6 +26,14 @@
 		ED2A00EC2AA9B419004A346D /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = ED2A00EB2AA9B419004A346D /* .gitignore */; };
 		ED2A00EF2AA9B765004A346D /* AppFlowCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A00EE2AA9B765004A346D /* AppFlowCoordinator.swift */; };
 		ED2A00F52AA9B848004A346D /* UserDefaultsKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A00F42AA9B848004A346D /* UserDefaultsKey.swift */; };
+		ED2A00F72AA9BBE1004A346D /* TabBarSceneDIContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A00F62AA9BBE1004A346D /* TabBarSceneDIContainer.swift */; };
+		ED2A00FB2AA9BCB4004A346D /* SearchCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A00FA2AA9BCB4004A346D /* SearchCoordinator.swift */; };
+		ED2A00FF2AA9BD3E004A346D /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A00FE2AA9BD3E004A346D /* SearchViewController.swift */; };
+		ED2A01022AA9BDD6004A346D /* TabBarCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A01012AA9BDD6004A346D /* TabBarCoordinator.swift */; };
+		ED2A01052AA9BE78004A346D /* SearchSceneDIContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A01042AA9BE78004A346D /* SearchSceneDIContainer.swift */; };
+		ED2A010A2AA9C296004A346D /* ImageEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A01092AA9C296004A346D /* ImageEnum.swift */; };
+		ED2A010C2AA9C394004A346D /* TabBarEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A010B2AA9C394004A346D /* TabBarEnum.swift */; };
+		ED2A010F2AA9D91C004A346D /* CoordinatorType.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A010E2AA9D91C004A346D /* CoordinatorType.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +53,14 @@
 		ED2A00ED2AA9B437004A346D /* TODO.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = TODO.md; sourceTree = "<group>"; };
 		ED2A00EE2AA9B765004A346D /* AppFlowCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFlowCoordinator.swift; sourceTree = "<group>"; };
 		ED2A00F42AA9B848004A346D /* UserDefaultsKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKey.swift; sourceTree = "<group>"; };
+		ED2A00F62AA9BBE1004A346D /* TabBarSceneDIContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarSceneDIContainer.swift; sourceTree = "<group>"; };
+		ED2A00FA2AA9BCB4004A346D /* SearchCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCoordinator.swift; sourceTree = "<group>"; };
+		ED2A00FE2AA9BD3E004A346D /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
+		ED2A01012AA9BDD6004A346D /* TabBarCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarCoordinator.swift; sourceTree = "<group>"; };
+		ED2A01042AA9BE78004A346D /* SearchSceneDIContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchSceneDIContainer.swift; sourceTree = "<group>"; };
+		ED2A01092AA9C296004A346D /* ImageEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageEnum.swift; sourceTree = "<group>"; };
+		ED2A010B2AA9C394004A346D /* TabBarEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarEnum.swift; sourceTree = "<group>"; };
+		ED2A010E2AA9D91C004A346D /* CoordinatorType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinatorType.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -135,6 +151,8 @@
 			children = (
 				ED2A00E62AA9AF56004A346D /* Base */,
 				ED2A00DE2AA9AEE5004A346D /* AuthScene */,
+				ED2A01002AA9BDAD004A346D /* TabBarScene */,
+				ED2A00F82AA9BC2B004A346D /* SearchScene */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -152,6 +170,8 @@
 			children = (
 				ED2A00DA2AA9AE60004A346D /* AppDIContainer.swift */,
 				ED2A00DC2AA9AE94004A346D /* AuthSceneDIContainer.swift */,
+				ED2A00F62AA9BBE1004A346D /* TabBarSceneDIContainer.swift */,
+				ED2A01042AA9BE78004A346D /* SearchSceneDIContainer.swift */,
 			);
 			path = DIContainer;
 			sourceTree = "<group>";
@@ -160,7 +180,7 @@
 			isa = PBXGroup;
 			children = (
 				ED2A00DF2AA9AEF8004A346D /* Flows */,
-				ED2A00E22AA9AF25004A346D /* Login */,
+				ED2A00E22AA9AF25004A346D /* AuthScene */,
 			);
 			path = AuthScene;
 			sourceTree = "<group>";
@@ -173,12 +193,12 @@
 			path = Flows;
 			sourceTree = "<group>";
 		};
-		ED2A00E22AA9AF25004A346D /* Login */ = {
+		ED2A00E22AA9AF25004A346D /* AuthScene */ = {
 			isa = PBXGroup;
 			children = (
 				ED2A00E32AA9AF2D004A346D /* View */,
 			);
-			path = Login;
+			path = AuthScene;
 			sourceTree = "<group>";
 		};
 		ED2A00E32AA9AF2D004A346D /* View */ = {
@@ -201,9 +221,69 @@
 		ED2A00F32AA9B837004A346D /* NameSpace */ = {
 			isa = PBXGroup;
 			children = (
-				ED2A00F42AA9B848004A346D /* UserDefaultsKey.swift */,
+				ED2A01062AA9C11D004A346D /* UserDefaults */,
+				ED2A01072AA9C12E004A346D /* TabBar */,
+				ED2A01082AA9C13D004A346D /* Image */,
+				ED2A010E2AA9D91C004A346D /* CoordinatorType.swift */,
 			);
 			path = NameSpace;
+			sourceTree = "<group>";
+		};
+		ED2A00F82AA9BC2B004A346D /* SearchScene */ = {
+			isa = PBXGroup;
+			children = (
+				ED2A00F92AA9BC52004A346D /* Flows */,
+				ED2A00FC2AA9BD29004A346D /* View */,
+			);
+			path = SearchScene;
+			sourceTree = "<group>";
+		};
+		ED2A00F92AA9BC52004A346D /* Flows */ = {
+			isa = PBXGroup;
+			children = (
+				ED2A00FA2AA9BCB4004A346D /* SearchCoordinator.swift */,
+			);
+			path = Flows;
+			sourceTree = "<group>";
+		};
+		ED2A00FC2AA9BD29004A346D /* View */ = {
+			isa = PBXGroup;
+			children = (
+				ED2A00FE2AA9BD3E004A346D /* SearchViewController.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		ED2A01002AA9BDAD004A346D /* TabBarScene */ = {
+			isa = PBXGroup;
+			children = (
+				ED2A01012AA9BDD6004A346D /* TabBarCoordinator.swift */,
+			);
+			path = TabBarScene;
+			sourceTree = "<group>";
+		};
+		ED2A01062AA9C11D004A346D /* UserDefaults */ = {
+			isa = PBXGroup;
+			children = (
+				ED2A00F42AA9B848004A346D /* UserDefaultsKey.swift */,
+			);
+			path = UserDefaults;
+			sourceTree = "<group>";
+		};
+		ED2A01072AA9C12E004A346D /* TabBar */ = {
+			isa = PBXGroup;
+			children = (
+				ED2A010B2AA9C394004A346D /* TabBarEnum.swift */,
+			);
+			path = TabBar;
+			sourceTree = "<group>";
+		};
+		ED2A01082AA9C13D004A346D /* Image */ = {
+			isa = PBXGroup;
+			children = (
+				ED2A01092AA9C296004A346D /* ImageEnum.swift */,
+			);
+			path = Image;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -292,11 +372,19 @@
 			files = (
 				ED2A00E52AA9AF3D004A346D /* LoginViewController.swift in Sources */,
 				ED2A00EF2AA9B765004A346D /* AppFlowCoordinator.swift in Sources */,
+				ED2A010A2AA9C296004A346D /* ImageEnum.swift in Sources */,
 				ED2A00F52AA9B848004A346D /* UserDefaultsKey.swift in Sources */,
 				ED2A00E12AA9AF08004A346D /* AuthCoordinator.swift in Sources */,
+				ED2A01052AA9BE78004A346D /* SearchSceneDIContainer.swift in Sources */,
+				ED2A00FB2AA9BCB4004A346D /* SearchCoordinator.swift in Sources */,
 				ED2A00EA2AA9B267004A346D /* CoordinatorProtocol.swift in Sources */,
+				ED2A00F72AA9BBE1004A346D /* TabBarSceneDIContainer.swift in Sources */,
 				ED2A00DD2AA9AE94004A346D /* AuthSceneDIContainer.swift in Sources */,
+				ED2A010C2AA9C394004A346D /* TabBarEnum.swift in Sources */,
+				ED2A00FF2AA9BD3E004A346D /* SearchViewController.swift in Sources */,
 				ED2A00B12AA99CEC004A346D /* AppDelegate.swift in Sources */,
+				ED2A01022AA9BDD6004A346D /* TabBarCoordinator.swift in Sources */,
+				ED2A010F2AA9D91C004A346D /* CoordinatorType.swift in Sources */,
 				ED2A00B32AA99CEC004A346D /* SceneDelegate.swift in Sources */,
 				ED2A00E82AA9AF85004A346D /* BaseViewController.swift in Sources */,
 				ED2A00DB2AA9AE60004A346D /* AppDIContainer.swift in Sources */,

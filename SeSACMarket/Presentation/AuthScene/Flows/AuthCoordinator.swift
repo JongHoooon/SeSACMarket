@@ -12,14 +12,17 @@ protocol AuthCoordinatorDependencies {
 }
 
 protocol AuthCoordinatorDelegate: AnyObject {
-    func showTabBar()
+    func showTabBarScene()
 }
 
-final class AuthCoordinator: CoordinatorProtocol {
+final class AuthCoordinator: CoordinatorProtocol,
+                             ChangeRootableProtocol {
     
     var childCoordinators: [CoordinatorProtocol] = []
     private let dependencies: AuthCoordinatorDependencies
     weak var delegate: AuthCoordinatorDelegate?
+    var navigationController = UINavigationController()
+    let type: CoordinatorType = .auth
     
     init(
         dependencies: AuthCoordinatorDependencies

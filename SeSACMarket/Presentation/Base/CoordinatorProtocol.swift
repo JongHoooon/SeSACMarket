@@ -16,18 +16,18 @@ protocol CoordinatorProtocol: AnyObject {
 
 // child 관리
 extension CoordinatorProtocol {
-    func addChild(child: CoordinatorProtocol) {
+    func addChildCoordinator(child: CoordinatorProtocol) {
         childCoordinators.append(child)
     }
     
-    func removeChild(child: CoordinatorProtocol) {
+    func removeChildCoordinator(child: CoordinatorProtocol) {
         childCoordinators = childCoordinators.filter { $0.type != child.type }
         child.navigationController.popToRootViewController(animated: false)
     }
 }
 
-// 화면 전환
-extension CoordinatorProtocol {
+protocol ChangeRootableProtocol {}
+extension ChangeRootableProtocol {
     func changeWindowRoot(rootViewController: UIViewController, duration: TimeInterval = 1.0) {
         let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
         let sceneDelegate = windowScene?.delegate as? SceneDelegate

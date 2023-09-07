@@ -9,9 +9,11 @@ import UIKit
 
 final class AppFlowCoordinator: CoordinatorProtocol {
     
-    var childCoordinators: [CoordinatorProtocol] = []
     private let appDIContainer: AppDIContainer
-    
+    var childCoordinators: [CoordinatorProtocol] = []
+    let navigationController = UINavigationController()
+    let type = CoordinatorType.app
+ 
     init(
         appDIContainer: AppDIContainer
     ) {
@@ -19,27 +21,34 @@ final class AppFlowCoordinator: CoordinatorProtocol {
     }
     
     func start() {
+        #warning("삭제 필요!!!!")
+        UserDefaults.standard.set(true, forKey: UserDefaultsKey.isLoggedIn.key)
         let isLoggedIn = UserDefaults.standard.bool(forKey: UserDefaultsKey.isLoggedIn.key)
         
         switch isLoggedIn {
-        case true:      showTabBar()
-        case false:     showAuthView()
+        case true:      showTabBarScene()
+        case false:     showAuthScene()
         }
     }
 }
 
-extension AppFlowCoordinator {
-    func showAuthView() {
+extension AppFlowCoordinator: TabBarCoordinatorDelegate {
+    func showAuthScene() {
         let authSceneDIContainer = appDIContainer.makeAuthSceneDIContainer()
         let flow = authSceneDIContainer.makeAuthCoordinator()
         flow.delegate = self
+        childCoordinators = [flow]
         flow.start()
     }
 }
 
 extension AppFlowCoordinator: AuthCoordinatorDelegate {
-    func showTabBar() {
-        
+    func showTabBarScene() {
+        let tabBarSceneDIContainer = TabBarSceneDIContainer()
+        let flow = tabBarSceneDIContainer.makeTabBarFlowCoordinator()
+        flow.delegate = self
+        childCoordinators = [flow]
+        flow.start()
     }
 }
 
