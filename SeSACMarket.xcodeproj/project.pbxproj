@@ -17,6 +17,15 @@
 		ED2A00D42AA9AD6F004A346D /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = ED2A00D32AA9AD6F004A346D /* RxCocoa */; };
 		ED2A00D62AA9AD6F004A346D /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = ED2A00D52AA9AD6F004A346D /* RxRelay */; };
 		ED2A00D82AA9AD6F004A346D /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = ED2A00D72AA9AD6F004A346D /* RxSwift */; };
+		ED2A00DB2AA9AE60004A346D /* AppDIContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A00DA2AA9AE60004A346D /* AppDIContainer.swift */; };
+		ED2A00DD2AA9AE94004A346D /* AuthSceneDIContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A00DC2AA9AE94004A346D /* AuthSceneDIContainer.swift */; };
+		ED2A00E12AA9AF08004A346D /* AuthCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A00E02AA9AF08004A346D /* AuthCoordinator.swift */; };
+		ED2A00E52AA9AF3D004A346D /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A00E42AA9AF3D004A346D /* LoginViewController.swift */; };
+		ED2A00E82AA9AF85004A346D /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A00E72AA9AF85004A346D /* BaseViewController.swift */; };
+		ED2A00EA2AA9B267004A346D /* CoordinatorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A00E92AA9B267004A346D /* CoordinatorProtocol.swift */; };
+		ED2A00EC2AA9B419004A346D /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = ED2A00EB2AA9B419004A346D /* .gitignore */; };
+		ED2A00EF2AA9B765004A346D /* AppFlowCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A00EE2AA9B765004A346D /* AppFlowCoordinator.swift */; };
+		ED2A00F52AA9B848004A346D /* UserDefaultsKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A00F42AA9B848004A346D /* UserDefaultsKey.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +35,16 @@
 		ED2A00B92AA99CED004A346D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		ED2A00BC2AA99CED004A346D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		ED2A00BE2AA99CED004A346D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		ED2A00DA2AA9AE60004A346D /* AppDIContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDIContainer.swift; sourceTree = "<group>"; };
+		ED2A00DC2AA9AE94004A346D /* AuthSceneDIContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthSceneDIContainer.swift; sourceTree = "<group>"; };
+		ED2A00E02AA9AF08004A346D /* AuthCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthCoordinator.swift; sourceTree = "<group>"; };
+		ED2A00E42AA9AF3D004A346D /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		ED2A00E72AA9AF85004A346D /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
+		ED2A00E92AA9B267004A346D /* CoordinatorProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinatorProtocol.swift; sourceTree = "<group>"; };
+		ED2A00EB2AA9B419004A346D /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		ED2A00ED2AA9B437004A346D /* TODO.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = TODO.md; sourceTree = "<group>"; };
+		ED2A00EE2AA9B765004A346D /* AppFlowCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFlowCoordinator.swift; sourceTree = "<group>"; };
+		ED2A00F42AA9B848004A346D /* UserDefaultsKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKey.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,6 +67,8 @@
 		ED2A00A42AA99CEC004A346D = {
 			isa = PBXGroup;
 			children = (
+				ED2A00ED2AA9B437004A346D /* TODO.md */,
+				ED2A00EB2AA9B419004A346D /* .gitignore */,
 				ED2A00AF2AA99CEC004A346D /* SeSACMarket */,
 				ED2A00AE2AA99CEC004A346D /* Products */,
 			);
@@ -89,6 +110,8 @@
 			children = (
 				ED2A00B02AA99CEC004A346D /* AppDelegate.swift */,
 				ED2A00B22AA99CEC004A346D /* SceneDelegate.swift */,
+				ED2A00EE2AA9B765004A346D /* AppFlowCoordinator.swift */,
+				ED2A00D92AA9AE4F004A346D /* DIContainer */,
 			);
 			path = Application;
 			sourceTree = "<group>";
@@ -110,6 +133,8 @@
 		ED2A00C82AA9AC29004A346D /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				ED2A00E62AA9AF56004A346D /* Base */,
+				ED2A00DE2AA9AEE5004A346D /* AuthScene */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -117,8 +142,68 @@
 		ED2A00C92AA9AC3B004A346D /* Infrastructure */ = {
 			isa = PBXGroup;
 			children = (
+				ED2A00F32AA9B837004A346D /* NameSpace */,
 			);
 			path = Infrastructure;
+			sourceTree = "<group>";
+		};
+		ED2A00D92AA9AE4F004A346D /* DIContainer */ = {
+			isa = PBXGroup;
+			children = (
+				ED2A00DA2AA9AE60004A346D /* AppDIContainer.swift */,
+				ED2A00DC2AA9AE94004A346D /* AuthSceneDIContainer.swift */,
+			);
+			path = DIContainer;
+			sourceTree = "<group>";
+		};
+		ED2A00DE2AA9AEE5004A346D /* AuthScene */ = {
+			isa = PBXGroup;
+			children = (
+				ED2A00DF2AA9AEF8004A346D /* Flows */,
+				ED2A00E22AA9AF25004A346D /* Login */,
+			);
+			path = AuthScene;
+			sourceTree = "<group>";
+		};
+		ED2A00DF2AA9AEF8004A346D /* Flows */ = {
+			isa = PBXGroup;
+			children = (
+				ED2A00E02AA9AF08004A346D /* AuthCoordinator.swift */,
+			);
+			path = Flows;
+			sourceTree = "<group>";
+		};
+		ED2A00E22AA9AF25004A346D /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				ED2A00E32AA9AF2D004A346D /* View */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		ED2A00E32AA9AF2D004A346D /* View */ = {
+			isa = PBXGroup;
+			children = (
+				ED2A00E42AA9AF3D004A346D /* LoginViewController.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		ED2A00E62AA9AF56004A346D /* Base */ = {
+			isa = PBXGroup;
+			children = (
+				ED2A00E72AA9AF85004A346D /* BaseViewController.swift */,
+				ED2A00E92AA9B267004A346D /* CoordinatorProtocol.swift */,
+			);
+			path = Base;
+			sourceTree = "<group>";
+		};
+		ED2A00F32AA9B837004A346D /* NameSpace */ = {
+			isa = PBXGroup;
+			children = (
+				ED2A00F42AA9B848004A346D /* UserDefaultsKey.swift */,
+			);
+			path = NameSpace;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -193,6 +278,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ED2A00BD2AA99CED004A346D /* LaunchScreen.storyboard in Resources */,
+				ED2A00EC2AA9B419004A346D /* .gitignore in Resources */,
 				ED2A00BA2AA99CED004A346D /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -204,8 +290,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ED2A00E52AA9AF3D004A346D /* LoginViewController.swift in Sources */,
+				ED2A00EF2AA9B765004A346D /* AppFlowCoordinator.swift in Sources */,
+				ED2A00F52AA9B848004A346D /* UserDefaultsKey.swift in Sources */,
+				ED2A00E12AA9AF08004A346D /* AuthCoordinator.swift in Sources */,
+				ED2A00EA2AA9B267004A346D /* CoordinatorProtocol.swift in Sources */,
+				ED2A00DD2AA9AE94004A346D /* AuthSceneDIContainer.swift in Sources */,
 				ED2A00B12AA99CEC004A346D /* AppDelegate.swift in Sources */,
 				ED2A00B32AA99CEC004A346D /* SceneDelegate.swift in Sources */,
+				ED2A00E82AA9AF85004A346D /* BaseViewController.swift in Sources */,
+				ED2A00DB2AA9AE60004A346D /* AppDIContainer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
