@@ -7,9 +7,23 @@
 
 import UIKit
 
-protocol CoordinatorProtocol {
+protocol CoordinatorProtocol: AnyObject {
     var childCoordinators: [CoordinatorProtocol] { get set }
+    var navigationController: UINavigationController { get }
+    var type: CoordinatorType { get }
     func start()
+}
+
+// child 관리
+extension CoordinatorProtocol {
+    func addChild(child: CoordinatorProtocol) {
+        childCoordinators.append(child)
+    }
+    
+    func removeChild(child: CoordinatorProtocol) {
+        childCoordinators = childCoordinators.filter { $0.type != child.type }
+        child.navigationController.popToRootViewController(animated: false)
+    }
 }
 
 // 화면 전환
