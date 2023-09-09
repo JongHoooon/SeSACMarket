@@ -14,8 +14,6 @@ extension UIColor {
     enum Text {
         /// label
         static let main = UIColor.label
-        /// systemGray
-        static let body = UIColor.systemGray
         /// systemGray5
         static let caption = UIColor.systemGray5
     }

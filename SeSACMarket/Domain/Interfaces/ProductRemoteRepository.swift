@@ -6,5 +6,5 @@
 //
 
 protocol ProductRemoteRepository {
-    func fetchProducts(query: String, start: Int, display: Int) async throws -> ProductPage
+    func fetchProducts(query: String, sort: SortEnum, start: Int, display: Int) async throws -> ProductsPage
 }

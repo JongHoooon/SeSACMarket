@@ -12,14 +12,19 @@ class BaseViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configure()
+        configureLayout()
+        configureNavigationBar()
     }
     
     func configure() {
-        view.backgroundColor = .systemBackground
-        configureLayout()
+        view.backgroundColor = .mainBackgroundColor
     }
     
     func configureLayout() {
+        
+    }
+    
+    func configureNavigationBar() {
         
     }
 }
