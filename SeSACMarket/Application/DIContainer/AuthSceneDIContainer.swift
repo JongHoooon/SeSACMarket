@@ -7,7 +7,7 @@
 
 import UIKit
 
-struct AuthSceneDIContainer {
+final class AuthSceneDIContainer {
     func makeAuthCoordinator() -> AuthCoordinator {
         return AuthCoordinator(
             dependencies: self
@@ -18,5 +18,5 @@ struct AuthSceneDIContainer {
 extension AuthSceneDIContainer: AuthCoordinatorDependencies {
     func makeLoginViewController() -> LoginViewController {
         return LoginViewController()
-    }   
+    }
 }

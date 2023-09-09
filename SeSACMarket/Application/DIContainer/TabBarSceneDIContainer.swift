@@ -7,20 +7,36 @@
 
 import UIKit
 
-struct TabBarSceneDIContainer {
-    func makeTabBarFlowCoordinator() -> TabBarCoordinator {
-        return TabBarCoordinator(
-            dependencies: self
-        )
+final class TabBarSceneDIContainer {
+    struct Dependencies {
+        let apiDataTransferService: APIDataTransferService
     }
+    
+    private let dependencies: Dependencies
+    
+    init(dedepdencies: Dependencies) {
+        self.dependencies = dedepdencies
+    }
+    
 }
 
 extension TabBarSceneDIContainer: TabBarCoordinatorDependencies {
+    
+    // MARK: - Tab Bar Scene
     func makeTabBarController() -> UITabBarController {
         return UITabBarController()
     }
     
+    // MARK: - Search Scene
     func makeSearchDIContainer() -> SearchSceneDIContainer {
-        return SearchSceneDIContainer()
+        let dependencies = SearchSceneDIContainer.Dependencies(apiDataTransferService: dependencies.apiDataTransferService)
+        return SearchSceneDIContainer(dedepdencies: dependencies)
+    }
+    
+    // MARK: - Flow Coordinator
+    func makeTabBarFlowCoordinator() -> TabBarCoordinator {
+        return TabBarCoordinator(
+            dependencies: self
+        )
     }
 }

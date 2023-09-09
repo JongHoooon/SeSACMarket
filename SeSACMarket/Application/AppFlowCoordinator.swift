@@ -44,7 +44,7 @@ extension AppFlowCoordinator: TabBarCoordinatorDelegate {
 
 extension AppFlowCoordinator: AuthCoordinatorDelegate {
     func showTabBarScene() {
-        let tabBarSceneDIContainer = TabBarSceneDIContainer()
+        let tabBarSceneDIContainer = appDIContainer.makeTabBarSceneDIContainer()
         let flow = tabBarSceneDIContainer.makeTabBarFlowCoordinator()
         flow.delegate = self
         childCoordinators = [flow]
