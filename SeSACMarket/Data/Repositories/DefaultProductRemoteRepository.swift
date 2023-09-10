@@ -22,8 +22,8 @@ final class DefaultProductRemoteRepository: ProductRemoteRepository {
         display: Int
     ) async throws -> ProductsPage {
         do {
-            return try await apiDataTransferManager.callRequest(
-                of: ProductsPage.self,
+            let productPageDTO =  try await apiDataTransferManager.callRequest(
+                of: ProductsPageDTO.self,
                 api: ProductAPI.fetchQuery(
                     query: query,
                     sort: sort,
@@ -31,6 +31,7 @@ final class DefaultProductRemoteRepository: ProductRemoteRepository {
                     display: display
                 )
             )
+            return productPageDTO.toDomain()
         } catch {
             throw error
         }

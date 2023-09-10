@@ -5,29 +5,20 @@
 //  Created by JongHoon on 2023/09/08.
 //
 
-struct Product: Decodable {
-    let productID: String
+struct Product {
+    let productID: Int
     let title: String
     let imageURL: String
     let mallName: String
-    let price: String
+    let price: Int
     let isLike: Bool?
 
-    enum CodingKeys: String, CodingKey {
-        case productID = "productId"
-        case title
-        case imageURL = "image"
-        case mallName
-        case price = "lprice"
-        case isLike
-    }
-
     init(
-        productID: String,
+        productID: Int,
         title: String,
         imageURL: String,
         mallName: String,
-        price: String,
+        price: Int,
         isLike: Bool = false
     ) {
         self.productID = productID
@@ -39,7 +30,7 @@ struct Product: Decodable {
     }
 }
 
-struct ProductsPage: Decodable {
+struct ProductsPage {
     let start: Int
     let display: Int
     let items: [Product]
