@@ -46,6 +46,7 @@ final class DefaultSearchViewModel: SearchViewModel {
     ) {
         self.productRemoteRepositoryUseCase = productRemoteRepositoryUseCase
         self.actions = actions
+        bind()
     }
     
     // MARK: - Input
@@ -56,8 +57,7 @@ final class DefaultSearchViewModel: SearchViewModel {
     func searchButtonClicked() {
         page = 1
         isEndPage = false
-        productsItemsRelay.accept([])
-        fetchProducts()
+        fetchProducts(isRefresh: true)
         scrollContentOffsetRelay.accept(.zero)
     }
     
@@ -75,7 +75,7 @@ final class DefaultSearchViewModel: SearchViewModel {
         if items[0] > (productsItemsRelay.value.count - 5)
             && isEndPage == false {
             page += 1
-            fetchProducts()
+            fetchProducts(isRefresh: false)
         }
     }
     
@@ -89,7 +89,7 @@ final class DefaultSearchViewModel: SearchViewModel {
 }
 
 private extension DefaultSearchViewModel {
-    func fetchProducts() {
+    func fetchProducts(isRefresh: Bool) {
         Task {
             do {
                 let productsPage = try await productRemoteRepositoryUseCase
@@ -98,8 +98,12 @@ private extension DefaultSearchViewModel {
                         sort: selectedSortRelay.value,
                         start: page
                     )
-                let newItems = productsItemsRelay.value + productsPage.items
-                productsItemsRelay.accept(newItems)
+                if isRefresh {
+                    productsItemsRelay.accept(productsPage.items)
+                } else {
+                    let newItems = productsItemsRelay.value + productsPage.items
+                    productsItemsRelay.accept(newItems)
+                }
                 if productsPage.items.isEmpty {
                     isEndPage = true
                 }
@@ -110,4 +114,17 @@ private extension DefaultSearchViewModel {
     }
 }
 
-
+private extension DefaultSearchViewModel {
+    func bind() {
+        selectedSortRelay
+            .bind(
+                with: self,
+                onNext: { owner, _ in
+                    guard !owner.searchBarTextRelay.value.trimmingCharacters(in: .whitespaces).isEmpty
+                    else { return }
+                    owner.fetchProducts(isRefresh: true)
+                    owner.scrollContentOffsetRelay.accept(.zero)
+            })
+            .disposed(by: disposeBag)
+    }
+}
