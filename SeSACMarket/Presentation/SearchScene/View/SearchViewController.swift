@@ -154,6 +154,15 @@ private extension SearchViewController {
                     owner.viewModel.prefetchItems(indexPaths: indexPaths)
             })
             .disposed(by: disposeBag)
+        
+        cancelButton.rx.tap
+            .asSignal()
+            .emit(
+                with: self,
+                onNext: { owner, _ in
+                    owner.searchBar.endEditing(true)
+            })
+            .disposed(by: disposeBag)
     }
     
     // MARK: - Output
