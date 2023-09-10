@@ -14,8 +14,9 @@ import SnapKit
 final class SearchViewController: BaseViewController {
     
     // MARK: - Properties
-    let viewModel: SearchViewModel
-    let disposeBag = DisposeBag()
+    private let viewModel: SearchViewModel
+    private let disposeBag = DisposeBag()
+    private let productLocalRepository: ProductLocalRepository
     
     // MARK: - UI
     private let searchBar = DefaultSearchBar()
@@ -24,8 +25,12 @@ final class SearchViewController: BaseViewController {
     private let productsCollectionView = ProductsCollectionView()
     
     // MARK: - Init
-    init(viewModel: SearchViewModel) {
+    init(
+        viewModel: SearchViewModel,
+        productLocalRepository: ProductLocalRepository
+    ) {
         self.viewModel = viewModel
+        self.productLocalRepository = productLocalRepository
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -160,7 +165,7 @@ private extension SearchViewController {
             .drive(sortCollectionView.rx.items(
                 cellIdentifier: SortCollectionViewCell.identifier,
                 cellType: SortCollectionViewCell.self
-            )) { index, sort, cell in
+            )) { _, sort, cell in
                 cell.configureCell(sort: sort)
             }
             .disposed(by: disposeBag)
@@ -170,7 +175,8 @@ private extension SearchViewController {
             .drive(productsCollectionView.rx.items(
                 cellIdentifier: ProductCollectionViewCell.identifier,
                 cellType: ProductCollectionViewCell.self
-            )) { index, product, cell in
+            )) { [weak self] _, product, cell in
+                cell.productLocalRepository = self?.productLocalRepository
                 cell.configureCell(product: product)
             }
             .disposed(by: disposeBag)
