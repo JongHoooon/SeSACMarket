@@ -7,6 +7,7 @@
 
 import UIKit
 
+import Kingfisher
 import SnapKit
 
 final class ProductCollectionViewCell: BaseCollectionViewCell {
@@ -15,7 +16,8 @@ final class ProductCollectionViewCell: BaseCollectionViewCell {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 8.0
+        imageView.layer.cornerRadius = Constant.CornerRadius.default
+        imageView.backgroundColor = .Custom.grayBackground
         return imageView
     }()
     
@@ -30,16 +32,16 @@ final class ProductCollectionViewCell: BaseCollectionViewCell {
     private let mallNameLabel: UILabel = {
         let label = UILabel()
         label.text = "몰 네임 라벨"
-        label.textColor = .Text.caption
-        label.font = .DefaultFont.caption
+        label.textColor = .Custom.Text.caption
+        label.font = .CustomFont.caption
         return label
     }()
     
     private let titleNameLabel: UILabel = {
         let label = UILabel()
         label.text = "타이틀 라벨"
-        label.textColor = .Text.main
-        label.font = .DefaultFont.title
+        label.textColor = .Custom.Text.main
+        label.font = .CustomFont.title
         label.numberOfLines = 2
         return label
     }()
@@ -47,8 +49,8 @@ final class ProductCollectionViewCell: BaseCollectionViewCell {
     private let priceNameLabel: UILabel = {
         let label = UILabel()
         label.text = "33,333"
-        label.textColor = .Text.main
-        label.font = .DefaultFont.bold
+        label.textColor = .Custom.Text.main
+        label.font = .CustomFont.bold
         return label
     }()
     
@@ -77,8 +79,22 @@ final class ProductCollectionViewCell: BaseCollectionViewCell {
         
         labelStackView.snp.makeConstraints {
             $0.top.equalTo(productImageView.snp.bottom).offset(4.0)
-            $0.horizontalEdges.equalToSuperview()
+            $0.leading.equalToSuperview().inset(Constant.Inset.small)
+            $0.trailing.equalToSuperview()
         }
     }
+    
+    func configureCell(product: Product) {
+        productImageView.kf.setImage(
+            with: URL(string: product.imageURL),
+            placeholder: ImageEnum.Placeholer.photo
+        )
+        mallNameLabel.text = product.mallName.mallNameFormat
+        titleNameLabel.text = product.title.htmlEscaped
+        priceNameLabel.text = product.price.priceFormat
+    }
+    
+    func cancelImageFetch() {
+        productImageView.kf.cancelDownloadTask()
+    }
 }
-
