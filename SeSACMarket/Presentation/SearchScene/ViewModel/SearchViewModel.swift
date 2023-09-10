@@ -45,8 +45,6 @@ final class DefaultSearchViewModel: ViewModelProtocol {
     private let productLocalUseCase: ProductLocalUseCase
     private let productRemoteUseCase: ProductRemoteUseCase
     private let actions: SearchViewModelActions
-    private let disposeBag = DisposeBag()
-    
     
     init(
         productLocalUseCase: ProductLocalUseCase,
