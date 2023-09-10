@@ -18,6 +18,8 @@ final class TabBarSceneDIContainer {
         self.dependencies = dedepdencies
     }
     
+    // MARK: - Product LocalRepository
+    private lazy var productLocalRepository = DefaultProductLocalRepository()
 }
 
 extension TabBarSceneDIContainer: TabBarCoordinatorDependencies {
@@ -29,7 +31,13 @@ extension TabBarSceneDIContainer: TabBarCoordinatorDependencies {
     
     // MARK: - Search Scene
     func makeSearchDIContainer() -> SearchSceneDIContainer {
-        let dependencies = SearchSceneDIContainer.Dependencies(apiDataTransferService: dependencies.apiDataTransferService)
+        guard let productLocalRepository = productLocalRepository
+        else { fatalError("productLocalRepository is not linked") }
+        
+        let dependencies = SearchSceneDIContainer.Dependencies(
+            apiDataTransferService: dependencies.apiDataTransferService,
+            productLocalRepository: productLocalRepository
+        )
         return SearchSceneDIContainer(dedepdencies: dependencies)
     }
     

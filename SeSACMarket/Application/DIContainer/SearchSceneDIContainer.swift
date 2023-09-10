@@ -11,6 +11,7 @@ final class SearchSceneDIContainer {
     
     struct Dependencies {
         let apiDataTransferService: APIDataTransferService
+        let productLocalRepository: ProductLocalRepository
     }
     
     private let dependencies: Dependencies
@@ -18,8 +19,6 @@ final class SearchSceneDIContainer {
     init(dedepdencies: Dependencies) {
         self.dependencies = dedepdencies
     }
-    
-
 }
 
 extension SearchSceneDIContainer: SearchCoordinatorDependencies {
@@ -40,7 +39,10 @@ extension SearchSceneDIContainer: SearchCoordinatorDependencies {
     
     // MARK: - Search Scene
     func makeSearchViewController() -> SearchViewController {
-        return SearchViewController(viewModel: makeSearchViewModel())
+        return SearchViewController(
+            viewModel: makeSearchViewModel(),
+            productLocalRepository: dependencies.productLocalRepository
+        )
     }
     
     func makeSearchViewModel() -> SearchViewModel {
