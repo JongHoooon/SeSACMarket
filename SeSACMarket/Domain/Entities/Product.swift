@@ -6,28 +6,28 @@
 //
 
 struct Product: Decodable {
-    let productID: Int
+    let productID: String
     let title: String
     let imageURL: String
     let mallName: String
-    let price: Int
+    let price: String
     let isLike: Bool?
-    
+
     enum CodingKeys: String, CodingKey {
-        case productID
+        case productID = "productId"
         case title
         case imageURL = "image"
         case mallName
         case price = "lprice"
         case isLike
     }
-    
+
     init(
-        productID: Int,
+        productID: String,
         title: String,
         imageURL: String,
         mallName: String,
-        price: Int,
+        price: String,
         isLike: Bool = false
     ) {
         self.productID = productID
