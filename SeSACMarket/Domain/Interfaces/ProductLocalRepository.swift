@@ -6,8 +6,9 @@
 //
 
 protocol ProductLocalRepository {
-    func saveLikeProduct(productID: Int) async throws
+    func saveLikeProduct(product: Product) async throws
     func deleteLikeProduct(productID: Int) async throws
-    func fetchAllLikeProducts() async throws -> [Product]
-    func fetchQueryLikeProducts(query: String) async throws -> [Product]
+    func fetchAllLikeProducts() async -> [Product]
+    func fetchQueryLikeProducts(query: String) async -> [Product]
+    func isLikeProduct(productID: Int) async -> Bool
 }
