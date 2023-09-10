@@ -25,7 +25,7 @@ struct ProdcutDTO: Decodable {
     func toDomain() -> Product {
         return Product(
             productID: Int(productID) ?? 0,
-            title: title,
+            title: title.htmlEscaped,
             imageURL: imageURL,
             mallName: mallName,
             price: Int(price) ?? 0

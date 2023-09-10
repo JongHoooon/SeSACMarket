@@ -115,16 +115,14 @@ final class ProductCollectionViewCell: BaseCollectionViewCell {
             with: URL(string: product.imageURL),
             placeholder: ImageEnum.Placeholer.photo
         )
-        Task {
+        let likeCheckTask = Task {
             let isLike = await productLocalRepository?.isLikeProduct(productID: product.productID)
-                        
-            await MainActor.run {
-                likeButton.isSelected = isLike ?? false
-                return
-            }
+
+            likeButton.isSelected = isLike ?? false
         }
+        self.likeCheckTask = likeCheckTask
         mallNameLabel.text = product.mallName.mallNameFormat
-        titleNameLabel.text = product.title.htmlEscaped
+        titleNameLabel.text = product.title
         priceNameLabel.text = product.price.priceFormat
         self.cellProduct = product
     }
