@@ -8,13 +8,16 @@
 import UIKit
 
 extension UIColor {
-    static let mainTintColor = UIColor.label
-    static let mainBackgroundColor = UIColor.systemBackground
-    
-    enum Text {
-        /// label
-        static let main = UIColor.label
-        /// systemGray5
-        static let caption = UIColor.systemGray5
+    enum Custom {
+        static let mainTintColor = UIColor.label
+        static let mainBackgroundColor = UIColor.systemBackground
+        static let grayBackground = UIColor.systemGray
+        
+        enum Text {
+            /// label
+            static let main = UIColor.label
+            /// systemGray5
+            static let caption = UIColor.systemGray
+        }
     }
 }
