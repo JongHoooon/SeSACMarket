@@ -109,7 +109,7 @@ private extension SearchViewController {
         productsCollectionView.rx.didEndDisplayingCell
             .subscribe(onNext: { event in
                 guard let cell = event.cell as? ProductCollectionViewCell else { return }
-                cell.cancelImageFetch()
+                cell.cancelTask()
             })
             .disposed(by: disposeBag)
     }

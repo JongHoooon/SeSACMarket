@@ -15,6 +15,7 @@ final class ProductCollectionViewCell: BaseCollectionViewCell {
     // MARK: - Properties
     var productLocalRepository: ProductLocalRepository?
     private var cellProduct: Product?
+    private var likeCheckTask: Task<(), Never>?
 //    var testrepo = DefaultProductLocalRepository()
     
     // MARK: - UI
@@ -127,8 +128,9 @@ final class ProductCollectionViewCell: BaseCollectionViewCell {
         self.cellProduct = product
     }
     
-    func cancelImageFetch() {
+    func cancelTask() {
         productImageView.kf.cancelDownloadTask()
+        likeCheckTask?.cancel()
     }
 }
 
