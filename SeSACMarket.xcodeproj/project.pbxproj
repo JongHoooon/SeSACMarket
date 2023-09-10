@@ -67,6 +67,8 @@
 		ED4DACAB2AADEE4E0095CD77 /* FavoriteCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED4DACAA2AADEE4E0095CD77 /* FavoriteCoordinator.swift */; };
 		ED4DACAD2AADF1E50095CD77 /* FavoriteSceneDIContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED4DACAC2AADF1E50095CD77 /* FavoriteSceneDIContainer.swift */; };
 		ED4DACAF2AADFC070095CD77 /* ProductCollectionViewCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED4DACAE2AADFC070095CD77 /* ProductCollectionViewCellViewModel.swift */; };
+		ED4DACB12AAE12F40095CD77 /* ViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED4DACB02AAE12F40095CD77 /* ViewModelProtocol.swift */; };
+		ED4DACB32AAE250F0095CD77 /* Reactive+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED4DACB22AAE250F0095CD77 /* Reactive+Extension.swift */; };
 		ED5100232AAC3D1100BB305F /* APIDataTransferService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED5100222AAC3D1100BB305F /* APIDataTransferService.swift */; };
 		ED9FBD682AAC6ADB00B63CC5 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED9FBD672AAC6ADB00B63CC5 /* SearchViewModel.swift */; };
 		ED9FBD6A2AAC7D2C00B63CC5 /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED9FBD692AAC7D2C00B63CC5 /* Constant.swift */; };
@@ -134,6 +136,8 @@
 		ED4DACAA2AADEE4E0095CD77 /* FavoriteCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteCoordinator.swift; sourceTree = "<group>"; };
 		ED4DACAC2AADF1E50095CD77 /* FavoriteSceneDIContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteSceneDIContainer.swift; sourceTree = "<group>"; };
 		ED4DACAE2AADFC070095CD77 /* ProductCollectionViewCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductCollectionViewCellViewModel.swift; sourceTree = "<group>"; };
+		ED4DACB02AAE12F40095CD77 /* ViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelProtocol.swift; sourceTree = "<group>"; };
+		ED4DACB22AAE250F0095CD77 /* Reactive+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Reactive+Extension.swift"; sourceTree = "<group>"; };
 		ED5100222AAC3D1100BB305F /* APIDataTransferService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIDataTransferService.swift; sourceTree = "<group>"; };
 		ED9FBD672AAC6ADB00B63CC5 /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		ED9FBD692AAC7D2C00B63CC5 /* Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
@@ -455,6 +459,7 @@
 				ED2A01402AAAF4ED004A346D /* UIFont+Extension.swift */,
 				ED9FBD6C2AACA74900B63CC5 /* String+Extension.swift */,
 				ED4DACA02AAD92110095CD77 /* Int+Extension.swift */,
+				ED4DACB22AAE250F0095CD77 /* Reactive+Extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -464,6 +469,7 @@
 			children = (
 				ED2A00E92AA9B267004A346D /* CoordinatorProtocol.swift */,
 				ED2A01432AAAFA87004A346D /* ReusableProtocol.swift */,
+				ED4DACB02AAE12F40095CD77 /* ViewModelProtocol.swift */,
 			);
 			path = Protocol;
 			sourceTree = "<group>";
@@ -681,6 +687,7 @@
 				ED4DACAB2AADEE4E0095CD77 /* FavoriteCoordinator.swift in Sources */,
 				ED4DAC992AAD8F0E0095CD77 /* DefaultProductLocalRepository.swift in Sources */,
 				ED9FBD722AACB46F00B63CC5 /* SortCollectionView.swift in Sources */,
+				ED4DACB12AAE12F40095CD77 /* ViewModelProtocol.swift in Sources */,
 				ED2A011C2AA9F30A004A346D /* APIKey.swift in Sources */,
 				ED4DAC9C2AAD90130095CD77 /* ProductTable+Mapping.swift in Sources */,
 				ED2A01122AA9E552004A346D /* UIColor+Extension.swift in Sources */,
@@ -699,6 +706,7 @@
 				ED2A01052AA9BE78004A346D /* SearchSceneDIContainer.swift in Sources */,
 				ED2A014B2AAAFEBA004A346D /* HTTPHeader.swift in Sources */,
 				ED4DACA12AAD92110095CD77 /* Int+Extension.swift in Sources */,
+				ED4DACB32AAE250F0095CD77 /* Reactive+Extension.swift in Sources */,
 				ED2A01492AAAFE49004A346D /* HTTPMethod.swift in Sources */,
 				ED2A01532AAB006D004A346D /* APIProtocol.swift in Sources */,
 				ED2A01332AAAF0E7004A346D /* ButtonStyle1.swift in Sources */,

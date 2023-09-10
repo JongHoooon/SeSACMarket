@@ -14,7 +14,7 @@ import SnapKit
 final class SearchViewController: BaseViewController {
     
     // MARK: - Properties
-    private let viewModel: SearchViewModel
+    private let viewModel: DefaultSearchViewModel
     private let disposeBag = DisposeBag()
     
     // MARK: - UI
@@ -25,7 +25,7 @@ final class SearchViewController: BaseViewController {
     
     // MARK: - Init
     init(
-        viewModel: SearchViewModel
+        viewModel: DefaultSearchViewModel
     ) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -100,72 +100,20 @@ final class SearchViewController: BaseViewController {
 // MARK: - Bind
 private extension SearchViewController {
     func bind() {
-        bindInput()
-        bindOutput()
+        let viewDidLoad = Observable.just(Void())
         
-        productsCollectionView.rx.didEndDisplayingCell
-            .subscribe(onNext: { event in
-                guard let cell = event.cell as? ProductCollectionViewCell else { return }
-                cell.cancelTask()
-            })
-            .disposed(by: disposeBag)
-    }
-    
-    // MARK: - Input
-    func bindInput() {
+        let input = DefaultSearchViewModel.Input(
+            viewDidLoad: viewDidLoad,
+            searchButtonClicked: searchBar.rx.searchButtonClicked.asObservable(),
+            searchBarText: searchBar.rx.text.orEmpty.asObservable(),
+            sortSelected: sortCollectionView.rx.modelSelected(SortEnum.self).asObservable(),
+            prefetchItems: productsCollectionView.rx.prefetchItems.asObservable(),
+            cancelButtonClicked: cancelButton.rx.tap.asObservable()
+        )
         
-        Observable.just(Void())
-            .bind(
-                with: self,
-                onNext: { owner, _ in
-                    owner.viewModel.viewDidLoad()
-            })
-            .disposed(by: disposeBag)
+        let output = viewModel.transform(input: input, disposeBag: disposeBag)
         
-        sortCollectionView.rx.modelSelected(SortEnum.self)
-            .bind(
-                with: self,
-                onNext: { owner, sort in
-                    owner.viewModel.selectedSortRelay.accept(sort)
-            })
-            .disposed(by: disposeBag)
-        
-        let searchBarText = searchBar.rx.text
-            .orEmpty
-            .distinctUntilChanged()
-        
-        searchBar.rx.searchButtonClicked
-            .withLatestFrom(searchBarText)
-            .bind(
-                with: self,
-                onNext: { owner, text in
-                    owner.viewModel.searchBarTextRelay.accept(text)
-                    owner.viewModel.searchButtonClicked()
-            })
-            .disposed(by: disposeBag)
-        
-        productsCollectionView.rx.prefetchItems
-            .bind(
-                with: self,
-                onNext: { owner, indexPaths in
-                    owner.viewModel.prefetchItems(indexPaths: indexPaths)
-            })
-            .disposed(by: disposeBag)
-        
-        cancelButton.rx.tap
-            .asSignal()
-            .emit(
-                with: self,
-                onNext: { owner, _ in
-                    owner.searchBar.endEditing(true)
-            })
-            .disposed(by: disposeBag)
-    }
-    
-    // MARK: - Output
-    func bindOutput() {
-        
-        viewModel.sortItemsRelay
+        output.sortItemsRelay
             .asDriver()
             .distinctUntilChanged()
             .drive(sortCollectionView.rx.items(
@@ -176,7 +124,7 @@ private extension SearchViewController {
             }
             .disposed(by: disposeBag)
         
-        viewModel.productsItemsRelay
+        output.productsCellViewModelsRelay
             .asDriver()
             .drive(productsCollectionView.rx.items(
                 cellIdentifier: ProductCollectionViewCell.identifier,
@@ -186,9 +134,21 @@ private extension SearchViewController {
             }
             .disposed(by: disposeBag)
         
-        viewModel.scrollContentOffsetRelay
+        output.scrollContentOffsetRelay
             .asSignal()
             .emit(to: productsCollectionView.rx.contentOffset)
+            .disposed(by: disposeBag)
+        
+        output.searchBarEndEditting
+            .asSignal()
+            .emit(to: searchBar.rx.endEditing)
+            .disposed(by: disposeBag)
+        
+        productsCollectionView.rx.didEndDisplayingCell
+            .subscribe(onNext: { event in
+                guard let cell = event.cell as? ProductCollectionViewCell else { return }
+                cell.cancelTask()
+            })
             .disposed(by: disposeBag)
     }
 }

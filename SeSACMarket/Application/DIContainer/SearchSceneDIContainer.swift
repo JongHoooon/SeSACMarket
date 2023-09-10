@@ -55,7 +55,7 @@ extension SearchSceneDIContainer: SearchCoordinatorDependencies {
         )
     }
     
-    private func makeSearchViewModel() -> SearchViewModel {
+    private func makeSearchViewModel() -> DefaultSearchViewModel {
         return DefaultSearchViewModel(
             productLocalUseCase: makeProductLocalUseCase(),
             productRemoteUseCase: makeProductRemoteUseCase(),

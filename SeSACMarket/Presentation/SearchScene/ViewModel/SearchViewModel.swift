@@ -15,31 +15,36 @@ struct SearchViewModelActions {
     
 }
 
-protocol SearchViewModelInput {
-    func viewDidLoad()
-    func searchButtonClicked()
-    func prefetchItems(indexPaths: [IndexPath])
-    var searchBarTextRelay: BehaviorRelay<String> { get }
-    var selectedSortRelay: BehaviorRelay<SortEnum> { get }
-}
-
-protocol SearchViewModelOutput {
-    var sortItemsRelay: BehaviorRelay<[SortEnum]> { get }
-    var productsItemsRelay: BehaviorRelay<[ProductCollectionViewCellViewModel]>  { get }
-    var scrollContentOffsetRelay: PublishRelay<CGPoint> { get }
-}
-
-protocol SearchViewModel: SearchViewModelInput, SearchViewModelOutput {}
-
-final class DefaultSearchViewModel: SearchViewModel {
-
+final class DefaultSearchViewModel: ViewModelProtocol {
+    
+    struct Input {
+        let viewDidLoad: Observable<Void>
+        let searchButtonClicked: Observable<Void>
+        let searchBarText: Observable<String>
+        let sortSelected: Observable<SortEnum>
+        let prefetchItems: Observable<[IndexPath]>
+        let cancelButtonClicked: Observable<Void>
+    }
+    
+    struct Output {
+        let sortItemsRelay = BehaviorRelay<[SortEnum]>(value: SortEnum.allCases)
+        let productsCellViewModelsRelay = BehaviorRelay<[ProductCollectionViewCellViewModel]>(value: [])
+        let scrollContentOffsetRelay = PublishRelay<CGPoint>()
+        let searchBarEndEditting = PublishRelay<Void>()
+    }
+    
+    // MARK: - States
+    private var page = 1
+    private var isEndPage = false
+    private var searchBarTextRelay: BehaviorRelay<String> = .init(value: "")
+    private var selectedSortRelay: BehaviorRelay<SortEnum> = .init(value: .similarity)
+    
+    // MARK: - Properties
     private let productLocalUseCase: ProductLocalUseCase
     private let productRemoteUseCase: ProductRemoteUseCase
     private let actions: SearchViewModelActions
     private let disposeBag = DisposeBag()
     
-    private var page = 1
-    private var isEndPage = false
     
     init(
         productLocalUseCase: ProductLocalUseCase,
@@ -49,91 +54,99 @@ final class DefaultSearchViewModel: SearchViewModel {
         self.productLocalUseCase = productLocalUseCase
         self.productRemoteUseCase = productRemoteUseCase
         self.actions = actions
-        bind()
     }
     
-    // MARK: - Input
-    func viewDidLoad() {
+    func transform(input: Input, disposeBag: DisposeBag) -> Output {
+        let output = Output()
         
-    }
-    
-    func searchButtonClicked() {
-        page = 1
-        isEndPage = false
-        fetchProducts(isRefresh: true)
-        scrollContentOffsetRelay.accept(.zero)
-    }
-    
-    func prefetchItems(indexPaths: [IndexPath]) {
-        let items = indexPaths.map { $0.item }
-        
-        var urls: [URL] = []
-        items.forEach {
-            if let url = URL(string: productsItemsRelay.value[$0].prodcut.imageURL) {
-                urls.append(url)
-            }
-        }
-        ImagePrefetcher(resources: urls).start()
-        
-        if items[0] > (productsItemsRelay.value.count - 5)
-            && isEndPage == false {
-            page += 1
-            fetchProducts(isRefresh: false)
-        }
-    }
-    
-    var searchBarTextRelay: BehaviorRelay<String> = .init(value: "")
-    var selectedSortRelay: BehaviorRelay<SortEnum> = .init(value: .similarity)
-    
-    // MARK: - Output
-    var productsItemsRelay: BehaviorRelay<[ProductCollectionViewCellViewModel]> = .init(value: [])
-    var sortItemsRelay: BehaviorRelay<[SortEnum]> = .init(value: SortEnum.allCases)
-    var scrollContentOffsetRelay: PublishRelay<CGPoint> = .init()
-}
-
-private extension DefaultSearchViewModel {
-    func fetchProducts(isRefresh: Bool) {
-        Task {
-            do {
-                let productsPage = try await productRemoteUseCase
-                    .fetchProducts(
-                        query: searchBarTextRelay.value,
-                        sort: selectedSortRelay.value,
-                        start: page
-                    )
-                if isRefresh {
-                    productsItemsRelay.accept(productsPage.items.map { ProductCollectionViewCellViewModel(
-                        prodcut: $0,
-                        productLocalUseCase: productLocalUseCase
-                    )})
-                } else {
-                    let newItems = productsItemsRelay.value + productsPage.items.map { ProductCollectionViewCellViewModel(
-                        prodcut: $0,
-                        productLocalUseCase: productLocalUseCase
-                    )}
-                    productsItemsRelay.accept(newItems)
-                }
-                if productsPage.items.isEmpty {
-                    isEndPage = true
-                }
-            } catch {
-                print(error)
-            }
-        }
-    }
-}
-
-private extension DefaultSearchViewModel {
-    func bind() {
-        selectedSortRelay
-            .bind(
-                with: self,
-                onNext: { owner, _ in
-                    guard !owner.searchBarTextRelay.value.trimmingCharacters(in: .whitespaces).isEmpty
-                    else { return }
-                    owner.fetchProducts(isRefresh: true)
-                    owner.scrollContentOffsetRelay.accept(.zero)
+        input.viewDidLoad
+            .subscribe(onNext: {
+                
             })
             .disposed(by: disposeBag)
+        
+        input.searchButtonClicked
+            .withLatestFrom(input.searchBarText)
+            .bind(
+                with: self,
+                onNext: { owner, text in
+                    owner.searchBarTextRelay.accept(text)
+                    fetchProducts(start: 1)
+            })
+            .disposed(by: disposeBag)
+        
+        input.sortSelected
+            .bind(
+                with: self,
+                onNext: { owner, sort in
+                    owner.selectedSortRelay.accept(sort)
+                    
+                    guard !owner.searchBarTextRelay.value.isEmpty
+                    else { return }
+                    
+                    fetchProducts(start: 1)
+            })
+            .disposed(by: disposeBag)
+        
+        input.prefetchItems
+            .bind(
+                with: self,
+                onNext: { owner, indexPathes in
+                    let items = indexPathes.map { $0.item }
+                    
+                    var urls: [URL] = []
+                    items.forEach {
+                        if let url = URL(string: output.productsCellViewModelsRelay.value[$0].prodcut.imageURL) {
+                            urls.append(url)
+                        }
+                    }
+                    ImagePrefetcher(resources: urls).start()
+                    
+                    if items[0] > (output.productsCellViewModelsRelay.value.count - 5)
+                        && owner.isEndPage == false {
+                        owner.page += 1
+                        fetchProducts(start: owner.page)
+                    }
+            })
+            .disposed(by: disposeBag)
+        
+        input.cancelButtonClicked
+            .bind(onNext: {
+                output.searchBarEndEditting.accept(Void())
+            })
+            .disposed(by: disposeBag)
+        
+        return output
+        
+        func fetchProducts(start: Int) {
+            Task {
+                do {
+                    let productsPage = try await productRemoteUseCase.fetchProducts(
+                        query: searchBarTextRelay.value,
+                        sort: selectedSortRelay.value,
+                        start: start
+                    )
+                    let viewModels = productsPage.items.map {
+                        return ProductCollectionViewCellViewModel(
+                            prodcut: $0,
+                            productLocalUseCase: productLocalUseCase
+                        )
+                    }
+                    if start == 1 {
+                        isEndPage = false
+                        output.productsCellViewModelsRelay.accept(viewModels)
+                        output.scrollContentOffsetRelay.accept(.zero)
+                    } else {
+                        let currentViewModels = output.productsCellViewModelsRelay.value
+                        output.productsCellViewModelsRelay.accept(currentViewModels+viewModels)
+                    }
+                    if productsPage.items.isEmpty {
+                        isEndPage = true
+                    }
+                } catch {
+                    print(error)
+                }
+            }
+        }
     }
 }
