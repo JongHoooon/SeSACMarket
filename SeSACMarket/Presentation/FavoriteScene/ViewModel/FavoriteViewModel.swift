@@ -7,17 +7,20 @@
 
 import Foundation
 
-protocol FavoriteViewModelInput {
+import RxSwift
+
+final class FavoriteViewModel: ViewModelProtocol {
     
-}
-
-protocol FavoriteViewModelOutput {
-
-}
-
-protocol FavoriteViewModel: FavoriteViewModelInput, FavoriteViewModelOutput {}
-
-final class DefaultFavoriteViewModel: FavoriteViewModel {
+    struct Input {
+        
+    }
     
+    struct Output {
+        
+    }
+    
+    func transform(input: Input, disposeBag: DisposeBag) -> Output {
+        return Output()
+    }
 }
  
