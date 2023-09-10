@@ -16,7 +16,6 @@ final class SearchViewController: BaseViewController {
     // MARK: - Properties
     private let viewModel: SearchViewModel
     private let disposeBag = DisposeBag()
-    private let productLocalRepository: ProductLocalRepository
     
     // MARK: - UI
     private let searchBar = DefaultSearchBar()
@@ -26,11 +25,9 @@ final class SearchViewController: BaseViewController {
     
     // MARK: - Init
     init(
-        viewModel: SearchViewModel,
-        productLocalRepository: ProductLocalRepository
+        viewModel: SearchViewModel
     ) {
         self.viewModel = viewModel
-        self.productLocalRepository = productLocalRepository
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -184,9 +181,8 @@ private extension SearchViewController {
             .drive(productsCollectionView.rx.items(
                 cellIdentifier: ProductCollectionViewCell.identifier,
                 cellType: ProductCollectionViewCell.self
-            )) { [weak self] _, product, cell in
-                cell.productLocalRepository = self?.productLocalRepository
-                cell.configureCell(product: product)
+            )) { _, viewModel, cell in
+                cell.viewModel = viewModel
             }
             .disposed(by: disposeBag)
         

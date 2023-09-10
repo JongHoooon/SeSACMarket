@@ -47,14 +47,14 @@ extension SearchSceneDIContainer: SearchCoordinatorDependencies {
     // MARK: - Search Scene
     func makeSearchViewController() -> SearchViewController {
         return SearchViewController(
-            viewModel: makeSearchViewModel(),
-            productLocalRepository: dependencies.productLocalRepository
+            viewModel: makeSearchViewModel()
         )
     }
     
     private func makeSearchViewModel() -> SearchViewModel {
         return DefaultSearchViewModel(
-            productRemoteRepositoryUseCase: makeProductRemoteUseCase(),
+            productLocalRepository: dependencies.productLocalRepository,
+            productRemoteUseCase: makeProductRemoteUseCase(),
             actions: SearchViewModelActions()
         )
     }

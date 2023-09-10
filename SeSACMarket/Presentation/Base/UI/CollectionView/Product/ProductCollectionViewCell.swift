@@ -13,8 +13,12 @@ import SnapKit
 final class ProductCollectionViewCell: BaseCollectionViewCell {
     
     // MARK: - Properties
-    var productLocalRepository: ProductLocalRepository?
-    private var cellProduct: Product?
+    var viewModel: ProductCollectionViewCellViewModel? {
+        didSet {
+            guard let product = viewModel?.prodcut else { return }
+            configureCell(product: product)
+        }
+    }
     private var likeCheckTask: Task<(), Never>?
     
     // MARK: - UI
@@ -116,7 +120,7 @@ final class ProductCollectionViewCell: BaseCollectionViewCell {
             placeholder: ImageEnum.Placeholer.photo
         )
         let likeCheckTask = Task {
-            let isLike = await productLocalRepository?.isLikeProduct(productID: product.productID)
+            let isLike = await viewModel?.productLocalRepository.isLikeProduct(productID: product.productID)
 
             likeButton.isSelected = isLike ?? false
         }
@@ -124,7 +128,6 @@ final class ProductCollectionViewCell: BaseCollectionViewCell {
         mallNameLabel.text = product.mallName.mallNameFormat
         titleNameLabel.text = product.title
         priceNameLabel.text = product.price.priceFormat
-        self.cellProduct = product
     }
     
     func cancelTask() {
@@ -145,13 +148,13 @@ private extension ProductCollectionViewCell {
     
     @objc
     func likeButtonClicked() {
-        guard let product = cellProduct else { return }
         likeButton.isEnabled = false
+        guard let product = viewModel?.prodcut else { return }
         switch likeButton.isSelected {
         case true: // 삭제
             Task {
                 do {
-                    try await productLocalRepository?.deleteLikeProduct(productID: product.productID)
+                    try await viewModel?.productLocalRepository.deleteLikeProduct(productID: product.productID)
                     
                     likeButton.isSelected.toggle()
                     likeButton.isEnabled = true
@@ -163,7 +166,7 @@ private extension ProductCollectionViewCell {
         case false: // 저장
             Task {
                 do {
-                    try await productLocalRepository?.saveLikeProduct(product: product)
+                    try await viewModel?.productLocalRepository.saveLikeProduct(product: product)
                     
                     likeButton.isSelected.toggle()
                     likeButton.playAnimation(completion: { [weak self] in

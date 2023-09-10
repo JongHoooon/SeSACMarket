@@ -25,7 +25,7 @@ protocol SearchViewModelInput {
 
 protocol SearchViewModelOutput {
     var sortItemsRelay: BehaviorRelay<[SortEnum]> { get }
-    var productsItemsRelay: BehaviorRelay<[Product]>  { get }
+    var productsItemsRelay: BehaviorRelay<[ProductCollectionViewCellViewModel]>  { get }
     var scrollContentOffsetRelay: PublishRelay<CGPoint> { get }
 }
 
@@ -33,7 +33,8 @@ protocol SearchViewModel: SearchViewModelInput, SearchViewModelOutput {}
 
 final class DefaultSearchViewModel: SearchViewModel {
 
-    private let productRemoteRepositoryUseCase: ProductRemoteUseCase
+    private let productLocalRepository: ProductLocalRepository
+    private let productRemoteUseCase: ProductRemoteUseCase
     private let actions: SearchViewModelActions
     private let disposeBag = DisposeBag()
     
@@ -41,10 +42,12 @@ final class DefaultSearchViewModel: SearchViewModel {
     private var isEndPage = false
     
     init(
-        productRemoteRepositoryUseCase: ProductRemoteUseCase,
+        productLocalRepository: ProductLocalRepository,
+        productRemoteUseCase: ProductRemoteUseCase,
         actions: SearchViewModelActions
     ) {
-        self.productRemoteRepositoryUseCase = productRemoteRepositoryUseCase
+        self.productLocalRepository = productLocalRepository
+        self.productRemoteUseCase = productRemoteUseCase
         self.actions = actions
         bind()
     }
@@ -66,7 +69,7 @@ final class DefaultSearchViewModel: SearchViewModel {
         
         var urls: [URL] = []
         items.forEach {
-            if let url = URL(string: productsItemsRelay.value[$0].imageURL) {
+            if let url = URL(string: productsItemsRelay.value[$0].prodcut.imageURL) {
                 urls.append(url)
             }
         }
@@ -83,7 +86,7 @@ final class DefaultSearchViewModel: SearchViewModel {
     var selectedSortRelay: BehaviorRelay<SortEnum> = .init(value: .similarity)
     
     // MARK: - Output
-    var productsItemsRelay: BehaviorRelay<[Product]> = .init(value: [])
+    var productsItemsRelay: BehaviorRelay<[ProductCollectionViewCellViewModel]> = .init(value: [])
     var sortItemsRelay: BehaviorRelay<[SortEnum]> = .init(value: SortEnum.allCases)
     var scrollContentOffsetRelay: PublishRelay<CGPoint> = .init()
 }
@@ -92,16 +95,22 @@ private extension DefaultSearchViewModel {
     func fetchProducts(isRefresh: Bool) {
         Task {
             do {
-                let productsPage = try await productRemoteRepositoryUseCase
+                let productsPage = try await productRemoteUseCase
                     .fetchProducts(
                         query: searchBarTextRelay.value,
                         sort: selectedSortRelay.value,
                         start: page
                     )
                 if isRefresh {
-                    productsItemsRelay.accept(productsPage.items)
+                    productsItemsRelay.accept(productsPage.items.map { ProductCollectionViewCellViewModel(
+                        prodcut: $0,
+                        productLocalRepository: productLocalRepository
+                    )})
                 } else {
-                    let newItems = productsItemsRelay.value + productsPage.items
+                    let newItems = productsItemsRelay.value + productsPage.items.map { ProductCollectionViewCellViewModel(
+                        prodcut: $0,
+                        productLocalRepository: productLocalRepository
+                    )}
                     productsItemsRelay.accept(newItems)
                 }
                 if productsPage.items.isEmpty {
