@@ -26,7 +26,7 @@ extension SearchSceneDIContainer: SearchCoordinatorDependencies {
     
     // MARK: - Use Cases
     func makeProductRemoteUseCase() -> ProductRemoteUseCase {
-        return DefaultProductRemoteUseCase(
+        return ProductRemoteUseCase(
             productRemoteRepository: makeProductRemoteRepository()
         )
     }
