@@ -19,19 +19,26 @@ final class SearchSceneDIContainer {
     init(dedepdencies: Dependencies) {
         self.dependencies = dedepdencies
     }
+    
+    func makeSearchSceneCoordinator(navigationController: UINavigationController) -> SearchCoordinator {
+        return SearchCoordinator(
+            dependencies: self,
+            navigationController: navigationController
+        )
+    }
 }
 
 extension SearchSceneDIContainer: SearchCoordinatorDependencies {
     
     // MARK: - Use Cases
-    func makeProductRemoteUseCase() -> ProductRemoteUseCase {
+    private func makeProductRemoteUseCase() -> ProductRemoteUseCase {
         return ProductRemoteUseCase(
             productRemoteRepository: makeProductRemoteRepository()
         )
     }
     
     // MARK: - Repositories
-    func makeProductRemoteRepository() -> ProductRemoteRepository {
+    private func makeProductRemoteRepository() -> ProductRemoteRepository {
         return DefaultProductRemoteRepository(
             apiDataTransferManager: dependencies.apiDataTransferService
         )
@@ -45,17 +52,10 @@ extension SearchSceneDIContainer: SearchCoordinatorDependencies {
         )
     }
     
-    func makeSearchViewModel() -> SearchViewModel {
+    private func makeSearchViewModel() -> SearchViewModel {
         return DefaultSearchViewModel(
             productRemoteRepositoryUseCase: makeProductRemoteUseCase(),
             actions: SearchViewModelActions()
-        )
-    }
-    
-    func makeSearchSceneDIContainer(navigationController: UINavigationController) -> SearchCoordinator {
-        return SearchCoordinator(
-            dependencies: self,
-            navigationController: navigationController
         )
     }
 }

@@ -10,4 +10,5 @@ enum CoordinatorType {
     case auth
     case tabBar
     case search
+    case favorite
 }

@@ -62,6 +62,10 @@
 		ED4DAC9C2AAD90130095CD77 /* ProductTable+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED4DAC9B2AAD90130095CD77 /* ProductTable+Mapping.swift */; };
 		ED4DAC9F2AAD91AA0095CD77 /* ProdcutDTO+Mapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED4DAC9E2AAD91AA0095CD77 /* ProdcutDTO+Mapping.swift */; };
 		ED4DACA12AAD92110095CD77 /* Int+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED4DACA02AAD92110095CD77 /* Int+Extension.swift */; };
+		ED4DACA72AADEE2E0095CD77 /* FavoriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED4DACA62AADEE2E0095CD77 /* FavoriteViewController.swift */; };
+		ED4DACA92AADEE360095CD77 /* FavoriteViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED4DACA82AADEE360095CD77 /* FavoriteViewModel.swift */; };
+		ED4DACAB2AADEE4E0095CD77 /* FavoriteCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED4DACAA2AADEE4E0095CD77 /* FavoriteCoordinator.swift */; };
+		ED4DACAD2AADF1E50095CD77 /* FavoriteSceneDIContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED4DACAC2AADF1E50095CD77 /* FavoriteSceneDIContainer.swift */; };
 		ED5100232AAC3D1100BB305F /* APIDataTransferService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED5100222AAC3D1100BB305F /* APIDataTransferService.swift */; };
 		ED9FBD682AAC6ADB00B63CC5 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED9FBD672AAC6ADB00B63CC5 /* SearchViewModel.swift */; };
 		ED9FBD6A2AAC7D2C00B63CC5 /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED9FBD692AAC7D2C00B63CC5 /* Constant.swift */; };
@@ -124,6 +128,10 @@
 		ED4DAC9B2AAD90130095CD77 /* ProductTable+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProductTable+Mapping.swift"; sourceTree = "<group>"; };
 		ED4DAC9E2AAD91AA0095CD77 /* ProdcutDTO+Mapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProdcutDTO+Mapping.swift"; sourceTree = "<group>"; };
 		ED4DACA02AAD92110095CD77 /* Int+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Extension.swift"; sourceTree = "<group>"; };
+		ED4DACA62AADEE2E0095CD77 /* FavoriteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteViewController.swift; sourceTree = "<group>"; };
+		ED4DACA82AADEE360095CD77 /* FavoriteViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteViewModel.swift; sourceTree = "<group>"; };
+		ED4DACAA2AADEE4E0095CD77 /* FavoriteCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteCoordinator.swift; sourceTree = "<group>"; };
+		ED4DACAC2AADF1E50095CD77 /* FavoriteSceneDIContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteSceneDIContainer.swift; sourceTree = "<group>"; };
 		ED5100222AAC3D1100BB305F /* APIDataTransferService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIDataTransferService.swift; sourceTree = "<group>"; };
 		ED9FBD672AAC6ADB00B63CC5 /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		ED9FBD692AAC7D2C00B63CC5 /* Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
@@ -229,6 +237,7 @@
 				ED2A00DE2AA9AEE5004A346D /* AuthScene */,
 				ED2A01002AA9BDAD004A346D /* TabBarScene */,
 				ED2A00F82AA9BC2B004A346D /* SearchScene */,
+				ED4DACA22AADEDF70095CD77 /* FavoriteScene */,
 				ED2A013B2AAAF495004A346D /* Utils */,
 			);
 			path = Presentation;
@@ -250,6 +259,7 @@
 				ED2A00DC2AA9AE94004A346D /* AuthSceneDIContainer.swift */,
 				ED2A00F62AA9BBE1004A346D /* TabBarSceneDIContainer.swift */,
 				ED2A01042AA9BE78004A346D /* SearchSceneDIContainer.swift */,
+				ED4DACAC2AADF1E50095CD77 /* FavoriteSceneDIContainer.swift */,
 			);
 			path = DIContainer;
 			sourceTree = "<group>";
@@ -525,6 +535,40 @@
 			path = Network;
 			sourceTree = "<group>";
 		};
+		ED4DACA22AADEDF70095CD77 /* FavoriteScene */ = {
+			isa = PBXGroup;
+			children = (
+				ED4DACA32AADEE060095CD77 /* Flows */,
+				ED4DACA42AADEE090095CD77 /* ViewModel */,
+				ED4DACA52AADEE0D0095CD77 /* View */,
+			);
+			path = FavoriteScene;
+			sourceTree = "<group>";
+		};
+		ED4DACA32AADEE060095CD77 /* Flows */ = {
+			isa = PBXGroup;
+			children = (
+				ED4DACAA2AADEE4E0095CD77 /* FavoriteCoordinator.swift */,
+			);
+			path = Flows;
+			sourceTree = "<group>";
+		};
+		ED4DACA42AADEE090095CD77 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				ED4DACA82AADEE360095CD77 /* FavoriteViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		ED4DACA52AADEE0D0095CD77 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				ED4DACA62AADEE2E0095CD77 /* FavoriteViewController.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 		ED5100212AAC3C9800BB305F /* APIs */ = {
 			isa = PBXGroup;
 			children = (
@@ -628,8 +672,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ED4DACA92AADEE360095CD77 /* FavoriteViewModel.swift in Sources */,
 				ED2A00E52AA9AF3D004A346D /* LoginViewController.swift in Sources */,
 				ED2A012F2AAAE5E0004A346D /* ProductRemoteUseCase.swift in Sources */,
+				ED4DACAB2AADEE4E0095CD77 /* FavoriteCoordinator.swift in Sources */,
 				ED4DAC992AAD8F0E0095CD77 /* DefaultProductLocalRepository.swift in Sources */,
 				ED9FBD722AACB46F00B63CC5 /* SortCollectionView.swift in Sources */,
 				ED2A011C2AA9F30A004A346D /* APIKey.swift in Sources */,
@@ -662,8 +708,10 @@
 				ED2A01282AAADE37004A346D /* Product.swift in Sources */,
 				ED2A01442AAAFA87004A346D /* ReusableProtocol.swift in Sources */,
 				ED2A00F72AA9BBE1004A346D /* TabBarSceneDIContainer.swift in Sources */,
+				ED4DACA72AADEE2E0095CD77 /* FavoriteViewController.swift in Sources */,
 				ED9FBD6D2AACA74900B63CC5 /* String+Extension.swift in Sources */,
 				ED2A012A2AAAE276004A346D /* ProductRemoteRepository.swift in Sources */,
+				ED4DACAD2AADF1E50095CD77 /* FavoriteSceneDIContainer.swift in Sources */,
 				ED2A00DD2AA9AE94004A346D /* AuthSceneDIContainer.swift in Sources */,
 				ED2A012D2AAAE28D004A346D /* ProductLocalRepository.swift in Sources */,
 				ED2A015A2AAB37B2004A346D /* DefaultProductRemoteRepository.swift in Sources */,

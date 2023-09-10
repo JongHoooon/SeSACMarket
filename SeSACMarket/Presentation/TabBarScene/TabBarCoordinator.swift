@@ -9,7 +9,8 @@ import UIKit
 
 protocol TabBarCoordinatorDependencies {
     func makeTabBarController() -> UITabBarController
-    func makeSearchDIContainer() -> SearchSceneDIContainer
+    func makeSearchSceneDIContainer() -> SearchSceneDIContainer
+    func makeFavoriteSceneDIContainer() -> FavoriteSceneDIContainer
 }
 
 protocol TabBarCoordinatorDelegate: AnyObject {
@@ -34,12 +35,15 @@ final class TabBarCoordinator: CoordinatorProtocol,
         let tabBarController = dependencies.makeTabBarController()
         
         let searchSceneNavigationController = TabBarEnum.search.configureTabBarItem(navigationController: UINavigationController())
+        let favoriteSceneNavigationController = TabBarEnum.favorite.configureTabBarItem(navigationController: UINavigationController())
         
         tabBarController.viewControllers = [
-            searchSceneNavigationController
+            searchSceneNavigationController,
+            favoriteSceneNavigationController
         ]
         
         startSearchScene(navigationController: searchSceneNavigationController)
+        startFavoriteScene(navigationController: favoriteSceneNavigationController)
         
         changeWindowRoot(rootViewController: tabBarController)
     }
@@ -49,10 +53,21 @@ extension TabBarCoordinator: SearchCoordinatorDelegate {
     
 }
 
+extension TabBarCoordinator: FavoriteCoordinatorDelegate {
+    
+}
+
 private extension TabBarCoordinator {
     func startSearchScene(navigationController: UINavigationController) {
-        let searchDIContainer = dependencies.makeSearchDIContainer()
-        let flow = searchDIContainer.makeSearchSceneDIContainer(navigationController: navigationController)
+        let searchSceneDIContainer = dependencies.makeSearchSceneDIContainer()
+        let flow = searchSceneDIContainer.makeSearchSceneCoordinator(navigationController: navigationController)
+        flow.delegate = self
+        flow.start()
+        addChildCoordinator(child: flow)
+    }
+    func startFavoriteScene(navigationController: UINavigationController) {
+        let favoriteSceneDIContainer = dependencies.makeFavoriteSceneDIContainer()
+        let flow = favoriteSceneDIContainer.makeFavoriteSceneCoordinator(navigationController: navigationController)
         flow.delegate = self
         flow.start()
         addChildCoordinator(child: flow)

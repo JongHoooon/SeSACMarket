@@ -30,7 +30,7 @@ extension TabBarSceneDIContainer: TabBarCoordinatorDependencies {
     }
     
     // MARK: - Search Scene
-    func makeSearchDIContainer() -> SearchSceneDIContainer {
+    func makeSearchSceneDIContainer() -> SearchSceneDIContainer {
         guard let productLocalRepository = productLocalRepository
         else { fatalError("productLocalRepository is not linked") }
         
@@ -39,6 +39,15 @@ extension TabBarSceneDIContainer: TabBarCoordinatorDependencies {
             productLocalRepository: productLocalRepository
         )
         return SearchSceneDIContainer(dedepdencies: dependencies)
+    }
+    
+    // MARK: - Favorite Scene
+    func makeFavoriteSceneDIContainer() -> FavoriteSceneDIContainer {
+        guard let productLocalRepository = productLocalRepository
+        else { fatalError("productLocalRepository is not linked") }
+        
+        let dependencies = FavoriteSceneDIContainer.Dependendcies(prodcutLocalRepository: productLocalRepository)
+        return FavoriteSceneDIContainer(dependcencies: dependencies)
     }
     
     // MARK: - Flow Coordinator
