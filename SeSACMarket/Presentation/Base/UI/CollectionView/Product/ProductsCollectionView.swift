@@ -14,6 +14,7 @@ final class ProductsCollectionView: UICollectionView {
             frame: .zero,
             collectionViewLayout: UICollectionViewLayout()
         )
+        keyboardDismissMode = .onDrag
         registerCell()
     }
     
@@ -30,7 +31,6 @@ final class ProductsCollectionView: UICollectionView {
                 widthDimension: .absolute(itemWidth),
                 heightDimension: .fractionalHeight(1.0)
             )
-            
             
             let heightOfImageView = itemWidth
             let heightOfLabels = Constant.FontSize.caption +
