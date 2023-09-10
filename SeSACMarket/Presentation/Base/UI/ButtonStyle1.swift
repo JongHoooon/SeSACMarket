@@ -12,7 +12,7 @@ final class ButtonStyle1: UIButton {
     init(title: String) {
         super.init(frame: .zero)
         setTitle(title, for: .normal)
-        setTitleColor(.Text.main, for: .normal)
+        setTitleColor(.Custom.Text.main, for: .normal)
     }
     
     @available(*, unavailable)
