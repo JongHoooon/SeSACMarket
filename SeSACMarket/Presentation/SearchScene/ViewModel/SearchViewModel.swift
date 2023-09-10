@@ -72,7 +72,7 @@ final class DefaultSearchViewModel: SearchViewModel {
         }
         ImagePrefetcher(resources: urls).start()
         
-        if items.contains(productsItemsRelay.value.count - 1)
+        if items[0] > (productsItemsRelay.value.count - 5)
             && isEndPage == false {
             page += 1
             fetchProducts()
