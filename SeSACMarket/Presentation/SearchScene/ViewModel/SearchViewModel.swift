@@ -23,6 +23,7 @@ final class DefaultSearchViewModel: ViewModelProtocol {
         let searchBarText: Observable<String>
         let sortSelected: Observable<SortEnum>
         let prefetchItems: Observable<[IndexPath]>
+        let productCollectionViewWillDisplayIndexPath: Observable<IndexPath>
         let cancelButtonClicked: Observable<Void>
     }
     
@@ -38,6 +39,7 @@ final class DefaultSearchViewModel: ViewModelProtocol {
     private var isEndPage = false
     private var searchBarTextRelay: BehaviorRelay<String> = .init(value: "")
     private var selectedSortRelay: BehaviorRelay<SortEnum> = .init(value: .similarity)
+    private var isFetchEnable = true
     
     // MARK: - Properties
     private let productLocalUseCase: ProductLocalUseCase
@@ -101,12 +103,22 @@ final class DefaultSearchViewModel: ViewModelProtocol {
                         }
                     }
                     ImagePrefetcher(resources: urls).start()
-                    
-                    if items[0] > (output.productsCellViewModelsRelay.value.count - 5)
-                        && owner.isEndPage == false {
-                        owner.page += 1
-                        fetchProducts(start: owner.page)
-                    }
+            })
+            .disposed(by: disposeBag)
+        
+        input.productCollectionViewWillDisplayIndexPath
+            .filter { [weak self] _ in
+                self?.isEndPage == false && self?.isFetchEnable == true
+            }
+            .bind(
+                with: self,
+                onNext: { owner, indexPath in
+                let maxIndex = output.productsCellViewModelsRelay.value.count
+                if maxIndex - 5 == indexPath.item {
+                    owner.isFetchEnable = false
+                    owner.page += 1
+                    fetchProducts(start: owner.page)
+                }
             })
             .disposed(by: disposeBag)
         
@@ -147,6 +159,7 @@ final class DefaultSearchViewModel: ViewModelProtocol {
                     print(error)
                 }
             }
+            isFetchEnable = true
         }
     }
 }

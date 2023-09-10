@@ -108,6 +108,7 @@ private extension SearchViewController {
             searchBarText: searchBar.rx.text.orEmpty.asObservable(),
             sortSelected: sortCollectionView.rx.modelSelected(SortEnum.self).asObservable(),
             prefetchItems: productsCollectionView.rx.prefetchItems.asObservable(),
+            productCollectionViewWillDisplayIndexPath: productsCollectionView.rx.willDisplayCell.map { $0.at }.asObservable(),
             cancelButtonClicked: cancelButton.rx.tap.asObservable()
         )
         
