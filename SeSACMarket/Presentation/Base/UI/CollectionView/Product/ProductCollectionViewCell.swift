@@ -16,7 +16,6 @@ final class ProductCollectionViewCell: BaseCollectionViewCell {
     var productLocalRepository: ProductLocalRepository?
     private var cellProduct: Product?
     private var likeCheckTask: Task<(), Never>?
-//    var testrepo = DefaultProductLocalRepository()
     
     // MARK: - UI
     private let productImageView: UIImageView = {
@@ -167,27 +166,9 @@ private extension ProductCollectionViewCell {
                     try await productLocalRepository?.saveLikeProduct(product: product)
                     
                     likeButton.isSelected.toggle()
-                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                    UIView.animate(
-                        withDuration: 0.15,
-                        delay: 0.0,
-                        options: .curveEaseIn,
-                        animations: { [weak self] in
-                            guard let self = self else { return }
-                            self.likeButton.imageView?.transform = CGAffineTransform(scaleX: 1.6, y: 1.5)
-                        },
-                        completion: { _ in
-                            UIView.animate(
-                                withDuration: 0.1,
-                                delay: 0.0,
-                                options: .curveEaseIn,
-                                animations: {
-                                    self.likeButton.imageView?.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
-                                },
-                                completion: { _ in
-                                })
-                            self.likeButton.isEnabled = true
-                        })
+                    likeButton.playAnimation(completion: { [weak self] in
+                        self?.likeButton.isEnabled = true
+                    })
                 } catch {
                     print(error)
                     return
