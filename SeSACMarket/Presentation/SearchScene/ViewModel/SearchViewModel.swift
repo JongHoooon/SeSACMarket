@@ -33,7 +33,7 @@ protocol SearchViewModel: SearchViewModelInput, SearchViewModelOutput {}
 
 final class DefaultSearchViewModel: SearchViewModel {
 
-    private let productLocalRepository: ProductLocalRepository
+    private let productLocalUseCase: ProductLocalUseCase
     private let productRemoteUseCase: ProductRemoteUseCase
     private let actions: SearchViewModelActions
     private let disposeBag = DisposeBag()
@@ -42,11 +42,11 @@ final class DefaultSearchViewModel: SearchViewModel {
     private var isEndPage = false
     
     init(
-        productLocalRepository: ProductLocalRepository,
+        productLocalUseCase: ProductLocalUseCase,
         productRemoteUseCase: ProductRemoteUseCase,
         actions: SearchViewModelActions
     ) {
-        self.productLocalRepository = productLocalRepository
+        self.productLocalUseCase = productLocalUseCase
         self.productRemoteUseCase = productRemoteUseCase
         self.actions = actions
         bind()
@@ -104,12 +104,12 @@ private extension DefaultSearchViewModel {
                 if isRefresh {
                     productsItemsRelay.accept(productsPage.items.map { ProductCollectionViewCellViewModel(
                         prodcut: $0,
-                        productLocalRepository: productLocalRepository
+                        productLocalUseCase: productLocalUseCase
                     )})
                 } else {
                     let newItems = productsItemsRelay.value + productsPage.items.map { ProductCollectionViewCellViewModel(
                         prodcut: $0,
-                        productLocalRepository: productLocalRepository
+                        productLocalUseCase: productLocalUseCase
                     )}
                     productsItemsRelay.accept(newItems)
                 }

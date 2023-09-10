@@ -120,7 +120,7 @@ final class ProductCollectionViewCell: BaseCollectionViewCell {
             placeholder: ImageEnum.Placeholer.photo
         )
         let likeCheckTask = Task {
-            let isLike = await viewModel?.productLocalRepository.isLikeProduct(productID: product.productID)
+            let isLike = await viewModel?.productLocalUseCase.isLikeProduct(productID: product.productID)
 
             likeButton.isSelected = isLike ?? false
         }
@@ -154,7 +154,7 @@ private extension ProductCollectionViewCell {
         case true: // 삭제
             Task {
                 do {
-                    try await viewModel?.productLocalRepository.deleteLikeProduct(productID: product.productID)
+                    try await viewModel?.productLocalUseCase.deleteLikeProduct(productID: product.productID)
                     
                     likeButton.isSelected.toggle()
                     likeButton.isEnabled = true
@@ -166,7 +166,7 @@ private extension ProductCollectionViewCell {
         case false: // 저장
             Task {
                 do {
-                    try await viewModel?.productLocalRepository.saveLikeProduct(product: product)
+                    try await viewModel?.productLocalUseCase.saveLikeProduct(product: product)
                     
                     likeButton.isSelected.toggle()
                     likeButton.playAnimation(completion: { [weak self] in

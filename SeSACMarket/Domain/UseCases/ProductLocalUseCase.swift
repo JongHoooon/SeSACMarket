@@ -21,15 +21,15 @@ final class ProductLocalUseCase {
         try await productLocalRepository.deleteLikeProduct(productID: productID)
     }
     
-    func fetchAllLikeProducts() async throws -> [Product] {
+    func fetchAllLikeProducts() async -> [Product] {
         await productLocalRepository.fetchAllLikeProducts()
     }
     
-    func fetchQueryLikeProducts(query: String) async throws -> [Product] {
+    func fetchQueryLikeProducts(query: String) async -> [Product] {
         await productLocalRepository.fetchQueryLikeProducts(query: query)
     }
     
-    func isLikeProduct(productID: Int) async throws -> Bool {
+    func isLikeProduct(productID: Int) async -> Bool {
         await productLocalRepository.isLikeProduct(productID: productID)
     }
 }

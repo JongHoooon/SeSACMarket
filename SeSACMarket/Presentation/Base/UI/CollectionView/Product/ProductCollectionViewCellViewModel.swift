@@ -10,13 +10,13 @@ import Foundation
 final class ProductCollectionViewCellViewModel {
     
     let prodcut: Product
-    let productLocalRepository: ProductLocalRepository
+    let productLocalUseCase: ProductLocalUseCase
     
     init(
         prodcut: Product,
-        productLocalRepository: ProductLocalRepository
+        productLocalUseCase: ProductLocalUseCase
     ) {
         self.prodcut = prodcut
-        self.productLocalRepository = productLocalRepository
+        self.productLocalUseCase = productLocalUseCase
     }
 }
