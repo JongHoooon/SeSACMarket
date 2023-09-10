@@ -5,7 +5,7 @@
 //  Created by JongHoon on 2023/09/08.
 //
 
-enum SortEnum: String {
+enum SortEnum: CaseIterable {
 case similarity
 case date
 case priceDescending
@@ -17,8 +17,8 @@ extension SortEnum {
         switch self {
         case .similarity:               return "sim"
         case .date:                     return "date"
-        case .priceDescending:          return "asc"
-        case .priceAscending:           return "dsc"
+        case .priceDescending:          return "dsc"
+        case .priceAscending:           return "asc"
         }
     }
     
