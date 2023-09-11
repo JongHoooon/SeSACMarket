@@ -11,4 +11,5 @@ enum CoordinatorType {
     case tabBar
     case search
     case favorite
+    case detail
 }
