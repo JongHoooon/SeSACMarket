@@ -10,12 +10,17 @@ import Foundation
 import RxSwift
 import RxRelay
 
+struct FavoriteViewModelActions {
+    let showDetail: (_ product: Product) -> ()
+}
+
 final class FavoriteViewModel: ViewModelProtocol {
     
     struct Input {
         let viewWillAppear: Observable<Void>
         let searchTextInput: Observable<String>
         let cancelButtonClicked: Observable<Void>
+        let produtsCellSelected: Observable<Product>
     }
     
     struct Output {
@@ -24,13 +29,20 @@ final class FavoriteViewModel: ViewModelProtocol {
         let searchBarEndEditting = PublishRelay<Void>()
     }
     
+    // MARK: - States
     private let needReload = PublishRelay<Void>()
     private var currentQuery: String = ""
     
-    let productLocalUseCase: ProductLocalUseCase
+    // MARK: - Properties
+    private let productLocalUseCase: ProductLocalUseCase
+    private let actions: FavoriteViewModelActions
     
-    init(productLocalUseCase: ProductLocalUseCase) {
+    init(
+        productLocalUseCase: ProductLocalUseCase,
+        actions: FavoriteViewModelActions
+    ) {
         self.productLocalUseCase = productLocalUseCase
+        self.actions = actions
     }
     
     func transform(input: Input, disposeBag: DisposeBag) -> Output {
@@ -55,6 +67,14 @@ final class FavoriteViewModel: ViewModelProtocol {
         input.cancelButtonClicked
             .bind(onNext: { _ in
                 output.searchBarEndEditting.accept(Void())
+            })
+            .disposed(by: disposeBag)
+        
+        input.produtsCellSelected
+            .bind(
+                with: self,
+                onNext: { owner, product in
+                    owner.actions.showDetail(product)
             })
             .disposed(by: disposeBag)
         

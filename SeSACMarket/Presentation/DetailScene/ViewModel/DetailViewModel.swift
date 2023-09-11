@@ -14,7 +14,6 @@ final class DetailViewModel: ViewModelProtocol {
     
     struct Input {
         let viewDidLoad: Observable<Void>
-        let webViewDidCommit: Observable<Void>
         let webViewDidFinish: Observable<Void>
         let webViewDidFail: Observable<Error>
         let likeButtonTapped: Observable<Bool>
@@ -59,12 +58,21 @@ final class DetailViewModel: ViewModelProtocol {
                         let request = URLRequest(url: url)
                         output.webViewRequest.accept(request)
                     }
+                    
+                    output.isIndicatorAnimating.accept(true)
             })
             .disposed(by: disposeBag)
         
-        input.webViewDidCommit
-            .bind(onNext: { _ in
-                output.isIndicatorAnimating.accept(true)
+        NotificationCenter.default.rx.notification(.likeProduct)
+            .bind(with: self, onNext: { owner, notification in
+                let userInfo = notification.userInfo
+                guard let id = userInfo?["id"] as? Int,
+                      let isSelected = userInfo?["isSelected"] as? Bool
+                else { return }
+                
+                if owner.product.productID == id {
+                    output.likeButtonIsSelected.accept(isSelected)
+                }
             })
             .disposed(by: disposeBag)
         

@@ -18,7 +18,10 @@ final class DetailViewController: BaseViewController {
     private let disposeBag = DisposeBag()
     
     // MARK: - UI
-    private let likeButton = LikeButton()
+    private let likeButton: LikeButton = {
+        let button = LikeButton(isDetailView: true)
+        return button
+    }()
     
     private lazy var webView: WKWebView = {
         let webView = WKWebView(
@@ -54,12 +57,19 @@ final class DetailViewController: BaseViewController {
     override func configure() {
         super.configure()
         bind()
-        view.addSubview(webView)
+        [
+            webView,
+            indicator
+        ].forEach { view.addSubview($0) }
     }
     
     override func configureLayout() {
         webView.snp.makeConstraints {
             $0.edges.equalTo(view.safeAreaLayoutGuide)
+        }
+        
+        indicator.snp.makeConstraints {
+            $0.center.equalToSuperview()
         }
     }
     
@@ -80,7 +90,6 @@ private extension DetailViewController {
 
         let input = DetailViewModel.Input(
             viewDidLoad: self.rx.viewDidLoad.asObservable(),
-            webViewDidCommit: webView.rx.didCommit.map { _ in }.asObservable(),
             webViewDidFinish: webView.rx.didFinishLoad.map { _ in }.asObservable(),
             webViewDidFail: webView.rx.didFailLoad.map(\.1).asObservable(),
             likeButtonTapped: likeButtonTapped
@@ -105,11 +114,13 @@ private extension DetailViewController {
         
         output.likeButtonIsSelected
             .asDriver()
+            .distinctUntilChanged()
             .drive(likeButton.rx.isSelected)
             .disposed(by: disposeBag)
         
         output.likeButtonIsSelectWithAnimation
             .asSignal()
+            .distinctUntilChanged()
             .emit(to: likeButton.rx.selectWithAnimation)
             .disposed(by: disposeBag)
     }

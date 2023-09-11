@@ -85,7 +85,8 @@ private extension FavoriteViewController {
         let input = FavoriteViewModel.Input(
             viewWillAppear: self.rx.viewWillAppear.map { _ in }.asObservable(),
             searchTextInput: searchBar.rx.text.orEmpty.asObservable(),
-            cancelButtonClicked: cancelButton.rx.tap.asObservable()
+            cancelButtonClicked: cancelButton.rx.tap.asObservable(),
+            produtsCellSelected: productsCollectionView.rx.modelSelected(ProductCollectionViewCellViewModel.self).map(\.prodcut)
         )
         
         let output = viewModel.transform(input: input, disposeBag: disposeBag)

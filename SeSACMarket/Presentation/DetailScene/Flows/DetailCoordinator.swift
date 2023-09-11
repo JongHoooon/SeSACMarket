@@ -8,7 +8,6 @@
 import UIKit
 
 protocol DetailCoordinatorDependencies {
-    func makeFavoriteViewController() -> FavoriteViewController
 }
 
 protocol DetailCoordinatorDelegate: AnyObject {
@@ -30,11 +29,5 @@ final class DetailCoordinator: CoordinatorProtocol {
         self.dependencies = dependencies
     }
     
-    func start() {
-        let vc = dependencies.makeFavoriteViewController()
-        navigationController.pushViewController(
-            vc,
-            animated: true
-        )
-    }
+    func start() {}
 }

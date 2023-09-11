@@ -64,10 +64,15 @@ extension Reactive where Base: LikeButton {
         return Binder(self.base) { button, bool in
             switch bool {
             case true:
-                button.isSelected = true
-                button.playAnimation()
+                DispatchQueue.main.async {
+                    button.isSelected = true
+                    button.playAnimation(completion: {
+                    })
+                }
             case false:
-                button.isSelected = false
+                DispatchQueue.main.async {
+                    button.isSelected = false
+                }
             }
         }
     }

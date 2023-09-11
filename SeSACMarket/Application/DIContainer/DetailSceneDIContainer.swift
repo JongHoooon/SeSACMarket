@@ -30,16 +30,19 @@ final class DetailSceneDIContainer {
 extension DetailSceneDIContainer: DetailCoordinatorDependencies {
     
     // MARK: - Use Case
-    func makeProductLocalUseCase() -> ProductLocalUseCase {
+    private func makeProductLocalUseCase() -> ProductLocalUseCase {
         return ProductLocalUseCase(productLocalRepository: dependencies.prodcutLocalRepository)
     }
     
-    // MARK: - Favorite Scene
-    func makeFavoriteViewController() -> FavoriteViewController {
-        return FavoriteViewController(viewModel: makeFavoriteViewModel())
+    // MARK: - Detail Scene
+    func makeDetailViewController(product: Product) -> DetailViewController {
+        return DetailViewController(viewModel: makeDetailViewModel(product: product))
     }
     
-    func makeFavoriteViewModel() -> FavoriteViewModel {
-        return FavoriteViewModel(productLocalUseCase: makeProductLocalUseCase())
+    private func makeDetailViewModel(product: Product) -> DetailViewModel {
+        return DetailViewModel(
+            product: product,
+            productLocalUseCase: makeProductLocalUseCase()
+        )
     }
 }

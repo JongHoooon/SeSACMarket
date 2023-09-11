@@ -34,12 +34,21 @@ extension FavoriteSceneDIContainer: FavoriteCoordinatorDependencies {
         return ProductLocalUseCase(productLocalRepository: dependencies.prodcutLocalRepository)
     }
     
-    // MARK: - Search Scene
-    func makeFavoriteViewController() -> FavoriteViewController {
-        return FavoriteViewController(viewModel: makeFavoriteViewModel())
+    // MARK: - Favorite Scene
+    func makeFavoriteViewController(actions: FavoriteViewModelActions) -> FavoriteViewController {
+        return FavoriteViewController(viewModel: makeFavoriteViewModel(actions: actions))
     }
     
-    private func makeFavoriteViewModel() -> FavoriteViewModel {
-        return FavoriteViewModel(productLocalUseCase: makeProductLocalUseCase())
+    private func makeFavoriteViewModel(actions: FavoriteViewModelActions) -> FavoriteViewModel {
+        return FavoriteViewModel(productLocalUseCase: makeProductLocalUseCase(), actions: actions)
+    }
+    
+    // MARK: - Detail Scene
+    func makeDetailViewController(product: Product) -> DetailViewController {
+        return DetailViewController(viewModel: makeDetailViewModel(product: product))
+    }
+    
+    func makeDetailViewModel(product: Product) -> DetailViewModel {
+        return DetailViewModel(product: product, productLocalUseCase: makeProductLocalUseCase())
     }
 }
