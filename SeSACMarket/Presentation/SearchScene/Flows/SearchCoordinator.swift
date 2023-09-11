@@ -8,7 +8,8 @@
 import UIKit
 
 protocol SearchCoordinatorDependencies {
-    func makeSearchViewController() -> SearchViewController
+    func makeSearchViewController(actions: SearchViewModelActions) -> SearchViewController
+    func makeDetailViewController(product: Product) -> DetailViewController
 }
 
 protocol SearchCoordinatorDelegate: AnyObject {
@@ -32,10 +33,20 @@ final class SearchCoordinator: CoordinatorProtocol {
     }
     
     func start() {
-        let vc = dependencies.makeSearchViewController()
+        let actions = SearchViewModelActions(
+            showDetail: showDetail(product:)
+        )
+        let vc = dependencies.makeSearchViewController(actions: actions)
         navigationController.pushViewController(
             vc,
             animated: true
         )
+    }
+}
+
+private extension SearchCoordinator {
+    func showDetail(product: Product) {
+        let vc = dependencies.makeDetailViewController(product: product)
+        navigationController.pushViewController(vc, animated: true)
     }
 }

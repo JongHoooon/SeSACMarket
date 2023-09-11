@@ -12,7 +12,7 @@ import RxSwift
 import RxCocoa
 
 struct SearchViewModelActions {
-    
+    let showDetail: (_ product: Product) -> ()
 }
 
 final class DefaultSearchViewModel: ViewModelProtocol {
@@ -25,6 +25,7 @@ final class DefaultSearchViewModel: ViewModelProtocol {
         let prefetchItems: Observable<[IndexPath]>
         let productCollectionViewWillDisplayIndexPath: Observable<IndexPath>
         let cancelButtonClicked: Observable<Void>
+        let produtsCellSelected: Observable<Product>
     }
     
     struct Output {
@@ -123,6 +124,15 @@ final class DefaultSearchViewModel: ViewModelProtocol {
         input.cancelButtonClicked
             .bind(onNext: {
                 output.searchBarEndEditting.accept(Void())
+            })
+            .disposed(by: disposeBag)
+        
+        input.produtsCellSelected
+            .observe(on: MainScheduler.asyncInstance)
+            .subscribe(
+                with: self,
+                onNext: { owner, product in
+                    owner.actions.showDetail(product)
             })
             .disposed(by: disposeBag)
         

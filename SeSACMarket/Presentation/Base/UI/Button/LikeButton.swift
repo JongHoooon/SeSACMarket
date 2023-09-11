@@ -38,7 +38,7 @@ final class LikeButton: UIButton {
         layer.cornerRadius = frame.width / 2
     }
     
-    func playAnimation(completion: @escaping () -> Void) {
+    func playAnimation(completion: (() -> Void)? = nil) {
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         UIView.animate(
             withDuration: 0.15,
@@ -57,7 +57,7 @@ final class LikeButton: UIButton {
                         self.imageView?.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
                     },
                     completion: { _ in
-                        completion()
+                        completion?()
                     })
             })
     }

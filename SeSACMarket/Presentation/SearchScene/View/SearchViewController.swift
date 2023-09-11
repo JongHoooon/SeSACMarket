@@ -109,7 +109,7 @@ private extension SearchViewController {
             sortSelected: sortCollectionView.rx.modelSelected(SortEnum.self).asObservable(),
             prefetchItems: productsCollectionView.rx.prefetchItems.asObservable(),
             productCollectionViewWillDisplayIndexPath: productsCollectionView.rx.willDisplayCell.map { $0.at }.asObservable(),
-            cancelButtonClicked: cancelButton.rx.tap.asObservable()
+            cancelButtonClicked: cancelButton.rx.tap.asObservable(), produtsCellSelected: productsCollectionView.rx.modelSelected(ProductCollectionViewCellViewModel.self).map(\.prodcut)
         )
         
         let output = viewModel.transform(input: input, disposeBag: disposeBag)
