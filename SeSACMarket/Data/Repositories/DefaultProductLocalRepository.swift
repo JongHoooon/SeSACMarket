@@ -77,7 +77,12 @@ final class DefaultProductLocalRepository: ProductLocalRepository {
         await withCheckedContinuation { [weak self] continuation in
             guard let self else { return }
             realmTaskQueue.async {
-                let objects = self.realm.objects(ProductTable.self)
+                let objects = self.realm
+                    .objects(ProductTable.self)
+                    .sorted(
+                        byKeyPath: "enrolledDate",
+                        ascending: false
+                    )
                 continuation.resume(returning: objects.map { $0.toDomain() })
             }
         }
@@ -87,8 +92,13 @@ final class DefaultProductLocalRepository: ProductLocalRepository {
         await withCheckedContinuation { [weak self] continuation in
             guard let self else { return }
             realmTaskQueue.async {
-                let objets = self.realm.objects(ProductTable.self)
+                let objets = self.realm
+                    .objects(ProductTable.self)
                     .where { $0.title.contains(query) }
+                    .sorted(
+                        byKeyPath: "enrolledDate",
+                        ascending: false
+                    )
                 continuation.resume(returning: objets.map { $0.toDomain() })
             }
         }
