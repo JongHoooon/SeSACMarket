@@ -168,6 +168,7 @@ final class DefaultSearchViewModel: ViewModelProtocol {
                 }
             }
             isFetchEnable = true
+            output.searchBarEndEditting.accept(Void())
         }
     }
 }
