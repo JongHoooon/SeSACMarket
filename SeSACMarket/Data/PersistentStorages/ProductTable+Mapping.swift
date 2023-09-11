@@ -22,7 +22,7 @@ final class ProductTable: Object {
         productID: Int,
         title: String,
         imageURL: String,
-        mallNmae: String,
+        mallName: String,
         price: Int,
         isLike: Bool
     ) {

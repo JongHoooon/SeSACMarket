@@ -37,7 +37,7 @@ final class DefaultProductLocalRepository: ProductLocalRepository {
                     productID: product.productID,
                     title: product.title,
                     imageURL: product.imageURL,
-                    mallNmae: product.mallName,
+                    mallName: product.mallName,
                     price: product.price,
                     isLike: true
                 )
