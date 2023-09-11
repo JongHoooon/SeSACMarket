@@ -117,5 +117,12 @@ private extension FavoriteViewController {
             .asSignal()
             .emit(to: self.rx.defaultErrorHandler)
             .disposed(by: disposeBag)
+        
+        productsCollectionView.rx.didEndDisplayingCell
+            .subscribe(onNext: { event in
+                guard let cell = event.cell as? ProductCollectionViewCell else { return }
+                cell.cancelTask()
+            })
+            .disposed(by: disposeBag)
     }
 }
