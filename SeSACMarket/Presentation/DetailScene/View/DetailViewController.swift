@@ -123,5 +123,10 @@ private extension DetailViewController {
             .distinctUntilChanged()
             .emit(to: likeButton.rx.selectWithAnimation)
             .disposed(by: disposeBag)
+        
+        output.errorHandlerRelay
+            .asSignal()
+            .emit(to: self.rx.defaultErrorHandler)
+            .disposed(by: disposeBag)
     }
 }

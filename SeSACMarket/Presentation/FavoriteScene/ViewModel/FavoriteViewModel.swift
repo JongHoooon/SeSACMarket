@@ -27,6 +27,7 @@ final class FavoriteViewModel: ViewModelProtocol {
         let productsCellViewModelsRelay = BehaviorRelay<[ProductCollectionViewCellViewModel]>(value: [])
         let scrollContentOffsetRelay = PublishRelay<CGPoint>()
         let searchBarEndEditting = PublishRelay<Void>()
+        let errorHandlerRelay = PublishRelay<Error>()
     }
     
     // MARK: - States
@@ -94,6 +95,7 @@ final class FavoriteViewModel: ViewModelProtocol {
                         ProductCollectionViewCellViewModel(
                             prodcut: $0,
                             productLocalUseCase: productLocalUseCase,
+                            errorHandler: output.errorHandlerRelay,
                             needReload: needReload
                         )
                     }
@@ -106,6 +108,7 @@ final class FavoriteViewModel: ViewModelProtocol {
                         ProductCollectionViewCellViewModel(
                             prodcut: $0,
                             productLocalUseCase: productLocalUseCase,
+                            errorHandler: output.errorHandlerRelay,
                             needReload: needReload
                         )
                     }

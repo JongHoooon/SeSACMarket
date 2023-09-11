@@ -191,7 +191,7 @@ private extension ProductCollectionViewCell {
                     }
                     postLikeUpdateNotification(isSelected: false)
                 } catch {
-                    print(error)
+                    viewModel?.errorHandler.accept(error)
                     return
                 }
             }
@@ -206,7 +206,7 @@ private extension ProductCollectionViewCell {
                         self?.postLikeUpdateNotification(isSelected: true)
                     })
                 } catch {
-                    print(error)
+                    viewModel?.errorHandler.accept(error)
                     return
                 }
             }

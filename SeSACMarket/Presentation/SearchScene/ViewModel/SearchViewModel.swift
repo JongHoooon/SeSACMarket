@@ -33,6 +33,7 @@ final class DefaultSearchViewModel: ViewModelProtocol {
         let productsCellViewModelsRelay = BehaviorRelay<[ProductCollectionViewCellViewModel]>(value: [])
         let scrollContentOffsetRelay = PublishRelay<CGPoint>()
         let searchBarEndEditting = PublishRelay<Void>()
+        let errorHandlerRelay = PublishRelay<Error>()
     }
     
     // MARK: - States
@@ -149,7 +150,8 @@ final class DefaultSearchViewModel: ViewModelProtocol {
                     let viewModels = productsPage.items.map {
                         return ProductCollectionViewCellViewModel(
                             prodcut: $0,
-                            productLocalUseCase: productLocalUseCase
+                            productLocalUseCase: productLocalUseCase,
+                            errorHandler: output.errorHandlerRelay
                         )
                     }
                     if start == 1 {
@@ -164,7 +166,7 @@ final class DefaultSearchViewModel: ViewModelProtocol {
                         isEndPage = true
                     }
                 } catch {
-                    print(error)
+                    output.errorHandlerRelay.accept(error)
                 }
             }
             isFetchEnable = true

@@ -24,6 +24,20 @@ extension Reactive where Base: UIViewController {
     }
 }
 
+// MARK: - BaseViewController
+extension Reactive where Base: BaseViewController {
+    var defaultErrorHandler: Binder<Error> {
+        return Binder(self.base) { vc, error in
+            if error is APIError {
+                let error = error as! APIError
+                vc.presentSimpleAlert(message: error.errorMessage)
+            } else {
+                vc.presentSimpleAlert(message: error.localizedDescription)
+            }
+        }
+    }
+}
+
 // MARK: - UISearchBar
 extension Reactive where Base: UISearchBar {
     var endEditing: Binder<Void> {
