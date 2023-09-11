@@ -106,6 +106,14 @@ final class DetailViewModel: ViewModelProtocol {
                         }
                     }
                     output.likeButtonIsSelectWithAnimation.accept(!currentSelected)
+                    NotificationCenter.default.post(
+                        name: .likeProduct,
+                        object: nil,
+                        userInfo: [
+                            "id": owner.product.productID,
+                            "isSelected": !currentSelected
+                        ]
+                    )
             })
             .disposed(by: disposeBag)
             

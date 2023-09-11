@@ -150,6 +150,27 @@ private extension ProductCollectionViewCell {
             action: #selector(likeButtonClicked),
             for: .touchUpInside
         )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(likedObserver),
+            name: .likeProduct,
+            object: nil
+        )
+    }
+    
+    @objc
+    func likedObserver(notification: NSNotification) {
+        let userInfo = notification.userInfo
+        guard let id = userInfo?["id"] as? Int,
+              let isSelected = userInfo?["isSelected"] as? Bool
+        else { return }
+
+        if viewModel?.prodcut.productID == id {
+            DispatchQueue.main.async { [weak self] in
+                self?.likeButton.isSelected = isSelected
+            }
+        }
     }
     
     @objc
@@ -168,7 +189,7 @@ private extension ProductCollectionViewCell {
                     if type == .favorite {
                         viewModel?.needReload?.accept(Void())
                     }
-                    
+                    postLikeUpdateNotification(isSelected: false)
                 } catch {
                     print(error)
                     return
@@ -182,6 +203,7 @@ private extension ProductCollectionViewCell {
                     likeButton.isSelected.toggle()
                     likeButton.playAnimation(completion: { [weak self] in
                         self?.likeButton.isEnabled = true
+                        self?.postLikeUpdateNotification(isSelected: true)
                     })
                 } catch {
                     print(error)
@@ -189,5 +211,17 @@ private extension ProductCollectionViewCell {
                 }
             }
         }
+    }
+    
+    func postLikeUpdateNotification(isSelected: Bool) {
+        guard let id = viewModel?.prodcut.productID else { return }
+        NotificationCenter.default.post(
+            name: .likeProduct,
+            object: nil,
+            userInfo: [
+                "id": id,
+                "isSelected": isSelected
+            ]
+        )
     }
 }

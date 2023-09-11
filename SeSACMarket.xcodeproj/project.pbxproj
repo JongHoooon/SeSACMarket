@@ -73,6 +73,7 @@
 		ED4DACBB2AAE949A0095CD77 /* DetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED4DACBA2AAE949A0095CD77 /* DetailViewModel.swift */; };
 		ED4DACBD2AAE94E10095CD77 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED4DACBC2AAE94E10095CD77 /* DetailViewController.swift */; };
 		ED4DACE62AAEA4240095CD77 /* DetailSceneDIContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED4DACE52AAEA4240095CD77 /* DetailSceneDIContainer.swift */; };
+		ED4DACFD2AAEF5560095CD77 /* NSNotificationName+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED4DACFC2AAEF5560095CD77 /* NSNotificationName+Extension.swift */; };
 		ED5100232AAC3D1100BB305F /* APIDataTransferService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED5100222AAC3D1100BB305F /* APIDataTransferService.swift */; };
 		ED9FBD682AAC6ADB00B63CC5 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED9FBD672AAC6ADB00B63CC5 /* SearchViewModel.swift */; };
 		ED9FBD6A2AAC7D2C00B63CC5 /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED9FBD692AAC7D2C00B63CC5 /* Constant.swift */; };
@@ -146,6 +147,7 @@
 		ED4DACBA2AAE949A0095CD77 /* DetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewModel.swift; sourceTree = "<group>"; };
 		ED4DACBC2AAE94E10095CD77 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		ED4DACE52AAEA4240095CD77 /* DetailSceneDIContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailSceneDIContainer.swift; sourceTree = "<group>"; };
+		ED4DACFC2AAEF5560095CD77 /* NSNotificationName+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSNotificationName+Extension.swift"; sourceTree = "<group>"; };
 		ED5100222AAC3D1100BB305F /* APIDataTransferService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIDataTransferService.swift; sourceTree = "<group>"; };
 		ED9FBD672AAC6ADB00B63CC5 /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		ED9FBD692AAC7D2C00B63CC5 /* Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
@@ -470,6 +472,7 @@
 				ED9FBD6C2AACA74900B63CC5 /* String+Extension.swift */,
 				ED4DACA02AAD92110095CD77 /* Int+Extension.swift */,
 				ED4DACB22AAE250F0095CD77 /* Reactive+Extension.swift */,
+				ED4DACFC2AAEF5560095CD77 /* NSNotificationName+Extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -763,6 +766,7 @@
 				ED4DACB92AAE93A00095CD77 /* DetailCoordinator.swift in Sources */,
 				ED2A01412AAAF4ED004A346D /* UIFont+Extension.swift in Sources */,
 				ED2A00EA2AA9B267004A346D /* CoordinatorProtocol.swift in Sources */,
+				ED4DACFD2AAEF5560095CD77 /* NSNotificationName+Extension.swift in Sources */,
 				ED2A01282AAADE37004A346D /* Product.swift in Sources */,
 				ED2A01442AAAFA87004A346D /* ReusableProtocol.swift in Sources */,
 				ED2A00F72AA9BBE1004A346D /* TabBarSceneDIContainer.swift in Sources */,
