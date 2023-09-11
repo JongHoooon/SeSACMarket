@@ -10,6 +10,11 @@ import UIKit
 import Kingfisher
 import SnapKit
 
+enum ProductCellType {
+    case search
+    case favorite
+}
+
 final class ProductCollectionViewCell: BaseCollectionViewCell {
     
     // MARK: - Properties
@@ -20,6 +25,7 @@ final class ProductCollectionViewCell: BaseCollectionViewCell {
         }
     }
     private var likeCheckTask: Task<(), Never>?
+    var type: ProductCellType?
     
     // MARK: - UI
     private let productImageView: UIImageView = {
@@ -158,6 +164,11 @@ private extension ProductCollectionViewCell {
                     
                     likeButton.isSelected.toggle()
                     likeButton.isEnabled = true
+                    
+                    if type == .favorite {
+                        viewModel?.needReload?.accept(Void())
+                    }
+                    
                 } catch {
                     print(error)
                     return

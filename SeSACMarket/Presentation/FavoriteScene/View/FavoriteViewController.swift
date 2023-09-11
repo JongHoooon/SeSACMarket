@@ -7,10 +7,13 @@
 
 import UIKit
 
+import RxSwift
+
 final class FavoriteViewController: BaseViewController {
  
     // MARK: - Properties
     private let viewModel: FavoriteViewModel
+    private let disposeBag = DisposeBag()
     
     // MARK: - UI
     private let searchBar = DefaultSearchBar()
@@ -78,6 +81,39 @@ final class FavoriteViewController: BaseViewController {
 // MARK: - Bind
 private extension FavoriteViewController {
     func bind() {
+        
+        let viewWillAppear = rx.sentMessage(#selector(UIViewController.viewWillAppear(_:)))
+            .map { _ in }
+            .asObservable()
+        
+        let input = FavoriteViewModel.Input(
+            viewWillAppear: viewWillAppear,
+            searchTextInput: searchBar.rx.text.orEmpty.asObservable(),
+            cancelButtonClicked: cancelButton.rx.tap.asObservable()
+        )
+        
+        let output = viewModel.transform(input: input, disposeBag: disposeBag)
+        
+        output.productsCellViewModelsRelay
+            .asDriver()
+            .drive(productsCollectionView.rx.items(
+                cellIdentifier: ProductCollectionViewCell.identifier,
+                cellType: ProductCollectionViewCell.self
+            )) { _, viewModel, cell in
+                cell.viewModel = viewModel
+                cell.type = .favorite
+            }
+            .disposed(by: disposeBag)
+        
+        output.scrollContentOffsetRelay
+            .asSignal()
+            .emit(to: productsCollectionView.rx.contentOffset)
+            .disposed(by: disposeBag)
+        
+        output.searchBarEndEditting
+            .asSignal()
+            .emit(to: searchBar.rx.endEditing)
+            .disposed(by: disposeBag)
         
     }
 }

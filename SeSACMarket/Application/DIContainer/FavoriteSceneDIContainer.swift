@@ -40,6 +40,6 @@ extension FavoriteSceneDIContainer: FavoriteCoordinatorDependencies {
     }
     
     private func makeFavoriteViewModel() -> FavoriteViewModel {
-        return DefaultFavoriteViewModel()
+        return FavoriteViewModel(productLocalUseCase: makeProductLocalUseCase())
     }
 }
