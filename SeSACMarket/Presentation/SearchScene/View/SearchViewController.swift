@@ -100,10 +100,9 @@ final class SearchViewController: BaseViewController {
 // MARK: - Bind
 private extension SearchViewController {
     func bind() {
-        let viewDidLoad = Observable.just(Void())
         
         let input = DefaultSearchViewModel.Input(
-            viewDidLoad: viewDidLoad,
+            viewDidLoad: self.rx.viewDidLoad.asObservable(),
             searchButtonClicked: searchBar.rx.searchButtonClicked.asObservable(),
             searchBarText: searchBar.rx.text.orEmpty.asObservable(),
             sortSelected: sortCollectionView.rx.modelSelected(SortEnum.self).asObservable(),

@@ -82,12 +82,8 @@ final class FavoriteViewController: BaseViewController {
 private extension FavoriteViewController {
     func bind() {
         
-        let viewWillAppear = rx.sentMessage(#selector(UIViewController.viewWillAppear(_:)))
-            .map { _ in }
-            .asObservable()
-        
         let input = FavoriteViewModel.Input(
-            viewWillAppear: viewWillAppear,
+            viewWillAppear: self.rx.viewWillAppear.map { _ in }.asObservable(),
             searchTextInput: searchBar.rx.text.orEmpty.asObservable(),
             cancelButtonClicked: cancelButton.rx.tap.asObservable()
         )
