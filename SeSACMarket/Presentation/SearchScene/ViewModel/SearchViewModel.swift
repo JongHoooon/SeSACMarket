@@ -33,6 +33,7 @@ final class DefaultSearchViewModel: ViewModelProtocol {
         let productsCellViewModelsRelay = BehaviorRelay<[ProductCollectionViewCellViewModel]>(value: [])
         let scrollContentOffsetRelay = PublishRelay<CGPoint>()
         let searchBarEndEditting = PublishRelay<Void>()
+        let isShowIndicator = PublishRelay<Bool>()
         let errorHandlerRelay = PublishRelay<Error>()
     }
     
@@ -72,6 +73,7 @@ final class DefaultSearchViewModel: ViewModelProtocol {
             .bind(
                 with: self,
                 onNext: { owner, text in
+                    output.isShowIndicator.accept(true)
                     owner.searchBarTextRelay.accept(text)
                     fetchProducts(start: 1)
             })
@@ -85,7 +87,7 @@ final class DefaultSearchViewModel: ViewModelProtocol {
                     
                     guard !owner.searchBarTextRelay.value.isEmpty
                     else { return }
-                    
+                    output.isShowIndicator.accept(true)
                     fetchProducts(start: 1)
             })
             .disposed(by: disposeBag)
@@ -165,7 +167,9 @@ final class DefaultSearchViewModel: ViewModelProtocol {
                     if productsPage.items.isEmpty {
                         isEndPage = true
                     }
+                    output.isShowIndicator.accept(false)
                 } catch {
+                    output.isShowIndicator.accept(false)
                     output.errorHandlerRelay.accept(error)
                 }
             }

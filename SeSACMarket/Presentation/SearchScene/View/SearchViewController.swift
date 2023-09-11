@@ -139,6 +139,12 @@ private extension SearchViewController {
             .emit(to: productsCollectionView.rx.contentOffset)
             .disposed(by: disposeBag)
         
+        output.isShowIndicator
+            .asSignal()
+            .distinctUntilChanged()
+            .emit(to: self.rx.isShowIndicator)
+            .disposed(by: disposeBag)
+        
         output.searchBarEndEditting
             .asSignal()
             .emit(to: searchBar.rx.endEditing)

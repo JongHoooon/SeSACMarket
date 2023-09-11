@@ -36,8 +36,24 @@ extension Reactive where Base: BaseViewController {
             }
         }
     }
+    
+    var isShowIndicator: Binder<Bool> {
+        return Binder(self.base) { vc, isShow in
+            switch isShow {
+            case true:
+                vc.view.bringSubviewToFront(vc.indicatorBaseView)
+                vc.indicatorBaseView.isHidden = false
+                vc.indicatorView.isHidden = false
+                vc.indicatorView.startAnimating()
+            case false:
+                vc.indicatorBaseView.isHidden = true
+                vc.indicatorView.isHidden = true
+                vc.indicatorView.stopAnimating()
+                break
+            }
+        }
+    }
 }
-
 // MARK: - UISearchBar
 extension Reactive where Base: UISearchBar {
     var endEditing: Binder<Void> {
