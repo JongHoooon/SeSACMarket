@@ -49,7 +49,6 @@ extension Reactive where Base: BaseViewController {
                 vc.indicatorBaseView.isHidden = true
                 vc.indicatorView.isHidden = true
                 vc.indicatorView.stopAnimating()
-                break
             }
         }
     }
@@ -96,8 +95,7 @@ extension Reactive where Base: LikeButton {
             case true:
                 DispatchQueue.main.async {
                     button.isSelected = true
-                    button.playAnimation(completion: {
-                    })
+                    button.playAnimation()
                 }
             case false:
                 DispatchQueue.main.async {
