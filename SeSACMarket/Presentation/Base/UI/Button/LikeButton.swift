@@ -15,16 +15,20 @@ final class LikeButton: UIButton {
         didSet {
             switch isSelected {
             case true:
-                setImage(ImageEnum.Icon.heartFilled, for: .normal)
-                imageView?.tintColor = .red
+                DispatchQueue.main.async { [weak self] in
+                    self?.setImage(ImageEnum.Icon.heartFilled, for: .normal)
+                    self?.imageView?.tintColor = .red
+                }
             case false:
-                setImage(ImageEnum.Icon.heart, for: .normal)
-                
-                switch isDetailView {
-                case true:
-                    imageView?.tintColor = .label
-                case false:
-                    imageView?.tintColor = .black
+                DispatchQueue.main.async { [weak self] in
+                    self?.setImage(ImageEnum.Icon.heart, for: .normal)
+                    
+                    switch self?.isDetailView {
+                    case true:
+                        self?.imageView?.tintColor = .label
+                    default:
+                        self?.imageView?.tintColor = .black
+                    }
                 }
             }
         }
@@ -53,28 +57,29 @@ final class LikeButton: UIButton {
     }
     
     func playAnimation(completion: (() -> Void)? = nil) {
-        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-        isEnabled = false
-        UIView.animate(
-            withDuration: 0.15,
-            delay: 0.0,
-            options: .curveEaseIn,
-            animations: { [weak self] in
-                guard let self = self else { return }
-                self.imageView?.transform = CGAffineTransform(scaleX: 1.6, y: 1.5)
-            },
-            completion: { _ in
-                UIView.animate(
-                    withDuration: 0.1,
-                    delay: 0.0,
-                    options: .curveEaseIn,
-                    animations: {
-                        self.imageView?.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
-                    },
-                    completion: { _ in
-                        self.isEnabled = true
-                        completion?()
-                    })
-            })
+        DispatchQueue.main.async { [weak self] in
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            self?.isEnabled = false
+            UIView.animate(
+                withDuration: 0.15,
+                delay: 0.0,
+                options: .curveEaseIn,
+                animations: { [weak self] in
+                    self?.imageView?.transform = CGAffineTransform(scaleX: 1.6, y: 1.5)
+                },
+                completion: { _ in
+                    UIView.animate(
+                        withDuration: 0.1,
+                        delay: 0.0,
+                        options: .curveEaseIn,
+                        animations: {
+                            self?.imageView?.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+                        },
+                        completion: { _ in
+                            self?.isEnabled = true
+                            completion?()
+                        })
+                })
+        }
     }
 }

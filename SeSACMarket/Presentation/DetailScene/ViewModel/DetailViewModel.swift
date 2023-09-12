@@ -72,7 +72,7 @@ final class DetailViewModel: ViewModelProtocol {
                 else { return }
                 
                 if owner.product.productID == id {
-                    output.likeButtonIsSelected.accept(isSelected)
+                    output.likeButtonIsSelectWithAnimation.accept(isSelected)
                 }
             })
             .disposed(by: disposeBag)
@@ -116,14 +116,6 @@ final class DetailViewModel: ViewModelProtocol {
                         }
                     }
                     output.likeButtonIsSelectWithAnimation.accept(!currentSelected)
-                    NotificationCenter.default.post(
-                        name: .likeProduct,
-                        object: nil,
-                        userInfo: [
-                            "id": owner.product.productID,
-                            "isSelected": !currentSelected
-                        ]
-                    )
             })
             .disposed(by: disposeBag)
             

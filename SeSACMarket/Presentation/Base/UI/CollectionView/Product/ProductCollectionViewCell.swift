@@ -8,6 +8,7 @@
 import UIKit
 
 import Kingfisher
+import RxSwift
 import SnapKit
 
 enum ProductCellType {
@@ -24,8 +25,9 @@ final class ProductCollectionViewCell: BaseCollectionViewCell {
             configureCell(product: product)
         }
     }
-    private var likeCheckTask: Task<(), Never>?
     var type: ProductCellType?
+    private var likeCheckTask: Task<(), Never>?
+    private let disposeBag = DisposeBag()
     
     // MARK: - UI
     private let productImageView: UIImageView = {
@@ -97,6 +99,7 @@ final class ProductCollectionViewCell: BaseCollectionViewCell {
             labelStackView,
             likeButton
         ].forEach { contentView.addSubview($0) }
+        registerLikeObserver()
     }
     
     override func configureLayout() {
@@ -150,27 +153,29 @@ private extension ProductCollectionViewCell {
             action: #selector(likeButtonClicked),
             for: .touchUpInside
         )
-        
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(likedObserver),
-            name: .likeProduct,
-            object: nil
-        )
     }
     
-    @objc
-    func likedObserver(notification: NSNotification) {
-        let userInfo = notification.userInfo
-        guard let id = userInfo?["id"] as? Int,
-              let isSelected = userInfo?["isSelected"] as? Bool
-        else { return }
-
-        if viewModel?.prodcut.productID == id {
-            DispatchQueue.main.async { [weak self] in
-                self?.likeButton.isSelected = isSelected
-            }
-        }
+    func registerLikeObserver() {
+        NotificationCenter.default.rx.notification(.likeProduct)
+            .observe(on: MainScheduler.asyncInstance)
+            .bind(with: self, onNext: { owner, notification in
+                let userInfo = notification.userInfo
+                guard let id = userInfo?["id"] as? Int,
+                      let isSelected = userInfo?["isSelected"] as? Bool
+                else { return }
+                
+                if owner.viewModel?.prodcut.productID == id {
+                    switch isSelected {
+                    case true:
+                        owner.likeButton.isSelected = true
+                        owner.likeButton.playAnimation()
+                        break
+                    case false :
+                        owner.likeButton.isSelected = false
+                    }
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     @objc
@@ -182,46 +187,22 @@ private extension ProductCollectionViewCell {
             Task {
                 do {
                     try await viewModel?.productLocalUseCase.deleteLikeProduct(productID: product.productID)
-                    
-                    likeButton.isSelected.toggle()
                     likeButton.isEnabled = true
-                    
                     if type == .favorite {
                         viewModel?.needReload?.accept(Void())
                     }
-                    postLikeUpdateNotification(isSelected: false)
                 } catch {
                     viewModel?.errorHandler.accept(error)
-                    return
                 }
             }
         case false: // 저장
             Task {
                 do {
                     try await viewModel?.productLocalUseCase.saveLikeProduct(product: product)
-                    
-                    likeButton.isSelected.toggle()
-                    likeButton.playAnimation(completion: { [weak self] in
-                        self?.likeButton.isEnabled = true
-                        self?.postLikeUpdateNotification(isSelected: true)
-                    })
                 } catch {
                     viewModel?.errorHandler.accept(error)
-                    return
                 }
             }
         }
-    }
-    
-    func postLikeUpdateNotification(isSelected: Bool) {
-        guard let id = viewModel?.prodcut.productID else { return }
-        NotificationCenter.default.post(
-            name: .likeProduct,
-            object: nil,
-            userInfo: [
-                "id": id,
-                "isSelected": isSelected
-            ]
-        )
     }
 }
