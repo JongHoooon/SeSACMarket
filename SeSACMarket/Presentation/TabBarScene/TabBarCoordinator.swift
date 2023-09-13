@@ -54,7 +54,11 @@ extension TabBarCoordinator: SearchCoordinatorDelegate {
 }
 
 extension TabBarCoordinator: FavoriteCoordinatorDelegate {
-    
+    func showAuth() {
+        guard let delegate
+        else { fatalError("TabBarCoordinatorDelegate is not linked") }
+        delegate.showAuthScene()
+    }
 }
 
 private extension TabBarCoordinator {

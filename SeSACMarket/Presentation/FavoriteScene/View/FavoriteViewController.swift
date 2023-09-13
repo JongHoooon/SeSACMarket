@@ -19,6 +19,15 @@ final class FavoriteViewController: BaseViewController {
     private let searchBar = DefaultSearchBar()
     private let cancelButton = ButtonStyle1(title: "취소")
     private let productsCollectionView = ProductsCollectionView()
+    private let settingBarButton: UIBarButtonItem = {
+        let barButtonItem = UIBarButtonItem(
+            image: ImageEnum.Icon.gear,
+            style: .plain,
+            target: nil,
+            action: nil
+        )
+        return barButtonItem
+    }()
     
     // MARK: - Init
     init(viewModel: FavoriteViewModel) {
@@ -76,6 +85,7 @@ final class FavoriteViewController: BaseViewController {
     override func configureNavigationBar() {
         navigationItem.title = "좋아요 목록"
         navigationItem.backButtonTitle = ""
+        navigationItem.rightBarButtonItem = settingBarButton
     }
 }
 
@@ -83,13 +93,16 @@ final class FavoriteViewController: BaseViewController {
 private extension FavoriteViewController {
     func bind() {
         
+        // MARK: - Input
         let input = FavoriteViewModel.Input(
             viewWillAppear: self.rx.viewWillAppear.map { _ in }.asObservable(),
             searchTextInput: searchBar.rx.text.orEmpty.asObservable(),
             cancelButtonClicked: cancelButton.rx.tap.asObservable(),
-            produtsCellSelected: productsCollectionView.rx.modelSelected(ProductCollectionViewCellViewModel.self).map(\.prodcut)
+            produtsCellSelected: productsCollectionView.rx.modelSelected(ProductCollectionViewCellViewModel.self).map(\.prodcut),
+            settingButtonTapped: settingBarButton.rx.tap.asObservable()
         )
         
+        // MARK: - Output
         let output = viewModel.transform(input: input, disposeBag: disposeBag)
         
         output.productsCellViewModelsRelay

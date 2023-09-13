@@ -12,4 +12,5 @@ enum CoordinatorType {
     case search
     case favorite
     case detail
+    case setting
 }

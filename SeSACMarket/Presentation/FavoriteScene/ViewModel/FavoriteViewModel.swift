@@ -8,10 +8,11 @@
 import Foundation
 
 import RxSwift
-import RxRelay
+import RxCocoa
 
 struct FavoriteViewModelActions {
-    let showDetail: (_ product: Product) -> ()
+    let showDetail: (_ product: Product) -> Void
+    let showSetting: () -> Void
 }
 
 final class FavoriteViewModel: ViewModelProtocol {
@@ -21,6 +22,7 @@ final class FavoriteViewModel: ViewModelProtocol {
         let searchTextInput: Observable<String>
         let cancelButtonClicked: Observable<Void>
         let produtsCellSelected: Observable<Product>
+        let settingButtonTapped: Observable<Void>
     }
     
     struct Output {
@@ -78,6 +80,16 @@ final class FavoriteViewModel: ViewModelProtocol {
                     owner.actions.showDetail(product)
             })
             .disposed(by: disposeBag)
+        
+        input.settingButtonTapped
+            .asDriver(onErrorJustReturn: Void())
+            .drive(
+                with: self,
+                onNext: { owner, _ in
+                    owner.actions.showSetting()
+            })
+            .disposed(by: disposeBag)
+            
         
         needReload
             .bind(onNext: { _ in

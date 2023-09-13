@@ -35,14 +35,14 @@ extension DetailSceneDIContainer: DetailCoordinatorDependencies {
     }
     
     // MARK: - Detail Scene
-    func makeDetailViewController(product: Product) -> DetailViewController {
-        return DetailViewController(viewModel: makeDetailViewModel(product: product))
-    }
-    
-    private func makeDetailViewModel(product: Product) -> DetailViewModel {
-        return DetailViewModel(
-            product: product,
-            productLocalUseCase: makeProductLocalUseCase()
-        )
-    }
+//    func makeDetailViewController(product: Product) -> DetailViewController {
+//        return DetailViewController(viewModel: makeDetailViewModel(product: product))
+//    }
+//
+//    private func makeDetailViewModel(product: Product) -> DetailViewModel {
+//        return DetailViewModel(
+//            product: product,
+//            productLocalUseCase: makeProductLocalUseCase()
+//        )
+//    }
 }

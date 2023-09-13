@@ -48,7 +48,25 @@ extension FavoriteSceneDIContainer: FavoriteCoordinatorDependencies {
         return DetailViewController(viewModel: makeDetailViewModel(product: product))
     }
     
-    func makeDetailViewModel(product: Product) -> DetailViewModel {
+    private func makeDetailViewModel(product: Product) -> DetailViewModel {
         return DetailViewModel(product: product, productLocalUseCase: makeProductLocalUseCase())
+    }
+    
+    // MARK: - Setting Scene
+    func makeSettingViewController(actions: SettingViewModelActions) -> SettingViewController {
+        return SettingViewController(viewModel: makeSettingViewModel(actions: actions))
+    }
+    
+    private func makeSettingViewModel(actions: SettingViewModelActions) -> SettingViewModel {
+        return SettingViewModel(actions: actions)
+    }
+    
+    // MARK: - Logout Scene
+    func makeLogoutViewController(actions: LogoutViewModelActions) -> LogoutViewController {
+        return LogoutViewController(viewModel: makeLogoutViewModel(actions: actions))
+    }
+    
+    private func makeLogoutViewModel(actions: LogoutViewModelActions) -> LogoutViewModel {
+        return LogoutViewModel(actions: actions)
     }
 }

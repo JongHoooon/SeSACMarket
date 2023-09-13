@@ -8,7 +8,7 @@
 import UIKit
 
 protocol AuthCoordinatorDependencies {
-    func makeLoginViewController() -> LoginViewController
+    func makeLoginViewController(actions: LoginViewModelActions) -> LoginViewController
 }
 
 protocol AuthCoordinatorDelegate: AnyObject {
@@ -31,7 +31,10 @@ final class AuthCoordinator: CoordinatorProtocol,
     }
     
     func start() {
-        let vc = dependencies.makeLoginViewController()
+        guard let delegate
+        else { fatalError("AuthCoordinatorDelegate in not linked") }
+        let actions = LoginViewModelActions(showTabBar: delegate.showTabBarScene)
+        let vc = dependencies.makeLoginViewController(actions: actions)
         let nav = UINavigationController(rootViewController: vc)
         changeWindowRoot(rootViewController: nav)
     }

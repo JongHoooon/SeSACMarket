@@ -16,7 +16,11 @@ final class AuthSceneDIContainer {
 }
 
 extension AuthSceneDIContainer: AuthCoordinatorDependencies {
-    func makeLoginViewController() -> LoginViewController {
-        return LoginViewController()
+    func makeLoginViewController(actions: LoginViewModelActions) -> LoginViewController {
+        return LoginViewController(viewModel: makeLoginViewModel(actions: actions))
+    }
+    
+    func makeLoginViewModel(actions: LoginViewModelActions) -> LoginViewModel {
+        return LoginViewModel(actions: actions)
     }
 }

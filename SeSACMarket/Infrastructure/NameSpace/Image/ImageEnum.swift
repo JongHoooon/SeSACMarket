@@ -12,6 +12,7 @@ enum ImageEnum {
         static let magninfyGlass = UIImage(systemName: "magnifyingglass")
         static let heart = UIImage(systemName: "heart")
         static let heartFilled = UIImage(systemName: "heart.fill")
+        static let gear = UIImage(systemName: "gearshape")
     }
     enum Placeholer {
         static let photo = UIImage(systemName: "photo")
