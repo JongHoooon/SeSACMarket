@@ -42,7 +42,7 @@ final class ProductCollectionViewCell: BaseCollectionViewCell {
     private let labelStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
-        stackView.distribution = .equalSpacing
+        stackView.distribution = .fill
         stackView.spacing = 4.0
         return stackView
     }()
@@ -112,6 +112,7 @@ final class ProductCollectionViewCell: BaseCollectionViewCell {
             $0.top.equalTo(productImageView.snp.bottom).offset(4.0)
             $0.leading.equalToSuperview().inset(Constant.Inset.small)
             $0.trailing.equalToSuperview()
+            $0.bottom.equalToSuperview()
         }
         
         likeButton.snp.makeConstraints {

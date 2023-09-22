@@ -25,12 +25,9 @@ final class ProductsCollectionView: UICollectionView {
     
     func configureLayout() {
         collectionViewLayout = UICollectionViewCompositionalLayout { (_, _) -> NSCollectionLayoutSection? in
+            
             let horizontalInsets = Constant.Inset.defaultInset * 3
             let itemWidth = (self.frame.width - horizontalInsets) / 2
-            let itemSize = NSCollectionLayoutSize(
-                widthDimension: .absolute(itemWidth),
-                heightDimension: .fractionalHeight(1.0)
-            )
             
             let heightOfImageView = itemWidth
             let heightOfLabels = Constant.FontSize.caption +
