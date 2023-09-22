@@ -25,11 +25,24 @@ final class LogoutViewController: BaseViewController {
         return button
     }()
 
+    private let dismissBarButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(
+            title: "닫기",
+            style: .plain,
+            target: nil,
+            action: nil
+        )
+        return button
+    }()
     
     // MARK: - Init
     init(viewModel: LogoutViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+    }
+    
+    deinit {
+        print("Deinit - \(String(describing: #fileID.components(separatedBy: "/").last ?? ""))")
     }
     
     @available(*, unavailable)
@@ -57,6 +70,7 @@ final class LogoutViewController: BaseViewController {
     
     override func configureNavigationBar() {
         navigationItem.title = "로그아웃"
+        navigationItem.rightBarButtonItem = dismissBarButton
     }
 }
 
@@ -67,7 +81,8 @@ private extension LogoutViewController {
         
         // MARK: - Input
         let input = LogoutViewModel.Input(
-            logoutButtonTapped: logoutButton.rx.tap.asObservable()
+            logoutButtonTapped: logoutButton.rx.tap.asObservable(),
+            dismissButtonTapped: dismissBarButton.rx.tap.asObservable()
         )
         
         // MARK: - Output

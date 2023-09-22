@@ -9,8 +9,6 @@ import Foundation
 
 final class AppDIContainer {
     
-    // MARK: - Network
-    lazy var apiDataTransferService = DefaultAPIDataTransferService()
     
     // MARK: - DIContainer of Scene
     func makeAuthSceneDIContainer() -> AuthSceneDIContainer {
@@ -18,7 +16,6 @@ final class AppDIContainer {
     }
     
     func makeTabBarSceneDIContainer() -> TabBarSceneDIContainer {
-        let dependencies = TabBarSceneDIContainer.Dependencies(apiDataTransferService: apiDataTransferService)
-        return TabBarSceneDIContainer(dedepdencies: dependencies)
+        return TabBarSceneDIContainer()
     }
 }

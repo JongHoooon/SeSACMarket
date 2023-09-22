@@ -2,47 +2,48 @@
 //  DetailSceneDIContainer.swift
 //  SeSACMarket
 //
-//  Created by JongHoon on 2023/09/11.
+//  Created by JongHoon on 2023/09/15.
 //
 
 import UIKit
 
 final class DetailSceneDIContainer {
+    let product: Product
     
-    struct Dependendcies {
-        let prodcutLocalRepository: ProductLocalRepository
+    init(product: Product) {
+        self.product = product
     }
     
-    private let dependencies: Dependendcies
-    
-    init(dependcencies: Dependendcies) {
-        self.dependencies = dependcencies
-    }
-    
-    func makeDetailSceneCoordinator(navigationController: UINavigationController) -> DetailCoordinator {
-        return DetailCoordinator(
-            navigationController: navigationController,
-            dependencies: self
+    func makeDetailCoordinator(navigationController: UINavigationController) -> DefaultDetailCoordinator {
+        return DefaultDetailCoordinator(
+            dependencies: self,
+            navigationController: navigationController
         )
     }
 }
 
 extension DetailSceneDIContainer: DetailCoordinatorDependencies {
     
-    // MARK: - Use Case
-    private func makeProductLocalUseCase() -> ProductLocalUseCase {
-        return ProductLocalUseCase(productLocalRepository: dependencies.prodcutLocalRepository)
+    // MARK: - UseCase
+    func makeLikeUseCase() -> LikeUseCase {
+        return DefaultLikeUseCase(productLocalRepository: makeProductLocalRepository())
     }
     
-    // MARK: - Detail Scene
-//    func makeDetailViewController(product: Product) -> DetailViewController {
-//        return DetailViewController(viewModel: makeDetailViewModel(product: product))
-//    }
-//
-//    private func makeDetailViewModel(product: Product) -> DetailViewModel {
-//        return DetailViewModel(
-//            product: product,
-//            productLocalUseCase: makeProductLocalUseCase()
-//        )
-//    }
+    // MARK: - Repository
+    func makeProductLocalRepository() -> ProductLocalRepository {
+        return DefaultProductLocalRepository()
+    }
+    
+    // MARK: - Detail View
+    func makeDetailViewController(coordinator: DetailCoordinator) -> DetailViewController {
+        return DetailViewController(viewModel: makeDetailViewModel(coordinator: coordinator))
+    }
+    
+    private func makeDetailViewModel(coordinator: DetailCoordinator) -> DetailViewModel {
+        return DetailViewModel(
+            product: product,
+            likeUseCase: makeLikeUseCase(),
+            coordinator: coordinator
+        )
+    }
 }

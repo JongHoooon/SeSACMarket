@@ -10,6 +10,10 @@ import Foundation
 import RxSwift
 import RxRelay
 
+struct DetailViewModelActions {
+    let finish: () -> Void
+}
+
 final class DetailViewModel: ViewModelProtocol {
     
     struct Input {
@@ -17,6 +21,7 @@ final class DetailViewModel: ViewModelProtocol {
         let webViewDidFinish: Observable<Void>
         let webViewDidFail: Observable<Error>
         let likeButtonTapped: Observable<Bool>
+        let backButtonTapped: Observable<Void>
     }
     
     struct Output {
@@ -29,14 +34,22 @@ final class DetailViewModel: ViewModelProtocol {
     }
     
     private let product: Product
-    private let productLocalUseCase: ProductLocalUseCase
+    private let likeUseCase: LikeUseCase
+    private weak var coordinator: DetailCoordinator?
     
     init(
         product: Product,
-        productLocalUseCase: ProductLocalUseCase
+        likeUseCase: LikeUseCase,
+        coordinator: DetailCoordinator
     ) {
         self.product = product
-        self.productLocalUseCase = productLocalUseCase
+        self.likeUseCase = likeUseCase
+        self.coordinator = coordinator
+    }
+    
+    deinit {
+        coordinator?.finish()
+        print("Deinit - \(String(describing: #fileID.components(separatedBy: "/").last ?? ""))")
     }
     
     func transform(input: Input, disposeBag: DisposeBag) -> Output {
@@ -51,7 +64,7 @@ final class DetailViewModel: ViewModelProtocol {
                     output.title.accept(owner.product.title)
                     
                     Task {
-                        let result = await owner.productLocalUseCase.isLikeProduct(productID: owner.product.productID)
+                        let result = await owner.likeUseCase.isLikeProduct(productID: owner.product.productID)
                         output.likeButtonIsSelected.accept(result)
                     }
                     
@@ -98,20 +111,18 @@ final class DetailViewModel: ViewModelProtocol {
                     case true: // 삭제
                         Task {
                             do {
-                                try await owner.productLocalUseCase.deleteLikeProduct(productID: owner.product.productID)
+                                try await owner.likeUseCase.deleteLikeProduct(productID: owner.product.productID)
                                 
                             } catch {
                                 output.errorHandlerRelay.accept(error)
-                                return
                             }
                         }
                     case false: // 저장
                         Task {
                             do {
-                                try await owner.productLocalUseCase.saveLikeProduct(product: owner.product)
+                                try await owner.likeUseCase.saveLikeProduct(product: owner.product)
                             } catch {
                                 output.errorHandlerRelay.accept(error)
-                                return
                             }
                         }
                     }

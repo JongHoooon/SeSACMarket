@@ -34,13 +34,16 @@ final class ProductsCollectionView: UICollectionView {
             Constant.FontSize.title * 2 +
             Constant.FontSize.bold
             let verticalInsets = Constant.Inset.small * 4
-            let groupHeight = heightOfImageView +
+            let cellHeight = heightOfImageView +
                 heightOfLabels +
-                verticalInsets +
-                16.0
+                verticalInsets
+            let itemSize = NSCollectionLayoutSize(
+                widthDimension: .absolute(itemWidth),
+                heightDimension: .estimated(cellHeight)
+            )
             let groupSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
-                heightDimension: .estimated(groupHeight)
+                heightDimension: .estimated(cellHeight)
             )
             
             let item = NSCollectionLayoutItem(layoutSize: itemSize)

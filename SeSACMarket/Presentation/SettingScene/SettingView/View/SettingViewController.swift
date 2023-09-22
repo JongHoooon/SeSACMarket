@@ -17,6 +17,16 @@ final class SettingViewController: BaseViewController {
     private let disposeBag = DisposeBag()
     
     // MARK: - UI
+    private let dismissBarButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(
+            image: ImageEnum.Icon.xmark,
+            style: .plain,
+            target: nil,
+            action: nil
+        )
+        return button
+    }()
+    
     private let goLogoutButton: ButtonStyle1 = {
         let button = ButtonStyle1(title: "로그아웃으로 이동")
         button.layer.borderColor = UIColor.Custom.mainTintColor.cgColor
@@ -29,6 +39,10 @@ final class SettingViewController: BaseViewController {
     init(viewModel: SettingViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+    }
+    
+    deinit {
+        print("Deinit - \(String(describing: #fileID.components(separatedBy: "/").last ?? ""))")
     }
     
     @available(*, unavailable)
@@ -56,6 +70,7 @@ final class SettingViewController: BaseViewController {
     
     override func configureNavigationBar() {
         navigationItem.title = "설정"
+        navigationItem.leftBarButtonItem = dismissBarButton
     }
 }
 
@@ -63,10 +78,11 @@ final class SettingViewController: BaseViewController {
 private extension SettingViewController {
     
     func bind() {
-        
+
         // MARK: - Input
         let input = SettingViewModel.Input(
-            goLogoutButtonTapped: goLogoutButton.rx.tap.asObservable()
+            goLogoutButtonTapped: goLogoutButton.rx.tap.asObservable(), 
+            dismissButtonTapped: dismissBarButton.rx.tap.asObservable()
         )
         
         // MARK: - Output

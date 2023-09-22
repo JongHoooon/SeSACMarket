@@ -8,23 +8,24 @@
 import UIKit
 
 protocol FavoriteCoordinatorDependencies {
-    func makeFavoriteViewController(actions: FavoriteViewModelActions) -> FavoriteViewController
-    func makeDetailViewController(product: Product) -> DetailViewController
-    func makeSettingViewController(actions: SettingViewModelActions) -> SettingViewController
-    func makeLogoutViewController(actions: LogoutViewModelActions) -> LogoutViewController
+    func makeFavoriteViewController(coordinator: FavoriteCoordinator) -> FavoriteViewController
 }
 
 protocol FavoriteCoordinatorDelegate: AnyObject {
     func showAuth()
 }
 
-final class FavoriteCoordinator: CoordinatorProtocol {
+protocol FavoriteCoordinator: AnyObject {
+    func showDetail(product: Product)
+    func showSetting()
+}
+ 
+final class DefaultFavoriteCoordinator: CoordinatorProtocol {
     
     private let dependencies: FavoriteCoordinatorDependencies
     weak var delegate: FavoriteCoordinatorDelegate?
     var childCoordinators: [CoordinatorProtocol] = []
     var navigationController: UINavigationController
-    var type: CoordinatorType = .favorite
     
     init(
         navigationController: UINavigationController,
@@ -34,31 +35,49 @@ final class FavoriteCoordinator: CoordinatorProtocol {
         self.dependencies = dependencies
     }
     
+    deinit {
+        print("Deinit - \(String(describing: #fileID.components(separatedBy: "/").last ?? ""))")
+    }
+    
     func start() {
-        let actions = FavoriteViewModelActions(
-            showDetail: showDetail(product:),
-            showSetting: showSetting
-        )
-        let vc = dependencies.makeFavoriteViewController(actions: actions)
-        navigationController.pushViewController(vc, animated: true)
+        let vc = dependencies.makeFavoriteViewController(coordinator: self)
+        navigationController.pushViewController(vc, animated: false)
+    }
+    
+    func finish() {
+        childCoordinators.removeAll()
     }
 }
 
-private extension FavoriteCoordinator {
+extension DefaultFavoriteCoordinator: FavoriteCoordinator {
     func showDetail(product: Product) {
-        let vc = dependencies.makeDetailViewController(product: product)
-        navigationController.pushViewController(vc, animated: true)
+        let detailDIContainer = DetailSceneDIContainer(product: product)
+        let flow = detailDIContainer.makeDetailCoordinator(navigationController: navigationController)
+        addChildCoordinator(child: flow)
+        flow.delegate = self
+        flow.start()
     }
     
     func showSetting() {
-        let actions = SettingViewModelActions(showLogout: showLogout)
-        let vc = dependencies.makeSettingViewController(actions: actions)
-        navigationController.pushViewController(vc, animated: true)
+        let settingDIContainer = SettingSceneDIContainer()
+        let flow = settingDIContainer.makeSettingSceneCoordinator(navigationController: navigationController)
+        flow.delegate = self
+        addChildCoordinator(child: flow)
+        flow.start()
     }
-    func showLogout() {
-        guard let delegate else { fatalError("FavoriteCoordinatorDelegate is not linked") }
-        let actions = LogoutViewModelActions(showAuth: delegate.showAuth)
-        let vc = dependencies.makeLogoutViewController(actions: actions)
-        navigationController.pushViewController(vc, animated: true)
+}
+
+extension DefaultFavoriteCoordinator: SettingCoordinatorDelegate {
+    func showAuth() {
+        guard let delegate = delegate
+        else { fatalError("FavoriteCoordinatorDelegate is not linked") }
+        finish()
+        delegate.showAuth()
+    }
+}
+
+extension DefaultFavoriteCoordinator: DetailCoordinatorDelegate {
+    func finish(child: CoordinatorProtocol) {
+        removeChildCoordinator(child: child)
     }
 }

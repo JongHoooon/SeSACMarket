@@ -7,13 +7,7 @@
 
 import Foundation
 
-final class DefaultProductRemoteRepository: ProductRemoteRepository {
-    
-    private let apiDataTransferManager: APIDataTransferService
-    
-    init(apiDataTransferManager: APIDataTransferService) {
-        self.apiDataTransferManager = apiDataTransferManager
-    }
+final class DefaultProductRemoteRepository: ProductRemoteRepository, APIDataTransferService {
     
     func fetchProducts(
         query: String,
@@ -22,7 +16,7 @@ final class DefaultProductRemoteRepository: ProductRemoteRepository {
         display: Int
     ) async throws -> ProductsPage {
         do {
-            let productPageDTO =  try await apiDataTransferManager.callRequest(
+            let productPageDTO =  try await self.callRequest(
                 of: ProductsPageDTO.self,
                 api: ProductAPI.fetchQuery(
                     query: query,

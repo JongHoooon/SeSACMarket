@@ -1,11 +1,15 @@
 //
-//  ProductRemoteUseCase.swift
+//  ProductRemoteFetchUseCase.swift
 //  SeSACMarket
 //
 //  Created by JongHoon on 2023/09/08.
 //
 
-final class ProductRemoteUseCase {
+protocol ProductRemoteFetchUseCase {
+    func fetchProducts(query: String, sort: SortEnum, start: Int, display: Int) async throws -> ProductsPage
+}
+
+final class DefaultProductRemoteFetchUseCase: ProductRemoteFetchUseCase {
     
     private let productRemoteRepository: ProductRemoteRepository
     

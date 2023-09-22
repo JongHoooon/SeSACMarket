@@ -30,6 +30,10 @@ final class LoginViewController: BaseViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
+    deinit {
+        print("Deinit - \(String(describing: #fileID.components(separatedBy: "/").last ?? ""))")
+    }
+    
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

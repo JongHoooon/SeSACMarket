@@ -1,5 +1,5 @@
 //
-//  LoginViewModel.swift
+//  LogoutViewModel.swift
 //  SeSACMarket
 //
 //  Created by JongHoon on 2023/09/12.
@@ -9,14 +9,11 @@ import Foundation
 
 import RxSwift
 
-struct LoginViewModelActions {
-    let showTabBar: () -> Void
-}
-
-final class LoginViewModel: ViewModelProtocol {
+final class LogoutViewModel: ViewModelProtocol {
     
     struct Input {
-        let loginButtonTapped: Observable<Void>
+        let logoutButtonTapped: Observable<Void>
+        let dismissButtonTapped: Observable<Void>
     }
     
     struct Output {
@@ -24,10 +21,10 @@ final class LoginViewModel: ViewModelProtocol {
     }
     
     // MARK: - Properties
-    private weak var coordinator: AuthCoordinator?
+    private weak var coordinator: LogoutCoordinator?
     
     // MARK: - Init
-    init(coordinator: AuthCoordinator) {
+    init(coordinator: LogoutCoordinator) {
         self.coordinator = coordinator
     }
     
@@ -38,16 +35,25 @@ final class LoginViewModel: ViewModelProtocol {
     func transform(input: Input, disposeBag: DisposeBag) -> Output {
         let output = Output()
         
-        input.loginButtonTapped
+        input.logoutButtonTapped
             .asSignal(onErrorJustReturn: Void())
             .emit(
                 with: self,
                 onNext: { owner, _ in
                     UserDefaults.standard.set(
-                        true,
+                        false,
                         forKey: UserDefaultsKey.isLoggedIn.key
                     )
-                    owner.coordinator?.showTabBar()
+                    owner.coordinator?.showAuth()
+            })
+            .disposed(by: disposeBag)
+        
+        input.dismissButtonTapped
+            .asDriver(onErrorJustReturn: Void())
+            .drive(
+                with: self,
+                onNext: { owner, _ in
+                    owner.coordinator?.dismiss()
             })
             .disposed(by: disposeBag)
         

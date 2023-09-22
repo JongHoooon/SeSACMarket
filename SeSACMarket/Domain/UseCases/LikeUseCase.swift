@@ -1,14 +1,21 @@
 //
-//  ProductLocalUseCase.swift
+//  LikeUseCase.swift
 //  SeSACMarket
 //
-//  Created by JongHoon on 2023/09/08.
+//  Created by JongHoon on 2023/09/14.
 //
 
 import Foundation
 
-final class ProductLocalUseCase {
+protocol LikeUseCase {
+    func saveLikeProduct(product: Product) async throws
+    func deleteLikeProduct(productID: Int) async throws
+    func isLikeProduct(productID: Int) async -> Bool
+}
+
+final class DefaultLikeUseCase: LikeUseCase {
     
+    // MARK: - Repository
     private let productLocalRepository: ProductLocalRepository
     
     init(productLocalRepository: ProductLocalRepository) {
@@ -37,14 +44,6 @@ final class ProductLocalUseCase {
                 "isSelected": false
             ]
         )
-    }
-    
-    func fetchAllLikeProducts() async -> [Product] {
-        await productLocalRepository.fetchAllLikeProducts()
-    }
-    
-    func fetchQueryLikeProducts(query: String) async -> [Product] {
-        await productLocalRepository.fetchQueryLikeProducts(query: query)
     }
     
     func isLikeProduct(productID: Int) async -> Bool {

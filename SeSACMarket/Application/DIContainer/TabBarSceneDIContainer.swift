@@ -8,52 +8,29 @@
 import UIKit
 
 final class TabBarSceneDIContainer {
-    struct Dependencies {
-        let apiDataTransferService: APIDataTransferService
+    
+    func makeTabBarFlowCoordinator(navigationController: UINavigationController) -> TabBarCoordinator {
+        return TabBarCoordinator(
+            dependencies: self,
+            navigationController: navigationController
+        )
     }
-    
-    private let dependencies: Dependencies
-    
-    init(dedepdencies: Dependencies) {
-        self.dependencies = dedepdencies
-    }
-    
-    // MARK: - Product LocalRepository
-    private lazy var productLocalRepository = DefaultProductLocalRepository()
 }
 
 extension TabBarSceneDIContainer: TabBarCoordinatorDependencies {
     
-    // MARK: - Tab Bar Scene
+    // MARK: - Tab Bar
     func makeTabBarController() -> UITabBarController {
         return UITabBarController()
     }
     
-    // MARK: - Search Scene
+    // MARK: - Search View
     func makeSearchSceneDIContainer() -> SearchSceneDIContainer {
-        guard let productLocalRepository = productLocalRepository
-        else { fatalError("productLocalRepository is not linked") }
-        
-        let dependencies = SearchSceneDIContainer.Dependencies(
-            apiDataTransferService: dependencies.apiDataTransferService,
-            productLocalRepository: productLocalRepository
-        )
-        return SearchSceneDIContainer(dedepdencies: dependencies)
+        return SearchSceneDIContainer()
     }
     
-    // MARK: - Favorite Scene
+    // MARK: - Favorite View
     func makeFavoriteSceneDIContainer() -> FavoriteSceneDIContainer {
-        guard let productLocalRepository = productLocalRepository
-        else { fatalError("productLocalRepository is not linked") }
-        
-        let dependencies = FavoriteSceneDIContainer.Dependendcies(prodcutLocalRepository: productLocalRepository)
-        return FavoriteSceneDIContainer(dependcencies: dependencies)
-    }
-    
-    // MARK: - Flow Coordinator
-    func makeTabBarFlowCoordinator() -> TabBarCoordinator {
-        return TabBarCoordinator(
-            dependencies: self
-        )
+        return FavoriteSceneDIContainer()
     }
 }

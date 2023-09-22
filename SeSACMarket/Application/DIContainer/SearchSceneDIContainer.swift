@@ -8,20 +8,9 @@
 import UIKit
 
 final class SearchSceneDIContainer {
-    
-    struct Dependencies {
-        let apiDataTransferService: APIDataTransferService
-        let productLocalRepository: ProductLocalRepository
-    }
-    
-    private let dependencies: Dependencies
-    
-    init(dedepdencies: Dependencies) {
-        self.dependencies = dedepdencies
-    }
-    
-    func makeSearchSceneCoordinator(navigationController: UINavigationController) -> SearchCoordinator {
-        return SearchCoordinator(
+
+    func makeSearchSceneCoordinator(navigationController: UINavigationController) -> DefaultSearchCoordinator {
+        return DefaultSearchCoordinator(
             dependencies: self,
             navigationController: navigationController
         )
@@ -31,47 +20,33 @@ final class SearchSceneDIContainer {
 extension SearchSceneDIContainer: SearchCoordinatorDependencies {
     
     // MARK: - Use Cases
-    private func makeProductLocalUseCase() -> ProductLocalUseCase {
-        return ProductLocalUseCase(productLocalRepository: dependencies.productLocalRepository)
+    private func makeProductRemoteUseCase() -> ProductRemoteFetchUseCase {
+        return DefaultProductRemoteFetchUseCase(productRemoteRepository: makeProductRemoteRepository())
     }
     
-    private func makeProductRemoteUseCase() -> ProductRemoteUseCase {
-        return ProductRemoteUseCase(
-            productRemoteRepository: makeProductRemoteRepository()
-        )
+    private func makeLikeUseCase() -> LikeUseCase {
+        return DefaultLikeUseCase(productLocalRepository: makeProductLocalRepository())
     }
     
     // MARK: - Repositories
+    private func makeProductLocalRepository() -> ProductLocalRepository {
+        return DefaultProductLocalRepository()
+    }
+    
     private func makeProductRemoteRepository() -> ProductRemoteRepository {
-        return DefaultProductRemoteRepository(
-            apiDataTransferManager: dependencies.apiDataTransferService
-        )
+        return DefaultProductRemoteRepository()
     }
     
-    // MARK: - Search Scene
-    func makeSearchViewController(actions: SearchViewModelActions) -> SearchViewController {
-        return SearchViewController(
-            viewModel: makeSearchViewModel(actions: actions)
-        )
+    // MARK: - Search View
+    func makeSearchViewController(coordinator: SearchCoordinator) -> SearchViewController {
+        return SearchViewController(viewModel: makeSearchViewModel(coordinator: coordinator))
     }
     
-    private func makeSearchViewModel(actions: SearchViewModelActions) -> DefaultSearchViewModel {
-        return DefaultSearchViewModel(
-            productLocalUseCase: makeProductLocalUseCase(),
+    private func makeSearchViewModel(coordinator: SearchCoordinator) -> SearchViewModel {
+        return SearchViewModel(
             productRemoteUseCase: makeProductRemoteUseCase(),
-            actions: actions
-        )
-    }
-    
-    // MARK: - Detail Scene
-    func makeDetailViewController(product: Product) -> DetailViewController {
-        return DetailViewController(viewModel: makeDetailViewModel(product: product))
-    }
-    
-    private func makeDetailViewModel(product: Product) -> DetailViewModel {
-        return DetailViewModel(
-            product: product,
-            productLocalUseCase: makeProductLocalUseCase()
+            likeUseCase: makeLikeUseCase(), 
+            coordinator: coordinator
         )
     }
 }

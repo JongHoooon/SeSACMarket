@@ -37,15 +37,22 @@ final class FavoriteViewModel: ViewModelProtocol {
     private var currentQuery: String = ""
     
     // MARK: - Properties
-    private let productLocalUseCase: ProductLocalUseCase
-    private let actions: FavoriteViewModelActions
+    private let productLocalUseCase: ProductLocalFetchUseCase
+    private let likeUseCase: LikeUseCase
+    private weak var coordinator: FavoriteCoordinator?
     
     init(
-        productLocalUseCase: ProductLocalUseCase,
-        actions: FavoriteViewModelActions
+        productLocalUseCase: ProductLocalFetchUseCase,
+        likeUseCase: LikeUseCase,
+        coordinator: FavoriteCoordinator
     ) {
         self.productLocalUseCase = productLocalUseCase
-        self.actions = actions
+        self.likeUseCase = likeUseCase
+        self.coordinator = coordinator
+    }
+    
+    deinit {
+        print("Deinit - \(String(describing: #fileID.components(separatedBy: "/").last ?? ""))")
     }
     
     func transform(input: Input, disposeBag: DisposeBag) -> Output {
@@ -77,7 +84,7 @@ final class FavoriteViewModel: ViewModelProtocol {
             .bind(
                 with: self,
                 onNext: { owner, product in
-                    owner.actions.showDetail(product)
+                    owner.coordinator?.showDetail(product: product)
             })
             .disposed(by: disposeBag)
         
@@ -86,7 +93,7 @@ final class FavoriteViewModel: ViewModelProtocol {
             .drive(
                 with: self,
                 onNext: { owner, _ in
-                    owner.actions.showSetting()
+                    owner.coordinator?.showSetting()
             })
             .disposed(by: disposeBag)
             
@@ -106,7 +113,7 @@ final class FavoriteViewModel: ViewModelProtocol {
                     let viewModels = products.map {
                         ProductCollectionViewCellViewModel(
                             prodcut: $0,
-                            productLocalUseCase: productLocalUseCase,
+                            likeUseCase: likeUseCase,
                             errorHandler: output.errorHandlerRelay,
                             needReload: needReload
                         )
@@ -119,7 +126,7 @@ final class FavoriteViewModel: ViewModelProtocol {
                     let viewModels = products.map {
                         ProductCollectionViewCellViewModel(
                             prodcut: $0,
-                            productLocalUseCase: productLocalUseCase,
+                            likeUseCase: likeUseCase,
                             errorHandler: output.errorHandlerRelay,
                             needReload: needReload
                         )

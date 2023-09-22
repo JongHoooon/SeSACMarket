@@ -11,12 +11,14 @@ import RxSwift
 
 struct SettingViewModelActions {
     let showLogout: () -> Void
+    let finish: () -> Void
 }
 
 final class SettingViewModel: ViewModelProtocol {
     
     struct Input {
         let goLogoutButtonTapped: Observable<Void>
+        let dismissButtonTapped: Observable<Void>
     }
     
     struct Output {
@@ -24,11 +26,15 @@ final class SettingViewModel: ViewModelProtocol {
     }
     
     // MARK: - Properties
-    let actions: SettingViewModelActions
+    private weak var coordinator: SettingCoordinator?
     
     // MARK: - Init
-    init(actions: SettingViewModelActions) {
-        self.actions = actions
+    init(coordinator: SettingCoordinator) {
+        self.coordinator = coordinator
+    }
+    
+    deinit {
+        print("Deinit - \(String(describing: #fileID.components(separatedBy: "/").last ?? ""))")
     }
     
     func transform(input: Input, disposeBag: DisposeBag) -> Output {
@@ -39,7 +45,16 @@ final class SettingViewModel: ViewModelProtocol {
             .emit(
                 with: self,
                 onNext: { owner, _ in
-                    owner.actions.showLogout()
+                    owner.coordinator?.showLogout()
+            })
+            .disposed(by: disposeBag)
+        
+        input.dismissButtonTapped
+            .asDriver(onErrorJustReturn: Void())
+            .drive(
+                with: self,
+                onNext: { owner, _ in
+                    owner.coordinator?.dismiss()
             })
             .disposed(by: disposeBag)
         

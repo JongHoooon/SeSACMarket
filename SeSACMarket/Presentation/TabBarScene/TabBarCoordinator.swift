@@ -14,6 +14,7 @@ protocol TabBarCoordinatorDependencies {
 }
 
 protocol TabBarCoordinatorDelegate: AnyObject {
+    func finish(child: CoordinatorProtocol)
     func showAuthScene()
 }
 
@@ -23,29 +24,52 @@ final class TabBarCoordinator: CoordinatorProtocol,
     var childCoordinators: [CoordinatorProtocol] = []
     weak var delegate: TabBarCoordinatorDelegate?
     private let dependencies: TabBarCoordinatorDependencies
-    let navigationController = UINavigationController()
-    let type: CoordinatorType = .tabBar
+    let navigationController: UINavigationController
 
+    private let searchSceneNavigationController = TabBarEnum.search.configureTabBarItem(navigationController: UINavigationController())
+    private let favoriteSceneNavigationController = TabBarEnum.favorite.configureTabBarItem(navigationController: UINavigationController())
     
-    init(dependencies: TabBarCoordinatorDependencies) {
+    // MARK: - Init
+    init(
+        dependencies: TabBarCoordinatorDependencies,
+        navigationController: UINavigationController
+    ) {
         self.dependencies = dependencies
+        self.navigationController = navigationController
+        print("init - \(String(describing: #fileID.components(separatedBy: "/").last ?? ""))")
+    }
+    
+    deinit {
+        print("Deinit - \(String(describing: #fileID.components(separatedBy: "/").last ?? ""))")
     }
     
     func start() {
         let tabBarController = dependencies.makeTabBarController()
-        
-        let searchSceneNavigationController = TabBarEnum.search.configureTabBarItem(navigationController: UINavigationController())
-        let favoriteSceneNavigationController = TabBarEnum.favorite.configureTabBarItem(navigationController: UINavigationController())
-        
         tabBarController.viewControllers = [
             searchSceneNavigationController,
             favoriteSceneNavigationController
         ]
-        
+        let transition = CATransition()
+        transition.duration = 0.25
+        transition.type = .fade
+        transition.timingFunction = CAMediaTimingFunction(
+            name: CAMediaTimingFunctionName.easeInEaseOut
+        )
+        navigationController.view.window?.layer.add(transition, forKey: kCATransition)
+        navigationController.pushViewController(tabBarController, animated: false)
         startSearchScene(navigationController: searchSceneNavigationController)
         startFavoriteScene(navigationController: favoriteSceneNavigationController)
-        
-        changeWindowRoot(rootViewController: tabBarController)
+    }
+    
+    func finish() {
+        searchSceneNavigationController.viewControllers.removeAll()
+        favoriteSceneNavigationController.viewControllers.removeAll()
+        childCoordinators.removeAll()
+        guard let delegate
+        else {
+            fatalError("TabBarCoordinatorDelegate is not linked")
+        }
+        delegate.finish(child: self)
     }
 }
 
@@ -56,7 +80,10 @@ extension TabBarCoordinator: SearchCoordinatorDelegate {
 extension TabBarCoordinator: FavoriteCoordinatorDelegate {
     func showAuth() {
         guard let delegate
-        else { fatalError("TabBarCoordinatorDelegate is not linked") }
+        else {
+            fatalError("TabBarCoordinatorDelegate is not linked")
+        }
+        finish()
         delegate.showAuthScene()
     }
 }

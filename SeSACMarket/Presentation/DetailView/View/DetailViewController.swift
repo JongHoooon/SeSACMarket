@@ -37,10 +37,13 @@ final class DetailViewController: BaseViewController {
     }()
 
     // MARK: - Init
-    init(viewModel: DetailViewModel)
-    {
+    init(viewModel: DetailViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+    }
+    
+    deinit {
+        print("Deinit - \(String(describing: #fileID.components(separatedBy: "/").last ?? ""))")
     }
     
     @available(*, unavailable)
@@ -88,13 +91,16 @@ private extension DetailViewController {
             }
             .compactMap { $0 }
 
+        // MARK: - Input
         let input = DetailViewModel.Input(
             viewDidLoad: self.rx.viewDidLoad.asObservable(),
             webViewDidFinish: webView.rx.didFinishLoad.map { _ in }.asObservable(),
             webViewDidFail: webView.rx.didFailLoad.map(\.1).asObservable(),
-            likeButtonTapped: likeButtonTapped
+            likeButtonTapped: likeButtonTapped,
+            backButtonTapped: Observable.just(Void())
         )
         
+        // MARK: - Output
         let output = viewModel.transform(input: input, disposeBag: disposeBag)
         
         output.title

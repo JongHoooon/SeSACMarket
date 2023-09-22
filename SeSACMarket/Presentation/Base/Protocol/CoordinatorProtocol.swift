@@ -10,8 +10,8 @@ import UIKit
 protocol CoordinatorProtocol: AnyObject {
     var childCoordinators: [CoordinatorProtocol] { get set }
     var navigationController: UINavigationController { get }
-    var type: CoordinatorType { get }
     func start()
+    func finish()
 }
 
 // child 관리
@@ -21,8 +21,7 @@ extension CoordinatorProtocol {
     }
     
     func removeChildCoordinator(child: CoordinatorProtocol) {
-        childCoordinators = childCoordinators.filter { $0.type != child.type }
-        child.navigationController.popToRootViewController(animated: false)
+        childCoordinators = childCoordinators.filter { $0.self !== child.self }
     }
 }
 

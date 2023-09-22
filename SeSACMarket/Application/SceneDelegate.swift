@@ -23,8 +23,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         window?.backgroundColor = .Custom.mainBackgroundColor
         window?.tintColor = .Custom.mainTintColor
+        let navigationController = UINavigationController()
+        window?.rootViewController = navigationController
+        window?.makeKeyAndVisible()
         
-        appFlowCoordinator = AppFlowCoordinator(appDIContainer: appDIContainer)
+        appFlowCoordinator = AppFlowCoordinator(
+            appDIContainer: appDIContainer,
+            navigationController: navigationController
+        )
         appFlowCoordinator?.start()
     }
 

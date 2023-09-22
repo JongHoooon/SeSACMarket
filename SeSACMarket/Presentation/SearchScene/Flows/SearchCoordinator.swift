@@ -1,5 +1,5 @@
 //
-//  SearchCoordinator.swift
+//  DefaultSearchCoordinator.swift
 //  SeSACMarket
 //
 //  Created by JongHoon on 2023/09/07.
@@ -8,21 +8,23 @@
 import UIKit
 
 protocol SearchCoordinatorDependencies {
-    func makeSearchViewController(actions: SearchViewModelActions) -> SearchViewController
-    func makeDetailViewController(product: Product) -> DetailViewController
+    func makeSearchViewController(coordinator: SearchCoordinator) -> SearchViewController
 }
 
 protocol SearchCoordinatorDelegate: AnyObject {
     
 }
 
-final class SearchCoordinator: CoordinatorProtocol {
+protocol SearchCoordinator: AnyObject {
+    func showDetail(product: Product)
+}
+
+final class DefaultSearchCoordinator: CoordinatorProtocol {
     
     var childCoordinators: [CoordinatorProtocol] = []
     weak var delegate: SearchCoordinatorDelegate?
     private let dependencies: SearchCoordinatorDependencies
     let navigationController: UINavigationController
-    let type: CoordinatorType = .search
     
     init(
         dependencies: SearchCoordinatorDependencies,
@@ -32,21 +34,32 @@ final class SearchCoordinator: CoordinatorProtocol {
         self.navigationController = navigationController
     }
     
+    deinit {
+        print("Deinit - \(String(describing: #fileID.components(separatedBy: "/").last ?? ""))")
+    }
+    
     func start() {
-        let actions = SearchViewModelActions(
-            showDetail: showDetail(product:)
-        )
-        let vc = dependencies.makeSearchViewController(actions: actions)
-        navigationController.pushViewController(
-            vc,
-            animated: true
-        )
+        let vc = dependencies.makeSearchViewController(coordinator: self)
+        navigationController.pushViewController(vc, animated: false)
+    }
+    
+    func finish() {
+        childCoordinators.removeAll()
     }
 }
 
-private extension SearchCoordinator {
+extension DefaultSearchCoordinator: SearchCoordinator {
     func showDetail(product: Product) {
-        let vc = dependencies.makeDetailViewController(product: product)
-        navigationController.pushViewController(vc, animated: true)
+        let detailSceneDIContainer = DetailSceneDIContainer(product: product)
+        let flow = detailSceneDIContainer.makeDetailCoordinator(navigationController: navigationController)
+        addChildCoordinator(child: flow)
+        flow.delegate = self
+        flow.start()
+    }
+}
+
+extension DefaultSearchCoordinator: DetailCoordinatorDelegate {
+    func finish(child: CoordinatorProtocol) {
+        removeChildCoordinator(child: child)
     }
 }

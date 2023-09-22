@@ -15,7 +15,7 @@ struct SearchViewModelActions {
     let showDetail: (_ product: Product) -> ()
 }
 
-final class DefaultSearchViewModel: ViewModelProtocol {
+final class SearchViewModel: ViewModelProtocol {
     
     struct Input {
         let viewDidLoad: Observable<Void>
@@ -45,18 +45,22 @@ final class DefaultSearchViewModel: ViewModelProtocol {
     private var isFetchEnable = true
     
     // MARK: - Properties
-    private let productLocalUseCase: ProductLocalUseCase
-    private let productRemoteUseCase: ProductRemoteUseCase
-    private let actions: SearchViewModelActions
+    private let productRemoteFetchUseCase: ProductRemoteFetchUseCase
+    private let likeUseCase: LikeUseCase
+    private weak var coordinator: SearchCoordinator?
     
     init(
-        productLocalUseCase: ProductLocalUseCase,
-        productRemoteUseCase: ProductRemoteUseCase,
-        actions: SearchViewModelActions
+        productRemoteUseCase: ProductRemoteFetchUseCase,
+        likeUseCase: LikeUseCase,
+        coordinator: SearchCoordinator
     ) {
-        self.productLocalUseCase = productLocalUseCase
-        self.productRemoteUseCase = productRemoteUseCase
-        self.actions = actions
+        self.productRemoteFetchUseCase = productRemoteUseCase
+        self.likeUseCase = likeUseCase
+        self.coordinator = coordinator
+    }
+    
+    deinit {
+        print("Deinit - \(String(describing: #fileID.components(separatedBy: "/").last ?? ""))")
     }
     
     func transform(input: Input, disposeBag: DisposeBag) -> Output {
@@ -135,7 +139,7 @@ final class DefaultSearchViewModel: ViewModelProtocol {
             .subscribe(
                 with: self,
                 onNext: { owner, product in
-                    owner.actions.showDetail(product)
+                    owner.coordinator?.showDetail(product: product)
             })
             .disposed(by: disposeBag)
         
@@ -144,15 +148,16 @@ final class DefaultSearchViewModel: ViewModelProtocol {
         func fetchProducts(start: Int) {
             Task {
                 do {
-                    let productsPage = try await productRemoteUseCase.fetchProducts(
+                    let productsPage = try await productRemoteFetchUseCase.fetchProducts(
                         query: searchBarTextRelay.value,
                         sort: selectedSortRelay.value,
-                        start: start
+                        start: start,
+                        display: 30
                     )
                     let viewModels = productsPage.items.map {
                         return ProductCollectionViewCellViewModel(
                             prodcut: $0,
-                            productLocalUseCase: productLocalUseCase,
+                            likeUseCase: likeUseCase,
                             errorHandler: output.errorHandlerRelay
                         )
                     }

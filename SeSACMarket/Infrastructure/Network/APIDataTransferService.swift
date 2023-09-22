@@ -7,37 +7,30 @@
 
 import Foundation
 
-protocol APIDataTransferService {
-    func callRequest<D: Decodable, A: APIProtocol>(of: D.Type, api: A) async throws -> D
-}
-
-final class DefaultAPIDataTransferService: APIDataTransferService {
-    
+protocol APIDataTransferService {}
+extension APIDataTransferService {
     func callRequest<D: Decodable, A: APIProtocol>(
-        of: D.Type,
-        api: A
-    ) async throws -> D {
-        do {
-            let request = try api.toRequest()
-            let (data, response) = try await URLSession.shared.data(for: request)
-            logResponse(
-                request: request,
-                response: response,
-                data: data,
-                api: api
-            )
-            try filterStatusCode(response: response, data: data)
-            let value = try decodingData(decodable: of, data: data)
-            return value
-        } catch {
-            throw error
+            of: D.Type,
+            api: A
+        ) async throws -> D {
+            do {
+                let request = try api.toRequest()
+                let (data, response) = try await URLSession.shared.data(for: request)
+                logResponse(
+                    request: request,
+                    response: response,
+                    data: data,
+                    api: api
+                )
+                try filterStatusCode(response: response, data: data)
+                let value = try decodingData(decodable: of, data: data)
+                return value
+            } catch {
+                throw error
+            }
         }
-    }
-}
-
-private extension APIDataTransferService {
-        
-    func filterStatusCode(
+    
+    private func filterStatusCode(
         response: URLResponse,
         data: Data,
         range: Range<Int> = 200..<300
@@ -58,7 +51,7 @@ private extension APIDataTransferService {
         }
     }
     
-    func decodingData<D: Decodable>(
+    private func decodingData<D: Decodable>(
         decodable: D.Type,
         data: Data
     ) throws -> D {
@@ -73,7 +66,7 @@ private extension APIDataTransferService {
         }
     }
     
-    func logResponse(
+    private func logResponse(
         request: URLRequest,
         response: URLResponse,
         data: Data,
@@ -106,8 +99,8 @@ private extension APIDataTransferService {
         print(log)
         
     }
+    
 }
-
 struct ErrorRseponse: Decodable {
     let errorMessage: String
     let errorCode: String

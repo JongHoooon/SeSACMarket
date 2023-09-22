@@ -8,34 +8,60 @@
 import UIKit
 
 protocol AuthCoordinatorDependencies {
-    func makeLoginViewController(actions: LoginViewModelActions) -> LoginViewController
+    func makeLoginViewController(coordinator: AuthCoordinator) -> LoginViewController
 }
 
 protocol AuthCoordinatorDelegate: AnyObject {
     func showTabBarScene()
+    func finish(child: CoordinatorProtocol)
 }
 
-final class AuthCoordinator: CoordinatorProtocol,
-                             ChangeRootableProtocol {
+protocol AuthCoordinator: AnyObject {
+    func showTabBar()
+}
+
+final class DefaultAuthCoordinator: CoordinatorProtocol,
+                                    ChangeRootableProtocol {
     
     var childCoordinators: [CoordinatorProtocol] = []
     private let dependencies: AuthCoordinatorDependencies
     weak var delegate: AuthCoordinatorDelegate?
-    var navigationController = UINavigationController()
-    let type: CoordinatorType = .auth
+    let navigationController: UINavigationController
     
     init(
-        dependencies: AuthCoordinatorDependencies
+        dependencies: AuthCoordinatorDependencies,
+        navigationController: UINavigationController
     ) {
         self.dependencies = dependencies
+        self.navigationController = navigationController
+    }
+    
+    deinit {
+        print("Deinit - \(String(describing: #fileID.components(separatedBy: "/").last ?? ""))")
     }
     
     func start() {
+        let vc = dependencies.makeLoginViewController(coordinator: self)
+        navigationController.viewControllers = [vc]
+        changeWindowRoot(rootViewController: navigationController)
+    }
+    
+    func finish() {
         guard let delegate
-        else { fatalError("AuthCoordinatorDelegate in not linked") }
-        let actions = LoginViewModelActions(showTabBar: delegate.showTabBarScene)
-        let vc = dependencies.makeLoginViewController(actions: actions)
-        let nav = UINavigationController(rootViewController: vc)
-        changeWindowRoot(rootViewController: nav)
+        else {
+            fatalError("AuthCoordinatorDelegate in not linked")
+        }
+        delegate.finish(child: self)
+    }
+}
+
+extension DefaultAuthCoordinator: AuthCoordinator {
+    func showTabBar() {
+        guard let delegate
+        else {
+            fatalError("AuthCoordinatorDelegate in not linked")
+        }
+        finish()
+        delegate.showTabBarScene()
     }
 }

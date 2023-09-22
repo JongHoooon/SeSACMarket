@@ -13,19 +13,18 @@ final class DefaultProductLocalRepository: ProductLocalRepository {
 
     private var realm: Realm = try! Realm()
     private let realmTaskQueue: DispatchQueue
-
-    init?() {
+    
+    init() {
         realmTaskQueue = DispatchQueue(label: "realm-serial-queue")
         do {
             try realmTaskQueue.sync {
                 realm = try Realm(queue: realmTaskQueue)
             }
-            if let url = realm.configuration.fileURL {
-                print("📁📁📁 \(String(describing: url)) 📁📁📁")
+            if let fileURL = realm.configuration.fileURL {
+                print("📁📁📁 \(String(describing: fileURL)) 📁📁📁")
             }
         } catch {
-            print(error)
-            return nil
+            fatalError(error.localizedDescription)
         }
     }
 
@@ -64,8 +63,8 @@ final class DefaultProductLocalRepository: ProductLocalRepository {
                 do {
                     try self.realm.write {
                         self.realm.delete(object)
-                        continuation.resume()
                     }
+                    continuation.resume()
                 } catch {
                     continuation.resume(throwing: error)
                 }

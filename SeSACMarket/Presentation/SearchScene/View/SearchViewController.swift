@@ -14,7 +14,7 @@ import SnapKit
 final class SearchViewController: BaseViewController {
     
     // MARK: - Properties
-    private let viewModel: DefaultSearchViewModel
+    private let viewModel: SearchViewModel
     private let disposeBag = DisposeBag()
     
     // MARK: - UI
@@ -25,10 +25,14 @@ final class SearchViewController: BaseViewController {
     
     // MARK: - Init
     init(
-        viewModel: DefaultSearchViewModel
+        viewModel: SearchViewModel
     ) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+    }
+    
+    deinit {
+        print("Deinit - \(String(describing: #fileID.components(separatedBy: "/").last ?? ""))")
     }
     
     @available(*, unavailable)
@@ -99,9 +103,10 @@ final class SearchViewController: BaseViewController {
 
 // MARK: - Bind
 private extension SearchViewController {
+    
     func bind() {
         
-        let input = DefaultSearchViewModel.Input(
+        let input = SearchViewModel.Input(
             viewDidLoad: self.rx.viewDidLoad.asObservable(),
             searchButtonClicked: searchBar.rx.searchButtonClicked.asObservable(),
             searchBarText: searchBar.rx.text.orEmpty.asObservable(),

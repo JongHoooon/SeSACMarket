@@ -9,18 +9,8 @@ import UIKit
 
 final class SettingSceneDIContainer {
 
-    struct Dependendcies {
-
-    }
-    
-    private let dependencies: Dependendcies
-    
-    init(dependcencies: Dependendcies) {
-        self.dependencies = dependcencies
-    }
-    
-    func makeSettingSceneCoordinator(navigationController: UINavigationController) -> SettingCoordinator {
-        return SettingCoordinator(
+    func makeSettingSceneCoordinator(navigationController: UINavigationController) -> DefaultSettingCoordinator {
+        return DefaultSettingCoordinator(
             dependencies: self,
             navigationController: navigationController
         )
@@ -28,4 +18,22 @@ final class SettingSceneDIContainer {
 }
 
 extension SettingSceneDIContainer: SettingCoordinatorDependencies {
+    
+    // MARK: - Setting View
+    func makeSettingViewController(coordinator: SettingCoordinator) -> SettingViewController {
+        return SettingViewController(viewModel: makeSettingViewMode(coordinator: coordinator))
+    }
+    
+    private func makeSettingViewMode(coordinator: SettingCoordinator) -> SettingViewModel {
+        return SettingViewModel(coordinator: coordinator)
+    }
+    
+    // MARK: - Logout View
+    func makeLogoutViewController(coordinator: LogoutCoordinator) -> LogoutViewController {
+        return LogoutViewController(viewModel: makeLogoutViewModel(coordinator: coordinator))
+    }
+    
+    private func makeLogoutViewModel(coordinator: LogoutCoordinator) -> LogoutViewModel {
+        return LogoutViewModel(coordinator: coordinator)
+    }
 }

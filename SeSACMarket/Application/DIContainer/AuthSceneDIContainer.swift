@@ -8,19 +8,23 @@
 import UIKit
 
 final class AuthSceneDIContainer {
-    func makeAuthCoordinator() -> AuthCoordinator {
-        return AuthCoordinator(
-            dependencies: self
+    
+    func makeAuthCoordinator(navigationController: UINavigationController) -> DefaultAuthCoordinator {
+        return DefaultAuthCoordinator(
+            dependencies: self,
+            navigationController: navigationController
         )
     }
 }
 
 extension AuthSceneDIContainer: AuthCoordinatorDependencies {
-    func makeLoginViewController(actions: LoginViewModelActions) -> LoginViewController {
-        return LoginViewController(viewModel: makeLoginViewModel(actions: actions))
+    
+    // MARK: - Login View
+    func makeLoginViewController(coordinator: AuthCoordinator) -> LoginViewController {
+        return LoginViewController(viewModel: makeLoginViewModel(coordinator: coordinator))
     }
     
-    func makeLoginViewModel(actions: LoginViewModelActions) -> LoginViewModel {
-        return LoginViewModel(actions: actions)
+    private func makeLoginViewModel(coordinator: AuthCoordinator) -> LoginViewModel {
+        return LoginViewModel(coordinator: coordinator)
     }
 }
