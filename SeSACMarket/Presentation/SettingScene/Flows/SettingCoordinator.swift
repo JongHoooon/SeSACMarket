@@ -10,6 +10,7 @@ import UIKit
 protocol SettingCoordinatorDependencies {
     func makeSettingViewController(coordinator: SettingCoordinator) -> SettingViewController
     func makeLogoutViewController(coordinator: SettingCoordinator) -> LogoutViewController
+    func makeLogoutAlertController(confirmCompletion: @escaping () -> Void) -> UIAlertController
 }
 
 protocol SettingCoordinatorDelegate: AnyObject {
@@ -69,25 +70,9 @@ extension DefaultSettingCoordinator: SettingCoordinator {
     }
     
     func presentLogoutAlert() {
-        let alertController = UIAlertController(
-            title: nil,
-            message: "정말로 로그아웃 하시겠습니까??",
-            preferredStyle: .alert
-        )
-        let cancelAction = UIAlertAction(
-            title: "취소",
-            style: .cancel
-        )
-        let confirmAction = UIAlertAction(
-            title: "로그아웃",
-            style: .destructive,
-            handler: { [weak self] _ in
-                self?.showAuth()
+        let alertController = dependencies.makeLogoutAlertController(confirmCompletion: { [weak self] in
+            self?.showAuth()
         })
-        [
-            cancelAction,
-            confirmAction
-        ].forEach { alertController.addAction($0) }
         navigationController.present(alertController, animated: true)
     }
     

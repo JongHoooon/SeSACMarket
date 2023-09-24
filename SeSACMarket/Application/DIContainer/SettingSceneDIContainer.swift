@@ -19,6 +19,7 @@ final class SettingSceneDIContainer {
 
 extension SettingSceneDIContainer: SettingCoordinatorDependencies {
     
+    
     // MARK: - Setting View
     func makeSettingViewController(coordinator: SettingCoordinator) -> SettingViewController {
         return SettingViewController(viewModel: makeSettingViewMode(coordinator: coordinator))
@@ -36,5 +37,28 @@ extension SettingSceneDIContainer: SettingCoordinatorDependencies {
     private func makeLogoutViewModel(coordinator: SettingCoordinator) -> LogoutViewModel {
         return LogoutViewModel(coordinator: coordinator)
     }
-
+    
+    // MARK: - Logout Alert
+    func makeLogoutAlertController(confirmCompletion: @escaping () -> Void) -> UIAlertController {
+        let logoutAlertController = UIAlertController(
+            title: nil,
+            message: "정말로 로그아웃 하시겠습니까??",
+            preferredStyle: .alert
+        )
+        let cancelAction = UIAlertAction(
+            title: "취소",
+            style: .cancel
+        )
+        let confirmAction = UIAlertAction(
+            title: "로그아웃",
+            style: .destructive,
+            handler: { _ in
+                confirmCompletion()
+        })
+        [
+            cancelAction,
+            confirmAction
+        ].forEach { logoutAlertController.addAction($0) }
+        return logoutAlertController
+    }
 }
