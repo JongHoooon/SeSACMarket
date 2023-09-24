@@ -274,7 +274,7 @@
 				ED2A01002AA9BDAD004A346D /* TabBarScene */,
 				ED2A00F82AA9BC2B004A346D /* SearchScene */,
 				ED4DACA22AADEDF70095CD77 /* FavoriteScene */,
-				ED4DACB42AAE931A0095CD77 /* DetailView */,
+				ED4DACB42AAE931A0095CD77 /* DetailScene */,
 				ED6E20172AB07EAD008D34F2 /* SettingScene */,
 				ED2A013B2AAAF495004A346D /* Utils */,
 			);
@@ -609,14 +609,14 @@
 			path = View;
 			sourceTree = "<group>";
 		};
-		ED4DACB42AAE931A0095CD77 /* DetailView */ = {
+		ED4DACB42AAE931A0095CD77 /* DetailScene */ = {
 			isa = PBXGroup;
 			children = (
 				EDDABCAA2AB417730003AAAC /* Flows */,
 				ED4DACB62AAE93300095CD77 /* ViewModel */,
 				ED4DACB72AAE933D0095CD77 /* View */,
 			);
-			path = DetailView;
+			path = DetailScene;
 			sourceTree = "<group>";
 		};
 		ED4DACB62AAE93300095CD77 /* ViewModel */ = {

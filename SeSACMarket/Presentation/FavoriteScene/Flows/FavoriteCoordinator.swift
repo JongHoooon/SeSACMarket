@@ -25,15 +25,16 @@ final class DefaultFavoriteCoordinator: CoordinatorProtocol {
     private let dependencies: FavoriteCoordinatorDependencies
     weak var delegate: FavoriteCoordinatorDelegate?
     weak var finishDelegate: CoordinatorFinishDelegate?
-    var childCoordinators: [CoordinatorProtocol] = []
     var navigationController: UINavigationController
+    var childCoordinators: [CoordinatorProtocol]
     
     init(
         navigationController: UINavigationController,
         dependencies: FavoriteCoordinatorDependencies
     ) {
-        self.navigationController = navigationController
         self.dependencies = dependencies
+        self.navigationController = navigationController
+        childCoordinators = []
     }
     
     deinit {

@@ -11,21 +11,16 @@ protocol SearchCoordinatorDependencies {
     func makeSearchViewController(coordinator: SearchCoordinator) -> SearchViewController
 }
 
-protocol SearchCoordinatorDelegate: AnyObject {
-    
-}
-
 protocol SearchCoordinator: AnyObject {
     func pushToDetail(product: Product)
 }
 
 final class DefaultSearchCoordinator: CoordinatorProtocol {
     
-    var childCoordinators: [CoordinatorProtocol] = []
-    weak var delegate: SearchCoordinatorDelegate?
-    weak var finishDelegate: CoordinatorFinishDelegate?
     private let dependencies: SearchCoordinatorDependencies
+    weak var finishDelegate: CoordinatorFinishDelegate?
     let navigationController: UINavigationController
+    var childCoordinators: [CoordinatorProtocol]
     
     init(
         dependencies: SearchCoordinatorDependencies,
@@ -33,6 +28,7 @@ final class DefaultSearchCoordinator: CoordinatorProtocol {
     ) {
         self.dependencies = dependencies
         self.navigationController = navigationController
+        self.childCoordinators = []
     }
     
     deinit {

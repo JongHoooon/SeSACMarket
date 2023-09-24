@@ -13,7 +13,6 @@ protocol AuthCoordinatorDependencies {
 
 protocol AuthCoordinatorDelegate: AnyObject {
     func showTabBarScene()
-    func finish(child: CoordinatorProtocol)
 }
 
 protocol AuthCoordinator: AnyObject {
@@ -23,10 +22,11 @@ protocol AuthCoordinator: AnyObject {
 final class DefaultAuthCoordinator: CoordinatorProtocol,
                                     ChangeRootableProtocol {
     
-    var childCoordinators: [CoordinatorProtocol] = []
     private let dependencies: AuthCoordinatorDependencies
     weak var delegate: AuthCoordinatorDelegate?
+    weak var finishDelegate: CoordinatorFinishDelegate?
     let navigationController: UINavigationController
+    var childCoordinators: [CoordinatorProtocol]
     
     init(
         dependencies: AuthCoordinatorDependencies,
@@ -34,6 +34,7 @@ final class DefaultAuthCoordinator: CoordinatorProtocol,
     ) {
         self.dependencies = dependencies
         self.navigationController = navigationController
+        self.childCoordinators = []
     }
     
     deinit {
@@ -44,14 +45,6 @@ final class DefaultAuthCoordinator: CoordinatorProtocol,
         let vc = dependencies.makeLoginViewController(coordinator: self)
         navigationController.viewControllers = [vc]
         changeWindowRoot(rootViewController: navigationController)
-    }
-    
-    func finish() {
-        guard let delegate
-        else {
-            fatalError("AuthCoordinatorDelegate in not linked")
-        }
-        delegate.finish(child: self)
     }
 }
 

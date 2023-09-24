@@ -28,8 +28,8 @@ final class DefaultSettingCoordinator: CoordinatorProtocol {
     private let dependencies: SettingCoordinatorDependencies
     weak var delegate: SettingCoordinatorDelegate?
     weak var finishDelegate: CoordinatorFinishDelegate?
-    var childCoordinators: [CoordinatorProtocol] = []
     var navigationController: UINavigationController
+    var childCoordinators: [CoordinatorProtocol]
     
     init(
         dependencies: SettingCoordinatorDependencies,
@@ -37,6 +37,7 @@ final class DefaultSettingCoordinator: CoordinatorProtocol {
     ) {
         self.dependencies = dependencies
         self.navigationController = navigationController
+        self.childCoordinators = []
     }
     
     deinit {

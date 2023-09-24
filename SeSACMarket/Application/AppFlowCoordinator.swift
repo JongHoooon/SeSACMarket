@@ -10,8 +10,9 @@ import UIKit
 final class AppFlowCoordinator: CoordinatorProtocol {
     
     private let appDIContainer: AppDIContainer
-    var childCoordinators: [CoordinatorProtocol] = []
+    var finishDelegate: CoordinatorFinishDelegate?
     let navigationController: UINavigationController
+    var childCoordinators: [CoordinatorProtocol]
     
     init(
         appDIContainer: AppDIContainer,
@@ -19,6 +20,7 @@ final class AppFlowCoordinator: CoordinatorProtocol {
     ) {
         self.appDIContainer = appDIContainer
         self.navigationController = navigationController
+        self.childCoordinators = []
         print("Init - \(String(describing: #fileID.components(separatedBy: "/").last ?? ""))")
     }
     
@@ -34,13 +36,6 @@ final class AppFlowCoordinator: CoordinatorProtocol {
         case false:     showAuthScene()
         }
     }
-    
-    func finish() {}
-    
-    func finish(child: CoordinatorProtocol) {
-        navigationController.viewControllers.removeAll()
-        removeChildCoordinator(child: child)
-    }
 }
 
 extension AppFlowCoordinator: TabBarCoordinatorDelegate {
@@ -48,6 +43,7 @@ extension AppFlowCoordinator: TabBarCoordinatorDelegate {
         let authSceneDIContainer = appDIContainer.makeAuthSceneDIContainer()
         let flow = authSceneDIContainer.makeAuthCoordinator(navigationController: navigationController)
         flow.delegate = self
+        flow.finishDelegate = self
         addChildCoordinator(child: flow)
         navigationController.isNavigationBarHidden = false
         flow.start()
@@ -59,9 +55,11 @@ extension AppFlowCoordinator: AuthCoordinatorDelegate {
         let tabBarSceneDIContainer = appDIContainer.makeTabBarSceneDIContainer()
         let flow = tabBarSceneDIContainer.makeTabBarFlowCoordinator(navigationController: navigationController)
         flow.delegate = self
+        flow.finishDelegate = self
         addChildCoordinator(child: flow)
         navigationController.isNavigationBarHidden = true
         flow.start()
     }
 }
 
+extension AppFlowCoordinator: CoordinatorFinishDelegate {}

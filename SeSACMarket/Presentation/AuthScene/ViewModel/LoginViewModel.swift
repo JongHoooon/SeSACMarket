@@ -9,10 +9,6 @@ import Foundation
 
 import RxSwift
 
-struct LoginViewModelActions {
-    let showTabBar: () -> Void
-}
-
 final class LoginViewModel: ViewModelProtocol {
     
     struct Input {

@@ -14,17 +14,17 @@ protocol TabBarCoordinatorDependencies {
 }
 
 protocol TabBarCoordinatorDelegate: AnyObject {
-    func finish(child: CoordinatorProtocol)
     func showAuthScene()
 }
 
 final class TabBarCoordinator: CoordinatorProtocol,
                                ChangeRootableProtocol {
 
-    var childCoordinators: [CoordinatorProtocol] = []
-    weak var delegate: TabBarCoordinatorDelegate?
     private let dependencies: TabBarCoordinatorDependencies
+    weak var delegate: TabBarCoordinatorDelegate?
+    weak var finishDelegate: CoordinatorFinishDelegate?
     let navigationController: UINavigationController
+    var childCoordinators: [CoordinatorProtocol]
 
     private let searchSceneNavigationController = TabBarEnum.search.configureTabBarItem(navigationController: UINavigationController())
     private let favoriteSceneNavigationController = TabBarEnum.favorite.configureTabBarItem(navigationController: UINavigationController())
@@ -36,6 +36,7 @@ final class TabBarCoordinator: CoordinatorProtocol,
     ) {
         self.dependencies = dependencies
         self.navigationController = navigationController
+        self.childCoordinators = []
         print("init - \(String(describing: #fileID.components(separatedBy: "/").last ?? ""))")
     }
     
@@ -56,25 +57,10 @@ final class TabBarCoordinator: CoordinatorProtocol,
             name: CAMediaTimingFunctionName.easeInEaseOut
         )
         navigationController.view.window?.layer.add(transition, forKey: kCATransition)
-        navigationController.pushViewController(tabBarController, animated: false)
+        navigationController.viewControllers = [tabBarController]
         startSearchScene(navigationController: searchSceneNavigationController)
         startFavoriteScene(navigationController: favoriteSceneNavigationController)
     }
-    
-    func finish() {
-        searchSceneNavigationController.viewControllers.removeAll()
-        favoriteSceneNavigationController.viewControllers.removeAll()
-        childCoordinators.removeAll()
-        guard let delegate
-        else {
-            fatalError("TabBarCoordinatorDelegate is not linked")
-        }
-        delegate.finish(child: self)
-    }
-}
-
-extension TabBarCoordinator: SearchCoordinatorDelegate {
-    
 }
 
 extension TabBarCoordinator: FavoriteCoordinatorDelegate {
@@ -92,7 +78,7 @@ private extension TabBarCoordinator {
     func startSearchScene(navigationController: UINavigationController) {
         let searchSceneDIContainer = dependencies.makeSearchSceneDIContainer()
         let flow = searchSceneDIContainer.makeSearchSceneCoordinator(navigationController: navigationController)
-        flow.delegate = self
+        flow.finishDelegate = self
         flow.start()
         addChildCoordinator(child: flow)
     }
@@ -100,8 +86,10 @@ private extension TabBarCoordinator {
         let favoriteSceneDIContainer = dependencies.makeFavoriteSceneDIContainer()
         let flow = favoriteSceneDIContainer.makeFavoriteSceneCoordinator(navigationController: navigationController)
         flow.delegate = self
+        flow.finishDelegate = self
         flow.start()
         addChildCoordinator(child: flow)
     }
 }
 
+extension TabBarCoordinator: CoordinatorFinishDelegate {}

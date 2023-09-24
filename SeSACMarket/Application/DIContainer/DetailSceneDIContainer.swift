@@ -25,12 +25,12 @@ final class DetailSceneDIContainer {
 extension DetailSceneDIContainer: DetailCoordinatorDependencies {
     
     // MARK: - UseCase
-    func makeLikeUseCase() -> LikeUseCase {
+    private func makeLikeUseCase() -> LikeUseCase {
         return DefaultLikeUseCase(productLocalRepository: makeProductLocalRepository())
     }
     
     // MARK: - Repository
-    func makeProductLocalRepository() -> ProductLocalRepository {
+    private func makeProductLocalRepository() -> ProductLocalRepository {
         return DefaultProductLocalRepository()
     }
     
