@@ -9,24 +9,17 @@ import UIKit
 
 protocol SettingCoordinatorDependencies {
     func makeSettingViewController(coordinator: SettingCoordinator) -> SettingViewController
-    func makeLogoutViewController(coordinator: LogoutCoordinator) -> LogoutViewController
+    func makeLogoutViewController(coordinator: SettingCoordinator) -> LogoutViewController
 }
 
 protocol SettingCoordinatorDelegate: AnyObject {
     func showAuth()
-    func finish(child: CoordinatorProtocol)
 }
 
-protocol SettingDismiss {
+protocol SettingCoordinator: AnyObject {
+    func pushToLogout()
     func dismiss()
     func finish()
-}
-
-protocol SettingCoordinator: AnyObject, SettingDismiss {
-    func showLogout()
-}
-
-protocol LogoutCoordinator: AnyObject, SettingDismiss {
     func showAuth()
 }
 
@@ -34,10 +27,9 @@ final class DefaultSettingCoordinator: CoordinatorProtocol {
 
     private let dependencies: SettingCoordinatorDependencies
     weak var delegate: SettingCoordinatorDelegate?
+    weak var finishDelegate: CoordinatorFinishDelegate?
     var childCoordinators: [CoordinatorProtocol] = []
     var navigationController: UINavigationController
-    
-    private let settingNavigationViewController = UINavigationController()
     
     init(
         dependencies: SettingCoordinatorDependencies,
@@ -53,44 +45,28 @@ final class DefaultSettingCoordinator: CoordinatorProtocol {
     
     func start() {
         let vc = dependencies.makeSettingViewController(coordinator: self)
-        settingNavigationViewController.pushViewController(vc, animated: false)
-        settingNavigationViewController.modalPresentationStyle = .fullScreen
-        navigationController.present(settingNavigationViewController, animated: true)
-    }
-    
-    func finish() {
-        guard let delegate
-        else {
-            fatalError("SettingCoordinatorDelegate is not linked")
-        }
-        childCoordinators.removeAll()
-        settingNavigationViewController.viewControllers.removeAll()
-        delegate.finish(child: self)
-    }
-    
-    func dismiss() {
-        settingNavigationViewController.dismiss(animated: true)
-        finish()
+        navigationController.viewControllers = [vc]
     }
 }
 
 extension DefaultSettingCoordinator: SettingCoordinator {
-    func showLogout() {
+    func pushToLogout() {
         let vc = dependencies.makeLogoutViewController(coordinator: self)
-        settingNavigationViewController.pushViewController(vc, animated: true)
+        navigationController.pushViewController(vc, animated: true)
     }
-}
-
-extension DefaultSettingCoordinator: LogoutCoordinator {
+    
     func showAuth() {
         guard let delegate = delegate
         else {
             fatalError("SettingCoordinatorDelegate is not linked")
         }
-        delegate.finish(child: self)
-        settingNavigationViewController.viewControllers.removeAll()
-        settingNavigationViewController.dismiss(animated: false)
-        childCoordinators.removeAll()
+        navigationController.viewControllers.removeAll()
+        navigationController.dismiss(animated: false)
+        finish()
         delegate.showAuth()
+    }
+    
+    func dismiss() {
+        navigationController.dismiss(animated: true)
     }
 }

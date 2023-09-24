@@ -14,6 +14,7 @@ final class LogoutViewModel: ViewModelProtocol {
     struct Input {
         let logoutButtonTapped: Observable<Void>
         let dismissButtonTapped: Observable<Void>
+        let viewDidDismiss: Observable<Void>
     }
     
     struct Output {
@@ -21,10 +22,10 @@ final class LogoutViewModel: ViewModelProtocol {
     }
     
     // MARK: - Properties
-    private weak var coordinator: LogoutCoordinator?
+    private weak var coordinator: SettingCoordinator?
     
     // MARK: - Init
-    init(coordinator: LogoutCoordinator) {
+    init(coordinator: SettingCoordinator) {
         self.coordinator = coordinator
     }
     
@@ -57,6 +58,14 @@ final class LogoutViewModel: ViewModelProtocol {
             })
             .disposed(by: disposeBag)
         
+        input.viewDidDismiss
+            .bind(
+                with: self,
+                onNext: { owner, _ in
+                    owner.coordinator?.finish()
+            })
+            .disposed(by: disposeBag)
+            
         return output
     }
 }

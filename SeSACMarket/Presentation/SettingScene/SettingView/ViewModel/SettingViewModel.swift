@@ -9,16 +9,12 @@ import Foundation
 
 import RxSwift
 
-struct SettingViewModelActions {
-    let showLogout: () -> Void
-    let finish: () -> Void
-}
-
 final class SettingViewModel: ViewModelProtocol {
     
     struct Input {
         let goLogoutButtonTapped: Observable<Void>
         let dismissButtonTapped: Observable<Void>
+        let viewDidDismiss: Observable<Void>
     }
     
     struct Output {
@@ -45,7 +41,7 @@ final class SettingViewModel: ViewModelProtocol {
             .emit(
                 with: self,
                 onNext: { owner, _ in
-                    owner.coordinator?.showLogout()
+                    owner.coordinator?.pushToLogout()
             })
             .disposed(by: disposeBag)
         
@@ -55,6 +51,15 @@ final class SettingViewModel: ViewModelProtocol {
                 with: self,
                 onNext: { owner, _ in
                     owner.coordinator?.dismiss()
+            })
+            .disposed(by: disposeBag)
+        
+        input.viewDidDismiss
+            .asDriver(onErrorJustReturn: Void())
+            .drive(
+                with: self,
+                onNext: { owner, _ in
+                    owner.coordinator?.finish()
             })
             .disposed(by: disposeBag)
         

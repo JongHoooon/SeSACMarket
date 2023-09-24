@@ -81,6 +81,8 @@
 		ED6E202A2AB08A51008D34F2 /* LogoutViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6E20292AB08A51008D34F2 /* LogoutViewModel.swift */; };
 		ED6E202C2AB08A8D008D34F2 /* LogoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6E202B2AB08A8D008D34F2 /* LogoutViewController.swift */; };
 		ED6E20312AB09D4E008D34F2 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6E20302AB09D4E008D34F2 /* LoginViewModel.swift */; };
+		ED8192012AC018F000C7C830 /* CoordinatorFinishDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED8192002AC018F000C7C830 /* CoordinatorFinishDelegate.swift */; };
+		ED8192032AC0192300C7C830 /* ChangeRootableProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED8192022AC0192300C7C830 /* ChangeRootableProtocol.swift */; };
 		ED9FBD682AAC6ADB00B63CC5 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED9FBD672AAC6ADB00B63CC5 /* SearchViewModel.swift */; };
 		ED9FBD6A2AAC7D2C00B63CC5 /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED9FBD692AAC7D2C00B63CC5 /* Constant.swift */; };
 		ED9FBD6D2AACA74900B63CC5 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED9FBD6C2AACA74900B63CC5 /* String+Extension.swift */; };
@@ -163,6 +165,8 @@
 		ED6E20292AB08A51008D34F2 /* LogoutViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogoutViewModel.swift; sourceTree = "<group>"; };
 		ED6E202B2AB08A8D008D34F2 /* LogoutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogoutViewController.swift; sourceTree = "<group>"; };
 		ED6E20302AB09D4E008D34F2 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
+		ED8192002AC018F000C7C830 /* CoordinatorFinishDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinatorFinishDelegate.swift; sourceTree = "<group>"; };
+		ED8192022AC0192300C7C830 /* ChangeRootableProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeRootableProtocol.swift; sourceTree = "<group>"; };
 		ED9FBD672AAC6ADB00B63CC5 /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
 		ED9FBD692AAC7D2C00B63CC5 /* Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
 		ED9FBD6C2AACA74900B63CC5 /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
@@ -493,6 +497,8 @@
 			isa = PBXGroup;
 			children = (
 				ED2A00E92AA9B267004A346D /* CoordinatorProtocol.swift */,
+				ED8192022AC0192300C7C830 /* ChangeRootableProtocol.swift */,
+				ED8192002AC018F000C7C830 /* CoordinatorFinishDelegate.swift */,
 				ED2A01432AAAFA87004A346D /* ReusableProtocol.swift */,
 				ED4DACB02AAE12F40095CD77 /* ViewModelProtocol.swift */,
 			);
@@ -767,7 +773,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1420;
-				LastUpgradeCheck = 1420;
+				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					ED2A00AC2AA99CEC004A346D = {
 						CreatedOnToolsVersion = 14.2;
@@ -847,6 +853,7 @@
 				ED2A01512AAB005A004A346D /* ProductAPI.swift in Sources */,
 				ED2A01052AA9BE78004A346D /* SearchSceneDIContainer.swift in Sources */,
 				ED2A014B2AAAFEBA004A346D /* HTTPHeader.swift in Sources */,
+				ED8192032AC0192300C7C830 /* ChangeRootableProtocol.swift in Sources */,
 				ED4DACA12AAD92110095CD77 /* Int+Extension.swift in Sources */,
 				ED6E20202AB080E2008D34F2 /* SettingCoordinator.swift in Sources */,
 				ED4DACB32AAE250F0095CD77 /* Reactive+Extension.swift in Sources */,
@@ -877,6 +884,7 @@
 				ED2A014D2AAAFF8E004A346D /* URLRequest+Extension.swift in Sources */,
 				ED2A00FF2AA9BD3E004A346D /* SearchViewController.swift in Sources */,
 				ED2A00B12AA99CEC004A346D /* AppDelegate.swift in Sources */,
+				ED8192012AC018F000C7C830 /* CoordinatorFinishDelegate.swift in Sources */,
 				ED2A01142AA9F08D004A346D /* DefaultSearchBar.swift in Sources */,
 				ED6E201C2AB07F62008D34F2 /* SettingViewModel.swift in Sources */,
 				ED2A01392AAAF276004A346D /* BaseCollectionViewCell.swift in Sources */,
@@ -909,6 +917,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -941,6 +950,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -969,6 +979,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -1001,6 +1012,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;

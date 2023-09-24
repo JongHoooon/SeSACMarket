@@ -80,9 +80,16 @@ private extension LogoutViewController {
     func bind() {
         
         // MARK: - Input
+        let viewDidDismiss = self.rx.viewDidDisappear
+            .filter { [weak self] _ in
+                return self?.navigationController?.isBeingDismissed == true
+            }
+            .asObservable()
+        
         let input = LogoutViewModel.Input(
             logoutButtonTapped: logoutButton.rx.tap.asObservable(),
-            dismissButtonTapped: dismissBarButton.rx.tap.asObservable()
+            dismissButtonTapped: dismissBarButton.rx.tap.asObservable(),
+            viewDidDismiss: viewDidDismiss
         )
         
         // MARK: - Output

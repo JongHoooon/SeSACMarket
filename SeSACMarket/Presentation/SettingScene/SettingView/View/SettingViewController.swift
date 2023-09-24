@@ -80,13 +80,19 @@ private extension SettingViewController {
     func bind() {
 
         // MARK: - Input
+        let viewDidDismiss = self.rx.viewDidDisappear
+            .filter { [weak self] _ in
+                return self?.navigationController?.isBeingDismissed == true
+            }
+            .asObservable()
+        
         let input = SettingViewModel.Input(
-            goLogoutButtonTapped: goLogoutButton.rx.tap.asObservable(), 
-            dismissButtonTapped: dismissBarButton.rx.tap.asObservable()
+            goLogoutButtonTapped: goLogoutButton.rx.tap.asObservable(),
+            dismissButtonTapped: dismissBarButton.rx.tap.asObservable(),
+            viewDidDismiss: viewDidDismiss
         )
         
         // MARK: - Output
         let _ = viewModel.transform(input: input, disposeBag: disposeBag)
     }
 }
-

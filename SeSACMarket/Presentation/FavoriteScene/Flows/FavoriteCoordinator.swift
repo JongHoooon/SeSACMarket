@@ -55,14 +55,18 @@ extension DefaultFavoriteCoordinator: FavoriteCoordinator {
         let flow = detailDIContainer.makeDetailCoordinator(navigationController: navigationController)
         addChildCoordinator(child: flow)
         flow.delegate = self
+        flow.finishDelegate = self
         flow.start()
     }
     
-    func showSetting() {
+    func presentToSetting() {
+        let settingNavigationController = UINavigationController()
         let settingDIContainer = SettingSceneDIContainer()
-        let flow = settingDIContainer.makeSettingSceneCoordinator(navigationController: navigationController)
+        let flow = settingDIContainer.makeSettingSceneCoordinator(navigationController: settingNavigationController)
         flow.delegate = self
+        flow.finishDelegate = self
         addChildCoordinator(child: flow)
+        navigationController.present(settingNavigationController, animated: true)
         flow.start()
     }
 }
@@ -81,3 +85,5 @@ extension DefaultFavoriteCoordinator: DetailCoordinatorDelegate {
         removeChildCoordinator(child: child)
     }
 }
+
+extension DefaultFavoriteCoordinator: CoordinatorFinishDelegate {}

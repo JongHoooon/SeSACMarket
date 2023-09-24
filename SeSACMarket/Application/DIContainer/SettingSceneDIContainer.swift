@@ -29,11 +29,12 @@ extension SettingSceneDIContainer: SettingCoordinatorDependencies {
     }
     
     // MARK: - Logout View
-    func makeLogoutViewController(coordinator: LogoutCoordinator) -> LogoutViewController {
+    func makeLogoutViewController(coordinator: SettingCoordinator) -> LogoutViewController {
         return LogoutViewController(viewModel: makeLogoutViewModel(coordinator: coordinator))
     }
     
-    private func makeLogoutViewModel(coordinator: LogoutCoordinator) -> LogoutViewModel {
+    private func makeLogoutViewModel(coordinator: SettingCoordinator) -> LogoutViewModel {
         return LogoutViewModel(coordinator: coordinator)
     }
+
 }

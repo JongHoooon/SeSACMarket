@@ -8,13 +8,13 @@
 import UIKit
 
 protocol CoordinatorProtocol: AnyObject {
+    var finishDelegate: CoordinatorFinishDelegate? { get set }
     var childCoordinators: [CoordinatorProtocol] { get set }
     var navigationController: UINavigationController { get }
     func start()
     func finish()
 }
 
-// child 관리
 extension CoordinatorProtocol {
     func addChildCoordinator(child: CoordinatorProtocol) {
         childCoordinators.append(child)
@@ -23,24 +23,10 @@ extension CoordinatorProtocol {
     func removeChildCoordinator(child: CoordinatorProtocol) {
         childCoordinators = childCoordinators.filter { $0.self !== child.self }
     }
-}
-
-protocol ChangeRootableProtocol {}
-extension ChangeRootableProtocol {
-    func changeWindowRoot(rootViewController: UIViewController, duration: TimeInterval = 1.0) {
-        let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
-        let sceneDelegate = windowScene?.delegate as? SceneDelegate
-        sceneDelegate?.window?.rootViewController = rootViewController
-        sceneDelegate?.window?.makeKeyAndVisible()
-        
-        guard let window = sceneDelegate?.window else { return }
-        
-        UIView.transition(
-            with: window,
-            duration: duration,
-            options: [.transitionCrossDissolve],
-            animations: nil,
-            completion: nil
-        )
+    
+    func finish() {
+        childCoordinators.removeAll()
+        navigationController.viewControllers.removeAll()
+        finishDelegate?.coordinatorDidFinish(child: self)
     }
 }
