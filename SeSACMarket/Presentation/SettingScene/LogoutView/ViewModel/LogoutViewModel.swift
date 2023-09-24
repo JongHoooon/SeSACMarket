@@ -45,7 +45,7 @@ final class LogoutViewModel: ViewModelProtocol {
                         false,
                         forKey: UserDefaultsKey.isLoggedIn.key
                     )
-                    owner.coordinator?.showAuth()
+                    owner.coordinator?.presentLogoutAlert()
             })
             .disposed(by: disposeBag)
         
