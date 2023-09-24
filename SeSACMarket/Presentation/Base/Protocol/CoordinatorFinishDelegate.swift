@@ -13,7 +13,6 @@ protocol CoordinatorFinishDelegate: AnyObject {
 
 extension CoordinatorFinishDelegate where Self: CoordinatorProtocol {
     func coordinatorDidFinish(child: CoordinatorProtocol) {
-        child.navigationController.viewControllers.removeAll()
         self.removeChildCoordinator(child: child)
     }
 }

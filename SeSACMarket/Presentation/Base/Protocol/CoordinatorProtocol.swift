@@ -26,7 +26,6 @@ extension CoordinatorProtocol {
     
     func finish() {
         childCoordinators.removeAll()
-        navigationController.viewControllers.removeAll()
         finishDelegate?.coordinatorDidFinish(child: self)
     }
 }
