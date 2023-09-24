@@ -16,14 +16,15 @@ protocol FavoriteCoordinatorDelegate: AnyObject {
 }
 
 protocol FavoriteCoordinator: AnyObject {
-    func showDetail(product: Product)
-    func showSetting()
+    func pushToDetail(product: Product)
+    func presentToSetting()
 }
  
 final class DefaultFavoriteCoordinator: CoordinatorProtocol {
     
     private let dependencies: FavoriteCoordinatorDependencies
     weak var delegate: FavoriteCoordinatorDelegate?
+    weak var finishDelegate: CoordinatorFinishDelegate?
     var childCoordinators: [CoordinatorProtocol] = []
     var navigationController: UINavigationController
     
@@ -50,11 +51,10 @@ final class DefaultFavoriteCoordinator: CoordinatorProtocol {
 }
 
 extension DefaultFavoriteCoordinator: FavoriteCoordinator {
-    func showDetail(product: Product) {
+    func pushToDetail(product: Product) {
         let detailDIContainer = DetailSceneDIContainer(product: product)
         let flow = detailDIContainer.makeDetailCoordinator(navigationController: navigationController)
         addChildCoordinator(child: flow)
-        flow.delegate = self
         flow.finishDelegate = self
         flow.start()
     }
@@ -77,12 +77,6 @@ extension DefaultFavoriteCoordinator: SettingCoordinatorDelegate {
         else { fatalError("FavoriteCoordinatorDelegate is not linked") }
         finish()
         delegate.showAuth()
-    }
-}
-
-extension DefaultFavoriteCoordinator: DetailCoordinatorDelegate {
-    func finish(child: CoordinatorProtocol) {
-        removeChildCoordinator(child: child)
     }
 }
 

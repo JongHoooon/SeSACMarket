@@ -12,10 +12,6 @@ protocol DetailCoordinatorDependencies {
     func makeDetailViewController(coordinator: DetailCoordinator) -> DetailViewController
 }
 
-protocol DetailCoordinatorDelegate: AnyObject {
-    func finish(child: CoordinatorProtocol)
-}
-
 protocol DetailCoordinator: AnyObject {
     func finish()
 }
@@ -23,10 +19,10 @@ protocol DetailCoordinator: AnyObject {
 final class DefaultDetailCoordinator: CoordinatorProtocol,
                                       ChangeRootableProtocol {
     
-    var childCoordinators: [CoordinatorProtocol] = []
     private let dependencies: DetailCoordinatorDependencies
-    weak var delegate: DetailCoordinatorDelegate?
+    weak var finishDelegate: CoordinatorFinishDelegate?
     var navigationController: UINavigationController
+    var childCoordinators: [CoordinatorProtocol]
     
     init(
         dependencies: DetailCoordinatorDependencies,
@@ -34,6 +30,7 @@ final class DefaultDetailCoordinator: CoordinatorProtocol,
     ) {
         self.dependencies = dependencies
         self.navigationController = navigationController
+        self.childCoordinators = []
     }
     
     deinit {
@@ -46,12 +43,4 @@ final class DefaultDetailCoordinator: CoordinatorProtocol,
     }
 }
 
-extension DefaultDetailCoordinator: DetailCoordinator {
-    func finish() {
-        guard let delegate 
-        else {
-            fatalError("DetailCoordinatorDelegate is not linked")
-        }
-        delegate.finish(child: self)
-    }
-}
+extension DefaultDetailCoordinator: DetailCoordinator {}

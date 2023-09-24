@@ -11,10 +11,6 @@ import Kingfisher
 import RxSwift
 import RxCocoa
 
-struct SearchViewModelActions {
-    let showDetail: (_ product: Product) -> ()
-}
-
 final class SearchViewModel: ViewModelProtocol {
     
     struct Input {
@@ -139,7 +135,7 @@ final class SearchViewModel: ViewModelProtocol {
             .subscribe(
                 with: self,
                 onNext: { owner, product in
-                    owner.coordinator?.showDetail(product: product)
+                    owner.coordinator?.pushToDetail(product: product)
             })
             .disposed(by: disposeBag)
         

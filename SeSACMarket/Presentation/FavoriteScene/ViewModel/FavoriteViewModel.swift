@@ -10,11 +10,6 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-struct FavoriteViewModelActions {
-    let showDetail: (_ product: Product) -> Void
-    let showSetting: () -> Void
-}
-
 final class FavoriteViewModel: ViewModelProtocol {
     
     struct Input {
@@ -84,7 +79,7 @@ final class FavoriteViewModel: ViewModelProtocol {
             .bind(
                 with: self,
                 onNext: { owner, product in
-                    owner.coordinator?.showDetail(product: product)
+                    owner.coordinator?.pushToDetail(product: product)
             })
             .disposed(by: disposeBag)
         
@@ -93,7 +88,7 @@ final class FavoriteViewModel: ViewModelProtocol {
             .drive(
                 with: self,
                 onNext: { owner, _ in
-                    owner.coordinator?.showSetting()
+                    owner.coordinator?.presentToSetting()
             })
             .disposed(by: disposeBag)
             

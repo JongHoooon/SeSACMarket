@@ -16,13 +16,14 @@ protocol SearchCoordinatorDelegate: AnyObject {
 }
 
 protocol SearchCoordinator: AnyObject {
-    func showDetail(product: Product)
+    func pushToDetail(product: Product)
 }
 
 final class DefaultSearchCoordinator: CoordinatorProtocol {
     
     var childCoordinators: [CoordinatorProtocol] = []
     weak var delegate: SearchCoordinatorDelegate?
+    weak var finishDelegate: CoordinatorFinishDelegate?
     private let dependencies: SearchCoordinatorDependencies
     let navigationController: UINavigationController
     
@@ -42,24 +43,16 @@ final class DefaultSearchCoordinator: CoordinatorProtocol {
         let vc = dependencies.makeSearchViewController(coordinator: self)
         navigationController.pushViewController(vc, animated: false)
     }
-    
-    func finish() {
-        childCoordinators.removeAll()
-    }
 }
 
 extension DefaultSearchCoordinator: SearchCoordinator {
-    func showDetail(product: Product) {
+    func pushToDetail(product: Product) {
         let detailSceneDIContainer = DetailSceneDIContainer(product: product)
         let flow = detailSceneDIContainer.makeDetailCoordinator(navigationController: navigationController)
         addChildCoordinator(child: flow)
-        flow.delegate = self
+        flow.finishDelegate = self
         flow.start()
     }
 }
 
-extension DefaultSearchCoordinator: DetailCoordinatorDelegate {
-    func finish(child: CoordinatorProtocol) {
-        removeChildCoordinator(child: child)
-    }
-}
+extension DefaultSearchCoordinator: CoordinatorFinishDelegate {}

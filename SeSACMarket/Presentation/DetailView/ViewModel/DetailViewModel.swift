@@ -10,10 +10,6 @@ import Foundation
 import RxSwift
 import RxRelay
 
-struct DetailViewModelActions {
-    let finish: () -> Void
-}
-
 final class DetailViewModel: ViewModelProtocol {
     
     struct Input {
