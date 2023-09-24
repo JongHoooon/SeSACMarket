@@ -7,8 +7,29 @@
 
 import Foundation
 
+import RxSwift
+
 protocol APIDataTransferService {}
 extension APIDataTransferService {
+    
+    func callRequest<D: Decodable, A: APIProtocol>(
+            of: D.Type,
+            api: A
+    ) -> Observable<D> {
+        return Observable.create { observer in
+            Task {
+                do {
+                    let value = try await callRequest(of: of, api: api)
+                    observer.onNext(value)
+                    observer.onCompleted()
+                } catch {
+                    observer.onError(error)
+                }
+            }
+            return Disposables.create()
+        }
+    }
+    
     func callRequest<D: Decodable, A: APIProtocol>(
             of: D.Type,
             api: A

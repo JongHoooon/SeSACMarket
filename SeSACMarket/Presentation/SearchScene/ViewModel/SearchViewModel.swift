@@ -33,10 +33,10 @@ final class SearchViewModel: ViewModelProtocol {
     }
     
     // MARK: - States
-    private var page = 1
-    private var isEndPage = false
-    private var searchBarTextRelay: BehaviorRelay<String> = .init(value: "")
-    private var selectedSortRelay: BehaviorRelay<SortEnum> = .init(value: .similarity)
+    private var currentPageRelay = BehaviorRelay<Int>(value: 1)
+    private var isEndPageRelay = BehaviorRelay<Bool>(value: true)
+    private var currentQueryRelay = BehaviorRelay<String>(value: "")
+    private var selectedSortRelay = BehaviorRelay<SortEnum>(value: .similarity)
     private var isFetchEnable = true
     
     // MARK: - Properties
@@ -71,23 +71,34 @@ final class SearchViewModel: ViewModelProtocol {
             .withLatestFrom(input.searchBarText)
             .bind(
                 with: self,
-                onNext: { owner, text in
+                onNext: { owner, query in
                     output.isShowIndicator.accept(true)
-                    owner.searchBarTextRelay.accept(text)
-                    fetchProducts(start: 1)
+                    owner.currentQueryRelay.accept(query)
+                    owner.currentPageRelay.accept(1)
+                    owner.productRemoteFetchUseCase.fetchProducts(
+                        query: query,
+                        sort: owner.selectedSortRelay.value,
+                        start: 1,
+                        display: 30
+                    )
             })
             .disposed(by: disposeBag)
         
         input.sortSelected
+            .distinctUntilChanged()
+            .filter { [weak self] _ in self?.currentQueryRelay.value.isEmpty == false }
             .bind(
                 with: self,
                 onNext: { owner, sort in
-                    owner.selectedSortRelay.accept(sort)
-                    
-                    guard !owner.searchBarTextRelay.value.isEmpty
-                    else { return }
                     output.isShowIndicator.accept(true)
-                    fetchProducts(start: 1)
+                    owner.selectedSortRelay.accept(sort)
+                    owner.currentPageRelay.accept(1)
+                    owner.productRemoteFetchUseCase.fetchProducts(
+                        query: owner.currentQueryRelay.value,
+                        sort: sort,
+                        start: 1,
+                        display: 30
+                    )
             })
             .disposed(by: disposeBag)
         
@@ -108,18 +119,19 @@ final class SearchViewModel: ViewModelProtocol {
             .disposed(by: disposeBag)
         
         input.productCollectionViewWillDisplayIndexPath
-            .filter { [weak self] _ in
-                self?.isEndPage == false && self?.isFetchEnable == true
-            }
+            .filter(isEnablePrefetch(indexPath:))
             .bind(
                 with: self,
                 onNext: { owner, indexPath in
-                let maxIndex = output.productsCellViewModelsRelay.value.count
-                if maxIndex - 5 == indexPath.item {
                     owner.isFetchEnable = false
-                    owner.page += 1
-                    fetchProducts(start: owner.page)
-                }
+                    let currentPage = owner.currentPageRelay.value
+                    owner.currentPageRelay.accept(currentPage + 1)
+                    owner.productRemoteFetchUseCase.fetchProducts(
+                        query: owner.currentQueryRelay.value,
+                        sort: owner.selectedSortRelay.value,
+                        start: currentPage+1,
+                        display: 30
+                    )
             })
             .disposed(by: disposeBag)
         
@@ -138,45 +150,80 @@ final class SearchViewModel: ViewModelProtocol {
             })
             .disposed(by: disposeBag)
         
+        let fetchProducts = productRemoteFetchUseCase.fetchProducts
+            .share()
+        
+        fetchProducts
+            .filter { isEndPage(prodctus: $0) == false }
+            .map(ProductsToCellViewModels(newProducts:))
+            .subscribe(
+                with: self,
+                onNext: { owner, viewModels in
+                    output.productsCellViewModelsRelay.accept(viewModels)
+                    output.isShowIndicator.accept(false)
+                    owner.isFetchEnable = true
+                    output.searchBarEndEditting.accept(Void())
+                },
+                onError: { owner, error in
+                    owner.coordinator?.presnetErrorMessageAlert(error: error)
+                    output.isShowIndicator.accept(false)
+                    owner.isFetchEnable = true
+                    output.searchBarEndEditting.accept(Void())
+            })
+            .disposed(by: disposeBag)
+        
+        fetchProducts
+            .withLatestFrom(currentPageRelay.asObservable())
+            .filter { $0 == 1 }
+            .subscribe(
+                with: self,
+                onNext: { owner, _ in
+                    owner.isEndPageRelay.accept(false)
+                    output.scrollContentOffsetRelay.accept(.zero)
+            })
+            .disposed(by: disposeBag)
+        
         return output
         
-        func fetchProducts(start: Int) {
-            guard let errorHander = coordinator?.presnetErrorMessageAlert(error:) else { return }
-            Task {
-                do {
-                    let productsPage = try await productRemoteFetchUseCase.fetchProducts(
-                        query: searchBarTextRelay.value,
-                        sort: selectedSortRelay.value,
-                        start: start,
-                        display: 30
-                    )
-                    let viewModels = productsPage.items.map {
-                        
-                        return ProductCollectionViewCellViewModel(
-                            prodcut: $0,
-                            likeUseCase: likeUseCase,
-                            errorHandler: errorHander
-                        )
-                    }
-                    if start == 1 {
-                        isEndPage = false
-                        output.productsCellViewModelsRelay.accept(viewModels)
-                        output.scrollContentOffsetRelay.accept(.zero)
-                    } else {
-                        let currentViewModels = output.productsCellViewModelsRelay.value
-                        output.productsCellViewModelsRelay.accept(currentViewModels+viewModels)
-                    }
-                    if productsPage.items.isEmpty {
-                        isEndPage = true
-                    }
-                    output.isShowIndicator.accept(false)
-                } catch {
-                    output.isShowIndicator.accept(false)
-                    coordinator?.presnetErrorMessageAlert(error: error)
-                }
+        func isEnablePrefetch(indexPath: IndexPath) -> Bool {
+            let maxIndex = output.productsCellViewModelsRelay.value.count
+            switch isEndPageRelay.value == false &&
+                   isFetchEnable == true &&
+                   maxIndex - 8 <= indexPath.item {
+            case true:
+                return true
+            case false:
+                return false
             }
-            isFetchEnable = true
-            output.searchBarEndEditting.accept(Void())
+        }
+                
+        func isEndPage(prodctus: [Product]) -> Bool {
+            switch prodctus.isEmpty {
+            case true:
+                isEndPageRelay.accept(true)
+                output.isShowIndicator.accept(false)
+                return true
+            case false:
+                return false
+            }
+        }
+        func ProductsToCellViewModels(
+            newProducts: [Product]
+        ) -> [ProductCollectionViewCellViewModel] {
+            guard let errorHandler = coordinator?.presnetErrorMessageAlert(error:) else { return [] }
+            let newViewModels = newProducts.map {
+                return ProductCollectionViewCellViewModel(
+                    prodcut: $0,
+                    likeUseCase: likeUseCase,
+                    errorHandler: errorHandler
+                )}
+            if currentPageRelay.value == 1 {
+                return newViewModels
+            } else {
+                let currentViewModels = output.productsCellViewModelsRelay.value
+                return currentViewModels + newViewModels
+            }
         }
     }
 }
+
