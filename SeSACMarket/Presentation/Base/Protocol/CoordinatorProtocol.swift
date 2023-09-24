@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol CoordinatorProtocol: AnyObject {
+protocol CoordinatorProtocol: AnyObject, ErrorAlertable {
     var finishDelegate: CoordinatorFinishDelegate? { get set }
     var childCoordinators: [CoordinatorProtocol] { get set }
     var navigationController: UINavigationController { get }

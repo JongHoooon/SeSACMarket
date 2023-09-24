@@ -13,13 +13,13 @@ final class ProductCollectionViewCellViewModel {
     
     let prodcut: Product
     let likeUseCase: LikeUseCase
-    let errorHandler: PublishRelay<Error>
+    let errorHandler: (_ error: Error) -> Void
     let needReload: PublishRelay<Void>?
     
     init(
         prodcut: Product,
         likeUseCase: LikeUseCase,
-        errorHandler: PublishRelay<Error>,
+        errorHandler: @escaping (_ error: Error) -> Void,
         needReload: PublishRelay<Void>? = nil
     ) {
         self.prodcut = prodcut

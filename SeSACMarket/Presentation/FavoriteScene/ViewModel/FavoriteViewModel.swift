@@ -24,7 +24,6 @@ final class FavoriteViewModel: ViewModelProtocol {
         let productsCellViewModelsRelay = BehaviorRelay<[ProductCollectionViewCellViewModel]>(value: [])
         let scrollContentOffsetRelay = PublishRelay<CGPoint>()
         let searchBarEndEditting = PublishRelay<Void>()
-        let errorHandlerRelay = PublishRelay<Error>()
     }
     
     // MARK: - States
@@ -102,6 +101,7 @@ final class FavoriteViewModel: ViewModelProtocol {
         return output
         
         func fetchProduct() {
+            guard let errorHandler = coordinator?.presnetErrorMessageAlert(error:) else { return }
             if currentQuery.isEmpty {
                 Task {
                     let products = await productLocalUseCase.fetchAllLikeProducts()
@@ -109,7 +109,7 @@ final class FavoriteViewModel: ViewModelProtocol {
                         ProductCollectionViewCellViewModel(
                             prodcut: $0,
                             likeUseCase: likeUseCase,
-                            errorHandler: output.errorHandlerRelay,
+                            errorHandler: errorHandler,
                             needReload: needReload
                         )
                     }
@@ -122,7 +122,7 @@ final class FavoriteViewModel: ViewModelProtocol {
                         ProductCollectionViewCellViewModel(
                             prodcut: $0,
                             likeUseCase: likeUseCase,
-                            errorHandler: output.errorHandlerRelay,
+                            errorHandler: errorHandler,
                             needReload: needReload
                         )
                     }

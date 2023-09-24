@@ -193,7 +193,7 @@ private extension ProductCollectionViewCell {
                         viewModel?.needReload?.accept(Void())
                     }
                 } catch {
-                    viewModel?.errorHandler.accept(error)
+                    viewModel?.errorHandler(error)
                 }
             }
         case false: // 저장
@@ -201,7 +201,7 @@ private extension ProductCollectionViewCell {
                 do {
                     try await viewModel?.likeUseCase.saveLikeProduct(product: product)
                 } catch {
-                    viewModel?.errorHandler.accept(error)
+                    viewModel?.errorHandler(error)
                 }
             }
         }

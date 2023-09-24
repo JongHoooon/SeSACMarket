@@ -15,7 +15,7 @@ protocol FavoriteCoordinatorDelegate: AnyObject {
     func showAuth()
 }
 
-protocol FavoriteCoordinator: AnyObject {
+protocol FavoriteCoordinator: AnyObject, ErrorAlertable {
     func pushToDetail(product: Product)
     func presentToSetting()
 }

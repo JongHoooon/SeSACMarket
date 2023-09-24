@@ -30,7 +30,6 @@ final class SearchViewModel: ViewModelProtocol {
         let scrollContentOffsetRelay = PublishRelay<CGPoint>()
         let searchBarEndEditting = PublishRelay<Void>()
         let isShowIndicator = PublishRelay<Bool>()
-        let errorHandlerRelay = PublishRelay<Error>()
     }
     
     // MARK: - States
@@ -142,6 +141,7 @@ final class SearchViewModel: ViewModelProtocol {
         return output
         
         func fetchProducts(start: Int) {
+            guard let errorHander = coordinator?.presnetErrorMessageAlert(error:) else { return }
             Task {
                 do {
                     let productsPage = try await productRemoteFetchUseCase.fetchProducts(
@@ -151,10 +151,11 @@ final class SearchViewModel: ViewModelProtocol {
                         display: 30
                     )
                     let viewModels = productsPage.items.map {
+                        
                         return ProductCollectionViewCellViewModel(
                             prodcut: $0,
                             likeUseCase: likeUseCase,
-                            errorHandler: output.errorHandlerRelay
+                            errorHandler: errorHander
                         )
                     }
                     if start == 1 {
@@ -171,7 +172,7 @@ final class SearchViewModel: ViewModelProtocol {
                     output.isShowIndicator.accept(false)
                 } catch {
                     output.isShowIndicator.accept(false)
-                    output.errorHandlerRelay.accept(error)
+                    coordinator?.presnetErrorMessageAlert(error: error)
                 }
             }
             isFetchEnable = true

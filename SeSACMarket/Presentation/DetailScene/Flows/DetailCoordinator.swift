@@ -12,7 +12,7 @@ protocol DetailCoordinatorDependencies {
     func makeDetailViewController(coordinator: DetailCoordinator) -> DetailViewController
 }
 
-protocol DetailCoordinator: AnyObject {
+protocol DetailCoordinator: AnyObject, ErrorAlertable {
     func finish()
 }
 

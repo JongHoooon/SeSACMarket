@@ -134,11 +134,6 @@ private extension FavoriteViewController {
             .emit(to: searchBar.rx.endEditing)
             .disposed(by: disposeBag)
         
-        output.errorHandlerRelay
-            .asSignal()
-            .emit(to: self.rx.defaultErrorHandler)
-            .disposed(by: disposeBag)
-        
         productsCollectionView.rx.didEndDisplayingCell
             .subscribe(onNext: { event in
                 guard let cell = event.cell as? ProductCollectionViewCell else { return }

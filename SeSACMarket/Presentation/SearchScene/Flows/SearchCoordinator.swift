@@ -11,7 +11,7 @@ protocol SearchCoordinatorDependencies {
     func makeSearchViewController(coordinator: SearchCoordinator) -> SearchViewController
 }
 
-protocol SearchCoordinator: AnyObject {
+protocol SearchCoordinator: AnyObject, ErrorAlertable {
     func pushToDetail(product: Product)
 }
 

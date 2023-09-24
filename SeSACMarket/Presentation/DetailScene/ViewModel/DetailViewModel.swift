@@ -26,7 +26,6 @@ final class DetailViewModel: ViewModelProtocol {
         let isIndicatorAnimating = BehaviorRelay<Bool>(value: false)
         let likeButtonIsSelected = BehaviorRelay<Bool>(value: false)
         let likeButtonIsSelectWithAnimation = PublishRelay<Bool>()
-        let errorHandlerRelay = PublishRelay<Error>()
     }
     
     private let product: Product
@@ -93,9 +92,11 @@ final class DetailViewModel: ViewModelProtocol {
             .disposed(by: disposeBag)
         
         input.webViewDidFail
-            .bind(onNext: { error in
-                output.isIndicatorAnimating.accept(false)
-                output.errorHandlerRelay.accept(error)
+            .bind(
+                with: self,
+                onNext: { owner, error in
+                    output.isIndicatorAnimating.accept(false)
+                    owner.coordinator?.presnetErrorMessageAlert(error: error)
             })
             .disposed(by: disposeBag)
         
@@ -110,7 +111,7 @@ final class DetailViewModel: ViewModelProtocol {
                                 try await owner.likeUseCase.deleteLikeProduct(productID: owner.product.productID)
                                 
                             } catch {
-                                output.errorHandlerRelay.accept(error)
+                                owner.coordinator?.presnetErrorMessageAlert(error: error)
                             }
                         }
                     case false: // 저장
@@ -118,7 +119,7 @@ final class DetailViewModel: ViewModelProtocol {
                             do {
                                 try await owner.likeUseCase.saveLikeProduct(product: owner.product)
                             } catch {
-                                output.errorHandlerRelay.accept(error)
+                                owner.coordinator?.presnetErrorMessageAlert(error: error)
                             }
                         }
                     }
