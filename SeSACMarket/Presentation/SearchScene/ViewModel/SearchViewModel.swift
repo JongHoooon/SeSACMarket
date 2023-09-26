@@ -155,7 +155,7 @@ final class SearchViewModel: ViewModelProtocol {
         
         fetchProducts
             .filter { isEndPage(prodctus: $0) == false }
-            .map(ProductsToCellViewModels(newProducts:))
+            .map(productsToCellViewModels(newProducts:))
             .subscribe(
                 with: self,
                 onNext: { owner, viewModels in
@@ -207,7 +207,7 @@ final class SearchViewModel: ViewModelProtocol {
                 return false
             }
         }
-        func ProductsToCellViewModels(
+        func productsToCellViewModels(
             newProducts: [Product]
         ) -> [ProductCollectionViewCellViewModel] {
             guard let errorHandler = coordinator?.presnetErrorMessageAlert(error:) else { return [] }
