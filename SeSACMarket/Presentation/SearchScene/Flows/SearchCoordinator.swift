@@ -41,14 +41,6 @@ final class DefaultSearchCoordinator: CoordinatorProtocol {
     }
 }
 
-extension DefaultSearchCoordinator: SearchCoordinator {
-    func pushToDetail(product: Product) {
-        let detailSceneDIContainer = DetailSceneDIContainer(product: product)
-        let flow = detailSceneDIContainer.makeDetailCoordinator(navigationController: navigationController)
-        addChildCoordinator(child: flow)
-        flow.finishDelegate = self
-        flow.start()
-    }
-}
+extension DefaultSearchCoordinator: SearchCoordinator, DetailCoordinatorable {}
 
 extension DefaultSearchCoordinator: CoordinatorFinishDelegate {}

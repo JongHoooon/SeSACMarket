@@ -51,15 +51,7 @@ final class DefaultFavoriteCoordinator: CoordinatorProtocol {
     }
 }
 
-extension DefaultFavoriteCoordinator: FavoriteCoordinator {
-    func pushToDetail(product: Product) {
-        let detailDIContainer = DetailSceneDIContainer(product: product)
-        let flow = detailDIContainer.makeDetailCoordinator(navigationController: navigationController)
-        addChildCoordinator(child: flow)
-        flow.finishDelegate = self
-        flow.start()
-    }
-    
+extension DefaultFavoriteCoordinator: FavoriteCoordinator, DetailCoordinatorable {
     func presentToSetting() {
         let settingNavigationController = UINavigationController()
         let settingDIContainer = SettingSceneDIContainer()

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		ED03AA9B2AC72FCB00D599EF /* DetailCoordinatorable.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED03AA9A2AC72FCB00D599EF /* DetailCoordinatorable.swift */; };
 		ED2A00B12AA99CEC004A346D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A00B02AA99CEC004A346D /* AppDelegate.swift */; };
 		ED2A00B32AA99CEC004A346D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A00B22AA99CEC004A346D /* SceneDelegate.swift */; };
 		ED2A00BA2AA99CED004A346D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ED2A00B92AA99CED004A346D /* Assets.xcassets */; };
@@ -95,6 +96,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		ED03AA9A2AC72FCB00D599EF /* DetailCoordinatorable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCoordinatorable.swift; sourceTree = "<group>"; };
 		ED2A00AD2AA99CEC004A346D /* SeSACMarket.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SeSACMarket.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED2A00B02AA99CEC004A346D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		ED2A00B22AA99CEC004A346D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -735,6 +737,7 @@
 			isa = PBXGroup;
 			children = (
 				EDDABCAB2AB4179B0003AAAC /* DetailCoordinator.swift */,
+				ED03AA9A2AC72FCB00D599EF /* DetailCoordinatorable.swift */,
 			);
 			path = Flows;
 			sourceTree = "<group>";
@@ -854,6 +857,7 @@
 				ED5100232AAC3D1100BB305F /* APIDataTransferService.swift in Sources */,
 				ED2A00E12AA9AF08004A346D /* AuthCoordinator.swift in Sources */,
 				ED6E201E2AB07FC5008D34F2 /* SettingViewController.swift in Sources */,
+				ED03AA9B2AC72FCB00D599EF /* DetailCoordinatorable.swift in Sources */,
 				ED2A01512AAB005A004A346D /* ProductAPI.swift in Sources */,
 				ED2A01052AA9BE78004A346D /* SearchSceneDIContainer.swift in Sources */,
 				ED2A014B2AAAFEBA004A346D /* HTTPHeader.swift in Sources */,
