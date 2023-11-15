@@ -16,7 +16,7 @@
 
 <br>
 
-<p align="center"><img width="884" alt="image" src="https://github.com/JongHoooon/SeSACMarket/assets/98168685/4904b600-ae09-40d3-995d-0d3f5160e7f1"></p>
+<p align="center"><img width="884" alt="image" src="https://github.com/JongHoooon/SeSACMarket/assets/98168685/f6141d16-86cf-4660-9ac4-de4f015ba30b"></p>
 
 <p align="center"><img width="884" alt="image" src="https://github.com/JongHoooon/SeSACMarket/assets/98168685/c54a7b48-26d4-4b6c-bb04-4a428087bf29"></p>
 
