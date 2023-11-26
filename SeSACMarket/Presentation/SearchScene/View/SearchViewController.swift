@@ -133,6 +133,12 @@ private extension SearchViewController {
             .map { Reactor.Action.productCollectionViewWillDisplayIndexPath($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
+        
+        productsCollectionView.rx.modelSelected(ProductCollectionViewCellViewModel.self)
+            .map(\.prodcut)
+            .map { Reactor.Action.productsCellSelected($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
     }
     
     func bindState(_ reactor: SearchReactor) {

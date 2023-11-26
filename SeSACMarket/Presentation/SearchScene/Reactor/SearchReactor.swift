@@ -155,7 +155,8 @@ extension SearchReactor {
                 .map { .setProductsPage($0) }
             ])
             
-        case .productsCellSelected(_):
+        case let .productsCellSelected(product):
+            coordinator?.pushToDetail(product: product)
             return .empty()
         }
     }
