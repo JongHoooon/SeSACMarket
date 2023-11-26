@@ -7,15 +7,17 @@
 
 import UIKit
 
+import ReactorKit
+
 import RxCocoa
 import RxSwift
 import SnapKit
 
-final class SearchViewController: BaseViewController {
+final class SearchViewController: BaseViewController, View {
     
     // MARK: - Properties
     private let viewModel: SearchViewModel
-    private let disposeBag = DisposeBag()
+    var disposeBag = DisposeBag()
     
     // MARK: - UI
     private let searchBar = DefaultSearchBar()
@@ -25,10 +27,12 @@ final class SearchViewController: BaseViewController {
     
     // MARK: - Init
     init(
+        reactor: SearchReactor,
         viewModel: SearchViewModel
     ) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        self.reactor = reactor
     }
     
     deinit {
@@ -54,12 +58,12 @@ final class SearchViewController: BaseViewController {
     // MARK: - Configure
     override func configure() {
         super.configure()
-        bind()
-        sortCollectionView.selectItem(
-            at: IndexPath(item: 0, section: 0),
-            animated: false,
-            scrollPosition: .top
-        )
+//        bind()
+//        sortCollectionView.selectItem(
+//            at: IndexPath(item: 0, section: 0),
+//            animated: false,
+//            scrollPosition: .top
+//        )
         [
             searchBar, cancelButton,
             sortCollectionView,
@@ -99,9 +103,53 @@ final class SearchViewController: BaseViewController {
     override func configureNavigationBar() {
         navigationItem.title = "쇼핑 검색"
     }
+    
+    func bind(reactor: SearchReactor) {
+        bindAction(reactor)
+        bindState(reactor)
+    }
 }
 
 // MARK: - Bind
+private extension SearchViewController {
+    func bindAction(_ reactor: SearchReactor) {
+        self.rx.viewDidLoad
+            .map { Reactor.Action.viewDidLoad }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        searchBar.rx.searchButtonClicked
+            .withLatestFrom(searchBar.rx.text.orEmpty)
+            .map { Reactor.Action.searchButtonClicked(query: $0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+    
+    func bindState(_ reactor: SearchReactor) {
+        Observable.just(reactor.sorItems)
+            .bind(to: sortCollectionView.rx.items(
+                cellIdentifier: SortCollectionViewCell.identifier,
+                cellType: SortCollectionViewCell.self
+            )) { _, sort, cell in
+                cell.configureCell(sort: sort)
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state.map { $0.productsCellViewModels }
+            .bind(to: productsCollectionView.rx.items(
+                cellIdentifier: ProductCollectionViewCell.identifier,
+                cellType: ProductCollectionViewCell.self
+            )) { _, viewModel, cell in
+                cell.viewModel = viewModel
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state.map { $0.isShowIndicator }
+            .bind(to: self.rx.isShowIndicator)
+            .disposed(by: disposeBag)
+    }
+}
+
 private extension SearchViewController {
     
     func bind() {
@@ -110,7 +158,7 @@ private extension SearchViewController {
             viewDidLoad: self.rx.viewDidLoad.asObservable(),
             searchButtonClicked: searchBar.rx.searchButtonClicked.asObservable(),
             searchBarText: searchBar.rx.text.orEmpty.asObservable(),
-            sortSelected: sortCollectionView.rx.modelSelected(SortEnum.self).asObservable(),
+            sortSelected: sortCollectionView.rx.modelSelected(Product.SortValue.self).asObservable(),
             prefetchItems: productsCollectionView.rx.prefetchItems.asObservable(),
             productCollectionViewWillDisplayIndexPath: productsCollectionView.rx.willDisplayCell.map { $0.at }.asObservable(),
             cancelButtonClicked: cancelButton.rx.tap.asObservable(),
@@ -119,37 +167,37 @@ private extension SearchViewController {
         
         let output = viewModel.transform(input: input, disposeBag: disposeBag)
         
-        output.sortItemsRelay
-            .asDriver()
-            .distinctUntilChanged()
-            .drive(sortCollectionView.rx.items(
-                cellIdentifier: SortCollectionViewCell.identifier,
-                cellType: SortCollectionViewCell.self
-            )) { _, sort, cell in
-                cell.configureCell(sort: sort)
-            }
-            .disposed(by: disposeBag)
+//        output.sortItemsRelay
+//            .asDriver()
+//            .distinctUntilChanged()
+//            .drive(sortCollectionView.rx.items(
+//                cellIdentifier: SortCollectionViewCell.identifier,
+//                cellType: SortCollectionViewCell.self
+//            )) { _, sort, cell in
+//                cell.configureCell(sort: sort)
+//            }
+//            .disposed(by: disposeBag)
         
-        output.productsCellViewModelsRelay
-            .asDriver()
-            .drive(productsCollectionView.rx.items(
-                cellIdentifier: ProductCollectionViewCell.identifier,
-                cellType: ProductCollectionViewCell.self
-            )) { _, viewModel, cell in
-                cell.viewModel = viewModel
-            }
-            .disposed(by: disposeBag)
+//        output.productsCellViewModelsRelay
+//            .asDriver()
+//            .drive(productsCollectionView.rx.items(
+//                cellIdentifier: ProductCollectionViewCell.identifier,
+//                cellType: ProductCollectionViewCell.self
+//            )) { _, viewModel, cell in
+//                cell.viewModel = viewModel
+//            }
+//            .disposed(by: disposeBag)
         
         output.scrollContentOffsetRelay
             .asSignal()
             .emit(to: productsCollectionView.rx.contentOffset)
             .disposed(by: disposeBag)
         
-        output.isShowIndicator
-            .asSignal()
-            .distinctUntilChanged()
-            .emit(to: self.rx.isShowIndicator)
-            .disposed(by: disposeBag)
+//        output.isShowIndicator
+//            .asSignal()
+//            .distinctUntilChanged()
+//            .emit(to: self.rx.isShowIndicator)
+//            .disposed(by: disposeBag)
         
         output.searchBarEndEditting
             .asSignal()

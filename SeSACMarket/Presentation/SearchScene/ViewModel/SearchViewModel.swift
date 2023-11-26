@@ -17,7 +17,7 @@ final class SearchViewModel: ViewModelProtocol {
         let viewDidLoad: Observable<Void>
         let searchButtonClicked: Observable<Void>
         let searchBarText: Observable<String>
-        let sortSelected: Observable<SortEnum>
+        let sortSelected: Observable<Product.SortValue>
         let prefetchItems: Observable<[IndexPath]>
         let productCollectionViewWillDisplayIndexPath: Observable<IndexPath>
         let cancelButtonClicked: Observable<Void>
@@ -25,7 +25,7 @@ final class SearchViewModel: ViewModelProtocol {
     }
     
     struct Output {
-        let sortItemsRelay = BehaviorRelay<[SortEnum]>(value: SortEnum.allCases)
+        let sortItemsRelay = BehaviorRelay<[Product.SortValue]>(value: Product.SortValue.allCases)
         let productsCellViewModelsRelay = BehaviorRelay<[ProductCollectionViewCellViewModel]>(value: [])
         let scrollContentOffsetRelay = PublishRelay<CGPoint>()
         let searchBarEndEditting = PublishRelay<Void>()
@@ -36,7 +36,7 @@ final class SearchViewModel: ViewModelProtocol {
     private var currentPageRelay = BehaviorRelay<Int>(value: 1)
     private var isEndPageRelay = BehaviorRelay<Bool>(value: true)
     private var currentQueryRelay = BehaviorRelay<String>(value: "")
-    private var selectedSortRelay = BehaviorRelay<SortEnum>(value: .similarity)
+    private var selectedSortRelay = BehaviorRelay<Product.SortValue>(value: .similarity)
     private var isFetchEnable = true
     
     // MARK: - Properties
@@ -67,22 +67,22 @@ final class SearchViewModel: ViewModelProtocol {
             })
             .disposed(by: disposeBag)
         
-        input.searchButtonClicked
-            .withLatestFrom(input.searchBarText)
-            .bind(
-                with: self,
-                onNext: { owner, query in
-                    output.isShowIndicator.accept(true)
-                    owner.currentQueryRelay.accept(query)
-                    owner.currentPageRelay.accept(1)
-                    owner.productRemoteFetchUseCase.fetchProducts(
-                        query: query,
-                        sort: owner.selectedSortRelay.value,
-                        start: 1,
-                        display: 30
-                    )
-            })
-            .disposed(by: disposeBag)
+//        input.searchButtonClicked
+//            .withLatestFrom(input.searchBarText)
+//            .bind(
+//                with: self,
+//                onNext: { owner, query in
+//                    output.isShowIndicator.accept(true)
+//                    owner.currentQueryRelay.accept(query)
+//                    owner.currentPageRelay.accept(1)
+//                    owner.productRemoteFetchUseCase.fetchProducts(
+//                        query: query,
+//                        sort: owner.selectedSortRelay.value,
+//                        start: 1,
+//                        display: 30
+//                    )
+//            })
+//            .disposed(by: disposeBag)
         
         input.sortSelected
             .distinctUntilChanged()

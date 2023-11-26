@@ -8,7 +8,7 @@
 import Foundation
 
 enum ProductAPI: APIProtocol {
-    case fetchQuery(query: String, sort: SortEnum, start: Int, display: Int)
+    case fetchQuery(productQuery: ProductQuery, start: Int, display: Int)
     
     var path: String {
         let baseURL = Endpoint.baseURL
@@ -25,10 +25,10 @@ enum ProductAPI: APIProtocol {
 
     var queryItems: [URLQueryItem]? {
         switch self {
-        case let .fetchQuery(query, sort, start, display):
+        case let .fetchQuery(productQuery, start, display):
                 return [
-                    URLQueryItem(name: "query", value: query),
-                    URLQueryItem(name: "sort", value: sort.parameter),
+                    URLQueryItem(name: "query", value: productQuery.query),
+                    URLQueryItem(name: "sort", value: productQuery.sortValue.parameter),
                     URLQueryItem(name: "start", value: "\(start)"),
                     URLQueryItem(name: "display", value: "\(display)")
                 ]

@@ -30,6 +30,33 @@ struct Product {
     }
 }
 
+extension Product {
+    enum SortValue: CaseIterable {
+        case similarity
+        case date
+        case priceDescending
+        case priceAscending
+        
+        var parameter: String {
+            switch self {
+            case .similarity:               return "sim"
+            case .date:                     return "date"
+            case .priceDescending:          return "dsc"
+            case .priceAscending:           return "asc"
+            }
+        }
+        
+        var title: String {
+            switch self {
+            case .similarity:               return "정확도"
+            case .date:                     return "날짜순"
+            case .priceDescending:          return "가격높은순"
+            case .priceAscending:           return "가격낮은순"
+            }
+        }
+    }
+}
+
 struct ProductsPage {
     let start: Int
     let display: Int

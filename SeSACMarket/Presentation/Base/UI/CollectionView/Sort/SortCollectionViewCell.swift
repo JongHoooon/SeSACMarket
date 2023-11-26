@@ -23,6 +23,7 @@ final class SortCollectionViewCell: BaseCollectionViewCell {
         }
     }
     
+    // MARK: - UI
     private let baseView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = Constant.CornerRadius.default
@@ -58,7 +59,7 @@ final class SortCollectionViewCell: BaseCollectionViewCell {
         }
     }
     
-    func configureCell(sort: SortEnum) {
+    func configureCell(sort: Product.SortValue) {
         sortLabel.text = sort.title
     }
 }

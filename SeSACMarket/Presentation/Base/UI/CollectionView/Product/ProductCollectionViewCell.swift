@@ -130,7 +130,7 @@ final class ProductCollectionViewCell: BaseCollectionViewCell {
             placeholder: ImageEnum.Placeholer.photo
         )
         let likeCheckTask = Task {
-            let isLike = await viewModel?.likeUseCase.isLikeProduct(productID: product.productID)
+            let isLike = await viewModel?.likeUseCase?.isLikeProduct(productID: product.productID)
 
             likeButton.isSelected = isLike ?? false
         }
@@ -187,21 +187,23 @@ private extension ProductCollectionViewCell {
         case true: // 삭제
             Task {
                 do {
-                    try await viewModel?.likeUseCase.deleteLikeProduct(productID: product.productID)
+                    try await viewModel?.likeUseCase?.deleteLikeProduct(productID: product.productID)
                     likeButton.isEnabled = true
                     if type == .favorite {
                         viewModel?.needReload?.accept(Void())
                     }
                 } catch {
-                    viewModel?.errorHandler(error)
+                    #warning("수정 필요!!")
+//                    viewModel?.errorHandler(error)
                 }
             }
         case false: // 저장
             Task {
                 do {
-                    try await viewModel?.likeUseCase.saveLikeProduct(product: product)
+                    try await viewModel?.likeUseCase?.saveLikeProduct(product: product)
                 } catch {
-                    viewModel?.errorHandler(error)
+                    #warning("수정 필요!!")
+//                    viewModel?.errorHandler(error)
                 }
             }
         }

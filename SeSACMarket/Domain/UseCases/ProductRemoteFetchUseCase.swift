@@ -9,9 +9,13 @@ import RxRelay
 import RxSwift
 
 protocol ProductRemoteFetchUseCase {
-    func fetchProducts(query: String, sort: SortEnum, start: Int, display: Int) async throws -> ProductsPage
-    func fetchProducts(query: String, sort: SortEnum, start: Int, display: Int)
+    func fetchProducts(query: String, sort: Product.SortValue, start: Int, display: Int) async throws -> ProductsPage
+    func fetchProducts(query: String, sort: Product.SortValue, start: Int, display: Int)
     var fetchProducts: PublishSubject<[Product]> { get }
+    
+//    func fetchProducts(productsQuery: ProductQuery, start: Int, display: Int) -> Single<Result<ProductsPage, Error>>
+    
+    func fetchProducts(productsQuery: ProductQuery, start: Int, display: Int) -> Single<ProductsPage>
 }
 
 final class DefaultProductRemoteFetchUseCase: ProductRemoteFetchUseCase {
@@ -28,7 +32,7 @@ final class DefaultProductRemoteFetchUseCase: ProductRemoteFetchUseCase {
     /// - display: 한 번에 표시할 검색 결과 개수(default: 30개)
     func fetchProducts(
         query: String,
-        sort: SortEnum,
+        sort: Product.SortValue,
         start: Int,
         display: Int = 30
     ) async throws -> ProductsPage {
@@ -42,7 +46,7 @@ final class DefaultProductRemoteFetchUseCase: ProductRemoteFetchUseCase {
     
     func fetchProducts(
         query: String,
-        sort: SortEnum,
+        sort: Product.SortValue,
         start: Int,
         display: Int = 30
     ) {
@@ -54,12 +58,52 @@ final class DefaultProductRemoteFetchUseCase: ProductRemoteFetchUseCase {
         )
         .subscribe(
             with: self,
-            onNext: { owner, productPage in
+            onSuccess: { owner, productPage in
                 owner.fetchProducts.onNext(productPage.items)
             },
-            onError: { owner, error in
+            onFailure: { owner, error in
                 owner.fetchProducts.onError(error)
         })
         .disposed(by: disposebag)
+    }
+    
+    func fetchProducts(
+        productsQuery: ProductQuery,
+        start: Int,
+        display: Int
+    ) -> Single<Result<ProductsPage, Error>> {
+        .create { [weak self] single in
+            guard let self else { return Disposables.create() }
+            
+            self.productRemoteRepository.fetchProducts(
+                productQuery: productsQuery,
+                start: start,
+                display: display
+            )
+            .subscribe(
+                onSuccess: {
+                    single(.success(.success($0)))
+                },
+                onFailure: {
+                    single(.success(.failure($0)))
+                }
+            )
+            .disposed(by: self.disposebag)
+            
+            return Disposables.create()
+        }
+        
+    }
+    
+    func fetchProducts(
+        productsQuery: ProductQuery,
+        start: Int,
+        display: Int
+    ) -> Single<ProductsPage> {
+        return productRemoteRepository.fetchProducts(
+            productQuery: productsQuery,
+            start: start,
+            display: display
+        )
     }
 }

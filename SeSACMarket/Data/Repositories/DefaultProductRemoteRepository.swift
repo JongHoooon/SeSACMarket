@@ -13,7 +13,7 @@ final class DefaultProductRemoteRepository: ProductRemoteRepository, APIDataTran
     
     func fetchProducts(
         query: String,
-        sort: SortEnum,
+        sort: Product.SortValue,
         start: Int,
         display: Int
     ) async throws -> ProductsPage {
@@ -21,8 +21,7 @@ final class DefaultProductRemoteRepository: ProductRemoteRepository, APIDataTran
             let productPageDTO =  try await self.callRequest(
                 of: ProductsPageDTO.self,
                 api: ProductAPI.fetchQuery(
-                    query: query,
-                    sort: sort,
+                    productQuery: ProductQuery(query: query, sortValue: sort),
                     start: start,
                     display: display
                 )
@@ -35,26 +34,49 @@ final class DefaultProductRemoteRepository: ProductRemoteRepository, APIDataTran
     
     func fetchProducts(
         query: String,
-        sort: SortEnum,
+        sort: Product.SortValue,
         start: Int,
         display: Int
-    ) -> Observable<ProductsPage> {
-        return Observable<ProductsPage>.create { observer in
+    ) -> Single<ProductsPage> {
+        return Single<ProductsPage>.create { single in
             Task {
                 do {
                     let productPageDTO = try await self.callRequest(
                         of: ProductsPageDTO.self,
                         api: ProductAPI.fetchQuery(
-                            query: query,
-                            sort: sort,
+                            productQuery: ProductQuery(query: query, sortValue: sort),
                             start: start,
                             display: display
                         )
                     )
-                    observer.onNext(productPageDTO.toDomain())
-                    observer.onCompleted()
+                    single(.success(productPageDTO.toDomain()))
                 } catch {
-                    observer.onError(error)
+                    single(.failure(error))
+                }
+            }
+            return Disposables.create()
+        }
+    }
+    
+    func fetchProducts(
+        productQuery: ProductQuery,
+        start: Int,
+        display: Int
+    ) -> Single<ProductsPage> {
+        return Single<ProductsPage>.create { single in
+            Task {
+                do {
+                    let productPageDTO = try await self.callRequest(
+                        of: ProductsPageDTO.self,
+                        api: ProductAPI.fetchQuery(
+                            productQuery: productQuery,
+                            start: start,
+                            display: display
+                        )
+                    )
+                    single(.success(productPageDTO.toDomain()))
+                } catch {
+                    single(.failure(error))
                 }
             }
             return Disposables.create()

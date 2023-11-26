@@ -8,6 +8,7 @@
 import RxSwift
 
 protocol ProductRemoteRepository {
-    func fetchProducts(query: String, sort: SortEnum, start: Int, display: Int) async throws -> ProductsPage
-    func fetchProducts(query: String, sort: SortEnum, start: Int, display: Int) -> Observable<ProductsPage>
+    func fetchProducts(query: String, sort: Product.SortValue, start: Int, display: Int) async throws -> ProductsPage
+    func fetchProducts(query: String, sort: Product.SortValue, start: Int, display: Int) -> Single<ProductsPage>
+    func fetchProducts(productQuery: ProductQuery, start: Int, display: Int) -> Single<ProductsPage>
 }
