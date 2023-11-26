@@ -36,6 +36,7 @@ final class SearchReactor: Reactor {
     }
     
     struct State {
+        @Pulse
         var scrollContentOffset: CGPoint = .zero
         var productsCellViewModels: [ProductCollectionViewCellViewModel] = []
         var searchBarEndEditting: Void = Void()

@@ -166,6 +166,8 @@ private extension SearchViewController {
             .bind(to: self.rx.isShowIndicator)
             .disposed(by: disposeBag)
         
+        reactor.pulse(\.$scrollContentOffset)
+            .bind(to: productsCollectionView.rx.contentOffset)
             .disposed(by: disposeBag)
     }
 }
