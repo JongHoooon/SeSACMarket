@@ -16,7 +16,6 @@ import SnapKit
 final class SearchViewController: BaseViewController, View {
     
     // MARK: - Properties
-    private let viewModel: SearchViewModel
     var disposeBag = DisposeBag()
     
     // MARK: - UI
@@ -27,10 +26,8 @@ final class SearchViewController: BaseViewController, View {
     
     // MARK: - Init
     init(
-        reactor: SearchReactor,
-        viewModel: SearchViewModel
+        reactor: SearchReactor
     ) {
-        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         self.reactor = reactor
     }
@@ -58,12 +55,6 @@ final class SearchViewController: BaseViewController, View {
     // MARK: - Configure
     override func configure() {
         super.configure()
-//        bind()
-//        sortCollectionView.selectItem(
-//            at: IndexPath(item: 0, section: 0),
-//            animated: false,
-//            scrollPosition: .top
-//        )
         [
             searchBar, cancelButton,
             sortCollectionView,
@@ -107,6 +98,10 @@ final class SearchViewController: BaseViewController, View {
     func bind(reactor: SearchReactor) {
         bindAction(reactor)
         bindState(reactor)
+        
+        cancelButton.rx.tap
+            .bind(to: searchBar.rx.endEditing)
+            .disposed(by: disposeBag)
     }
 }
 
@@ -123,10 +118,32 @@ private extension SearchViewController {
             .map { Reactor.Action.searchButtonClicked(query: $0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
+        
+        sortCollectionView.rx.modelSelected(Product.SortValue.self)
+            .map { Reactor.Action.sortSelected($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        productsCollectionView.rx.prefetchItems
+            .map { Reactor.Action.prefetchItems($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        productsCollectionView.rx.willDisplayCell.map { $0.at }
+            .map { Reactor.Action.productCollectionViewWillDisplayIndexPath($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
     }
     
     func bindState(_ reactor: SearchReactor) {
         Observable.just(reactor.sorItems)
+            .do(afterNext: { [weak self] _ in
+                self?.sortCollectionView.selectItem(
+                    at: IndexPath(item: 0, section: 0),
+                    animated: false,
+                    scrollPosition: .top
+                )
+            })
             .bind(to: sortCollectionView.rx.items(
                 cellIdentifier: SortCollectionViewCell.identifier,
                 cellType: SortCollectionViewCell.self
@@ -145,70 +162,10 @@ private extension SearchViewController {
             .disposed(by: disposeBag)
         
         reactor.state.map { $0.isShowIndicator }
+            .distinctUntilChanged()
             .bind(to: self.rx.isShowIndicator)
             .disposed(by: disposeBag)
-    }
-}
-
-private extension SearchViewController {
-    
-    func bind() {
         
-        let input = SearchViewModel.Input(
-            viewDidLoad: self.rx.viewDidLoad.asObservable(),
-            searchButtonClicked: searchBar.rx.searchButtonClicked.asObservable(),
-            searchBarText: searchBar.rx.text.orEmpty.asObservable(),
-            sortSelected: sortCollectionView.rx.modelSelected(Product.SortValue.self).asObservable(),
-            prefetchItems: productsCollectionView.rx.prefetchItems.asObservable(),
-            productCollectionViewWillDisplayIndexPath: productsCollectionView.rx.willDisplayCell.map { $0.at }.asObservable(),
-            cancelButtonClicked: cancelButton.rx.tap.asObservable(),
-            produtsCellSelected: productsCollectionView.rx.modelSelected(ProductCollectionViewCellViewModel.self).map(\.prodcut)
-        )
-        
-        let output = viewModel.transform(input: input, disposeBag: disposeBag)
-        
-//        output.sortItemsRelay
-//            .asDriver()
-//            .distinctUntilChanged()
-//            .drive(sortCollectionView.rx.items(
-//                cellIdentifier: SortCollectionViewCell.identifier,
-//                cellType: SortCollectionViewCell.self
-//            )) { _, sort, cell in
-//                cell.configureCell(sort: sort)
-//            }
-//            .disposed(by: disposeBag)
-        
-//        output.productsCellViewModelsRelay
-//            .asDriver()
-//            .drive(productsCollectionView.rx.items(
-//                cellIdentifier: ProductCollectionViewCell.identifier,
-//                cellType: ProductCollectionViewCell.self
-//            )) { _, viewModel, cell in
-//                cell.viewModel = viewModel
-//            }
-//            .disposed(by: disposeBag)
-        
-        output.scrollContentOffsetRelay
-            .asSignal()
-            .emit(to: productsCollectionView.rx.contentOffset)
-            .disposed(by: disposeBag)
-        
-//        output.isShowIndicator
-//            .asSignal()
-//            .distinctUntilChanged()
-//            .emit(to: self.rx.isShowIndicator)
-//            .disposed(by: disposeBag)
-        
-        output.searchBarEndEditting
-            .asSignal()
-            .emit(to: searchBar.rx.endEditing)
-            .disposed(by: disposeBag)
-        
-        productsCollectionView.rx.didEndDisplayingCell
-            .subscribe(onNext: { event in
-                guard let cell = event.cell as? ProductCollectionViewCell else { return }
-                cell.cancelTask()
-            })
             .disposed(by: disposeBag)
     }
 }

@@ -9,6 +9,7 @@ import Foundation
 
 import ReactorKit
 
+import Kingfisher
 import RxSwift
 import RxRelay
 
@@ -17,9 +18,8 @@ final class SearchReactor: Reactor {
         case viewDidLoad
         case searchButtonClicked(query: String)
         case sortSelected(Product.SortValue)
-        case prefetchItems(IndexPath)
+        case prefetchItems([IndexPath])
         case productCollectionViewWillDisplayIndexPath(IndexPath)
-        case cancelButtonClicked
         case productsCellSelected(Product)
     }
     
@@ -28,12 +28,16 @@ final class SearchReactor: Reactor {
         case setIndicator(Bool)
         case setFirstProductsPage(ProductsPage)
         case setProductsPage(ProductsPage)
+        case setIsFetchEnable(Bool)
+        case setCurrentPage(Int)
+        case setSelectedSortValue(Product.SortValue)
+        case setEndpage(Bool)
         case scrollToTop
     }
     
     struct State {
-        var productsCellViewModels: [ProductCollectionViewCellViewModel] = []
         var scrollContentOffset: CGPoint = .zero
+        var productsCellViewModels: [ProductCollectionViewCellViewModel] = []
         var searchBarEndEditting: Void = Void()
         var isShowIndicator: Bool = false
         var currentPage: Int = 1
@@ -45,6 +49,8 @@ final class SearchReactor: Reactor {
     
     enum NetworkEvent {
         case setSearchQuery(query: String)
+        case setCurrentPage(Int)
+        case endFetching
         case error(Error)
     }
     
@@ -93,6 +99,7 @@ extension SearchReactor {
         case let .searchButtonClicked(query):
             return .concat([
                 .just(.setIndicator(true)),
+                .just(.setIsFetchEnable(false)),
                 
                 searchProducts(
                     query: query,
@@ -100,15 +107,54 @@ extension SearchReactor {
                     start: 1,
                     display: 30
                 )
-                .observe(on: MainScheduler.asyncInstance)
                 .map { page in .setFirstProductsPage(page) },
                 
                 .just(.setIndicator(false)),
-
                 .just(.scrollToTop)
             ])
+            
+        case let .sortSelected(sortValue):
+            guard let query = currentState.searchQuery else { return .empty() }
+            return .concat([
+                .just(.setSelectedSortValue(sortValue)),
+                .just(.setIndicator(true)),
+                .just(.setIsFetchEnable(false)),
+                
+                searchProducts(
+                    query: query,
+                    sortValue: sortValue,
+                    start: 1,
+                    display: 30
+                )
+                .map { page in .setFirstProductsPage(page) },
+                
+                .just(.setIndicator(false)),
+                .just(.scrollToTop)
+            ])
+            
+        case let .prefetchItems(indexPathes):
+            prefetchImages(indexPathes: indexPathes)
+            return .empty()
 
-        default:
+        case let .productCollectionViewWillDisplayIndexPath(indexPath):
+            guard self.isEnablePrefetch(indexPath: indexPath)
+                  , let query = currentState.searchQuery
+            else { return .empty() }
+            
+            return .concat([
+                .just(.setIsFetchEnable(false)),
+                .just(.setCurrentPage(currentState.currentPage + 1)),
+                
+                searchProducts(
+                    query: query,
+                    sortValue: currentState.selectedSortValue,
+                    start: currentState.currentPage + 1,
+                    display: 30
+                )
+                .map { .setProductsPage($0) }
+            ])
+            
+        case .productsCellSelected(_):
             return .empty()
         }
     }
@@ -121,6 +167,12 @@ extension SearchReactor {
         case let .error(error):
             coordinator?.presnetErrorMessageAlert(error: error)
             return .empty()
+            
+        case .endFetching:
+            return .just(.setIsFetchEnable(true))
+            
+        case let .setCurrentPage(page):
+            return .just(.setCurrentPage(page))
         }
     }
     
@@ -136,20 +188,28 @@ extension SearchReactor {
             
         case let .setFirstProductsPage(productsPage):
             newState.currentPage = 1
-            newState.isEndPage = false
-            newState.productsCellViewModels = productsPage.items.map {
-                ProductCollectionViewCellViewModel(
-                    prodcut: $0,
-                    likeUseCase: likeUseCase,
-                    errorHandler: nil
-                )
-            }
+            newState.isEndPage = productsPage.items.isEmpty
+            newState.productsCellViewModels = productsToViewModels(products: productsPage.items)
             
         case .scrollToTop:
             newState.scrollContentOffset = .zero
             
-        case .setProductsPage(_):
-            break
+        case let .setProductsPage(productPage):
+            newState.isEndPage = productPage.items.isEmpty
+            let newViewModels = productsToViewModels(products: productPage.items)
+            newState.productsCellViewModels.append(contentsOf: newViewModels)
+            
+        case let .setIsFetchEnable(bool):
+            newState.isFetchEnable = bool
+            
+        case let .setCurrentPage(page):
+            newState.currentPage = page
+            
+        case let .setSelectedSortValue(sortValue):
+            newState.selectedSortValue = sortValue
+            
+        case let .setEndpage(bool):
+            newState.isEndPage = bool
         }
         
         return newState
@@ -158,6 +218,16 @@ extension SearchReactor {
 }
 
 private extension SearchReactor {
+    func productsToViewModels(products: [Product]) -> [ProductCollectionViewCellViewModel] {
+        return products.map {
+            ProductCollectionViewCellViewModel(
+                prodcut: $0,
+                likeUseCase: likeUseCase,
+                errorHandler: nil
+            )
+        }
+    }
+    
     func searchProducts(
         query: String,
         sortValue: Product.SortValue,
@@ -178,8 +248,34 @@ private extension SearchReactor {
             },
             onError: { [weak self] in
                 self?.networkEventRelay.accept(.error($0))
+            },
+            onDispose: {
+                self.networkEventRelay.accept(.endFetching)
             }
         )
+        .catchAndReturn(ProductsPage(start: 1, display: 30, items: []))
         .asObservable()
+    }
+    
+    func prefetchImages(indexPathes: [IndexPath]) {
+        let items = indexPathes.map { $0.item }
+        var urls: [URL] = []
+        items.forEach {
+            if let url = URL(string: currentState.productsCellViewModels[$0].prodcut.imageURL) {
+                urls.append(url)
+            }
+        }
+        ImagePrefetcher(resources: urls).start()
+    }
+    
+    func isEnablePrefetch(indexPath: IndexPath) -> Bool {
+        let maxIndex = currentState.productsCellViewModels.count
+        if currentState.isEndPage == false
+            && currentState.isFetchEnable == true
+            && maxIndex - 8 <= indexPath.item {
+            return true
+        } else {
+            return false
+        }
     }
 }

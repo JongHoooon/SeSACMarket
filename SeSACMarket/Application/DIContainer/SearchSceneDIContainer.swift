@@ -39,24 +39,13 @@ extension SearchSceneDIContainer: SearchCoordinatorDependencies {
     
     // MARK: - Search View
     func makeSearchViewController(coordinator: SearchCoordinator) -> SearchViewController {
-        return SearchViewController(
-            reactor: makeSearchReactor(coordinator: coordinator),
-            viewModel: makeSearchViewModel(coordinator: coordinator)
-        )
+        return SearchViewController(reactor: makeSearchReactor(coordinator: coordinator))
     }
     
     private func makeSearchReactor(coordinator: SearchCoordinator) -> SearchReactor {
         return SearchReactor(
             productRemoteUseCase: makeProductRemoteUseCase(),
             likeUseCase: makeLikeUseCase(),
-            coordinator: coordinator
-        )
-    }
-    
-    private func makeSearchViewModel(coordinator: SearchCoordinator) -> SearchViewModel {
-        return SearchViewModel(
-            productRemoteUseCase: makeProductRemoteUseCase(),
-            likeUseCase: makeLikeUseCase(), 
             coordinator: coordinator
         )
     }
