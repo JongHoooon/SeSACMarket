@@ -36,11 +36,11 @@ extension DetailSceneDIContainer: DetailCoordinatorDependencies {
     
     // MARK: - Detail View
     func makeDetailViewController(coordinator: DetailCoordinator) -> DetailViewController {
-        return DetailViewController(viewModel: makeDetailViewModel(coordinator: coordinator))
+        return DetailViewController(reactor: makeDetailReactor(coordinator: coordinator))
     }
     
-    private func makeDetailViewModel(coordinator: DetailCoordinator) -> DetailViewModel {
-        return DetailViewModel(
+    private func makeDetailReactor(coordinator: DetailCoordinator) -> DetailReactor {
+        return DetailReactor(
             product: product,
             likeUseCase: makeLikeUseCase(),
             coordinator: coordinator
