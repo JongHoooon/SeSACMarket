@@ -35,11 +35,11 @@ extension FavoriteSceneDIContainer: FavoriteCoordinatorDependencies {
     
     // MARK: - Favorite Scene
     func makeFavoriteViewController(coordinator: FavoriteCoordinator) -> FavoriteViewController {
-        return FavoriteViewController(viewModel: makeFavoriteViewModel(coordinator: coordinator))
+        return FavoriteViewController(reactor: makeFavoriteReactor(coordinator: coordinator))
     }
     
-    private func makeFavoriteViewModel(coordinator: FavoriteCoordinator) -> FavoriteViewModel {
-        return FavoriteViewModel(
+    private func makeFavoriteReactor(coordinator: FavoriteCoordinator) -> FavoriteReactor {
+        return FavoriteReactor(
             productLocalUseCase: makeProductLocalUseCase(),
             likeUseCase: makeLikeUseCase(),
             coordinator: coordinator

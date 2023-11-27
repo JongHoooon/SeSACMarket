@@ -7,13 +7,13 @@
 
 import UIKit
 
+import ReactorKit
 import RxSwift
 
-final class FavoriteViewController: BaseViewController {
+final class FavoriteViewController: BaseViewController, View {
  
     // MARK: - Properties
-    private let viewModel: FavoriteViewModel
-    private let disposeBag = DisposeBag()
+    var disposeBag = DisposeBag()
     
     // MARK: - UI
     private let searchBar = DefaultSearchBar()
@@ -30,9 +30,9 @@ final class FavoriteViewController: BaseViewController {
     }()
     
     // MARK: - Init
-    init(viewModel: FavoriteViewModel) {
-        self.viewModel = viewModel
+    init(reactor: FavoriteReactor) {
         super.init(nibName: nil, bundle: nil)
+        self.reactor = reactor
     }
     
     deinit {
@@ -60,7 +60,6 @@ final class FavoriteViewController: BaseViewController {
     // MARK: - Configure
     override func configure() {
         super.configure()
-        bind()
         [
             searchBar, cancelButton,
             productsCollectionView
@@ -95,27 +94,54 @@ final class FavoriteViewController: BaseViewController {
         navigationItem.backButtonTitle = ""
         navigationItem.rightBarButtonItem = settingBarButton
     }
+    
+    func bind(reactor: FavoriteReactor) {
+        bindAction(reactor: reactor)
+        bindState(reactor: reactor)
+    }
 }
 
-// MARK: - Bind
 private extension FavoriteViewController {
-    func bind() {
+    func bindAction(reactor: FavoriteReactor) {
+        self.rx.viewWillAppear
+            .map { Reactor.Action.viewWillAppear }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
         
-        // MARK: - Input
-        let input = FavoriteViewModel.Input(
-            viewWillAppear: self.rx.viewWillAppear.map { _ in }.asObservable(),
-            searchTextInput: searchBar.rx.text.orEmpty.asObservable(),
-            cancelButtonClicked: cancelButton.rx.tap.asObservable(),
-            produtsCellSelected: productsCollectionView.rx.modelSelected(ProductCollectionViewCellViewModel.self).map(\.prodcut),
-            settingButtonTapped: settingBarButton.rx.tap.asObservable()
-        )
+        searchBar.rx.text
+            .orEmpty
+            .map { Reactor.Action.searchTextInput($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
         
-        // MARK: - Output
-        let output = viewModel.transform(input: input, disposeBag: disposeBag)
+        productsCollectionView.rx.modelSelected(ProductCollectionViewCellViewModel.self)
+            .map(\.prodcut)
+            .map { Reactor.Action.productCellSelected($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
         
-        output.productsCellViewModelsRelay
-            .asDriver()
-            .drive(productsCollectionView.rx.items(
+        settingBarButton.rx.tap
+            .map { Reactor.Action.settingButtonTapped }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        cancelButton.rx.tap
+            .bind(to: searchBar.rx.endEditing)
+            .disposed(by: disposeBag)
+        
+        productsCollectionView.rx.didEndDisplayingCell
+            .subscribe(onNext: { event in
+                guard let cell = event.cell as? ProductCollectionViewCell else { return }
+                cell.cancelTask()
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    func bindState(reactor: FavoriteReactor) {
+        
+        reactor.state.map { $0.productsCellViewModels }
+            .compactMap { $0 }
+            .bind(to: productsCollectionView.rx.items(
                 cellIdentifier: ProductCollectionViewCell.identifier,
                 cellType: ProductCollectionViewCell.self
             )) { _, viewModel, cell in
@@ -124,21 +150,10 @@ private extension FavoriteViewController {
             }
             .disposed(by: disposeBag)
         
-        output.scrollContentOffsetRelay
-            .asSignal()
-            .emit(to: productsCollectionView.rx.contentOffset)
-            .disposed(by: disposeBag)
         
-        output.searchBarEndEditting
-            .asSignal()
-            .emit(to: searchBar.rx.endEditing)
-            .disposed(by: disposeBag)
-        
-        productsCollectionView.rx.didEndDisplayingCell
-            .subscribe(onNext: { event in
-                guard let cell = event.cell as? ProductCollectionViewCell else { return }
-                cell.cancelTask()
-            })
+        reactor.pulse(\.$scrollContentOffset)
+            .compactMap { $0 }
+            .bind(to: productsCollectionView.rx.contentOffset)
             .disposed(by: disposeBag)
     }
 }

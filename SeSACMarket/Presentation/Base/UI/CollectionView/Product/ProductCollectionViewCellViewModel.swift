@@ -14,17 +14,17 @@ final class ProductCollectionViewCellViewModel {
     let prodcut: Product
     let likeUseCase: LikeUseCase?
     let errorHandler: ((_ error: Error) -> Void)?
-    let needReload: PublishRelay<Void>?
+    let productsCellEventReplay: PublishRelay<ProductsCellEvent>?
     
     init(
         prodcut: Product,
         likeUseCase: LikeUseCase,
         errorHandler: ((_ error: Error) -> Void)?,
-        needReload: PublishRelay<Void>? = nil
+        productsCellEventReplay: PublishRelay<ProductsCellEvent>? = nil
     ) {
         self.prodcut = prodcut
         self.likeUseCase = likeUseCase
         self.errorHandler = errorHandler
-        self.needReload = needReload
+        self.productsCellEventReplay = productsCellEventReplay
     }
 }

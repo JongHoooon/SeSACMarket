@@ -190,11 +190,10 @@ private extension ProductCollectionViewCell {
                     try await viewModel?.likeUseCase?.deleteLikeProduct(productID: product.productID)
                     likeButton.isEnabled = true
                     if type == .favorite {
-                        viewModel?.needReload?.accept(Void())
+                        viewModel?.productsCellEventReplay?.accept(.needReload)
                     }
                 } catch {
-                    #warning("수정 필요!!")
-//                    viewModel?.errorHandler(error)
+                    viewModel?.productsCellEventReplay?.accept(.error(error))
                 }
             }
         case false: // 저장
@@ -202,8 +201,7 @@ private extension ProductCollectionViewCell {
                 do {
                     try await viewModel?.likeUseCase?.saveLikeProduct(product: product)
                 } catch {
-                    #warning("수정 필요!!")
-//                    viewModel?.errorHandler(error)
+                    viewModel?.productsCellEventReplay?.accept(.error(error))
                 }
             }
         }
