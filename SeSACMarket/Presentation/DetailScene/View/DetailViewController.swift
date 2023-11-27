@@ -125,6 +125,7 @@ private extension DetailViewController {
             .disposed(by: disposeBag)
         
         reactor.state.map { $0.likeButtonIsSelected }
+            .skip(1)
             .distinctUntilChanged()
             .bind(to: likeButton.rx.isSelected)
             .disposed(by: disposeBag)
@@ -134,56 +135,4 @@ private extension DetailViewController {
             .bind(to: likeButton.rx.selectWithAnimation)
             .disposed(by: disposeBag)
     }
-}
-
-private extension DetailViewController {
-    /*
-    func bind() {
-
-        let likeButtonTapped = likeButton.rx.tap
-            .map { [weak self] _ in
-                return self?.likeButton.isSelected
-            }
-            .compactMap { $0 }
-
-        // MARK: - Input
-        let input = DetailViewModel.Input(
-            viewDidLoad: self.rx.viewDidLoad.asObservable(),
-            webViewDidFinish: webView.rx.didFinishLoad.map { _ in }.asObservable(),
-            webViewDidFail: webView.rx.didFailLoad.map(\.1).asObservable(),
-            likeButtonTapped: likeButtonTapped,
-            backButtonTapped: Observable.just(Void())
-        )
-        
-        // MARK: - Output
-        let output = viewModel.transform(input: input, disposeBag: disposeBag)
-        
-        output.title
-            .asDriver()
-            .drive(navigationItem.rx.title)
-            .disposed(by: disposeBag)
-        
-        output.webViewRequest
-            .observe(on: MainScheduler.asyncInstance)
-            .bind(to: webView.rx.load)
-            .disposed(by: disposeBag)
-        
-        output.isIndicatorAnimating
-            .asDriver()
-            .drive(indicator.rx.isShowAndAnimating)
-            .disposed(by: disposeBag)
-        
-        output.likeButtonIsSelected
-            .asDriver()
-            .distinctUntilChanged()
-            .drive(likeButton.rx.isSelected)
-            .disposed(by: disposeBag)
-        
-        output.likeButtonIsSelectWithAnimation
-            .asSignal()
-            .distinctUntilChanged()
-            .emit(to: likeButton.rx.selectWithAnimation)
-            .disposed(by: disposeBag)
-    }
-     */
 }
