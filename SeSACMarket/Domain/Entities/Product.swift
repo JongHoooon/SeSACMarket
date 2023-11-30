@@ -36,15 +36,6 @@ extension Product {
         case date
         case priceDescending
         case priceAscending
-        
-        var title: String {
-            switch self {
-            case .similarity:               return "정확도"
-            case .date:                     return "날짜순"
-            case .priceDescending:          return "가격높은순"
-            case .priceAscending:           return "가격낮은순"
-            }
-        }
     }
 }
 

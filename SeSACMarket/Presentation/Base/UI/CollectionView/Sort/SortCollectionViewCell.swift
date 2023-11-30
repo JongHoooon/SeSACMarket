@@ -60,6 +60,11 @@ final class SortCollectionViewCell: BaseCollectionViewCell {
     }
     
     func configureCell(sort: Product.SortValue) {
-        sortLabel.text = sort.title
+        sortLabel.text = switch sort {
+        case .similarity:               "정확도"
+        case .date:                     "날짜순"
+        case .priceDescending:          "가격높은순"
+        case .priceAscending:           "가격낮은순"
+        }
     }
 }
