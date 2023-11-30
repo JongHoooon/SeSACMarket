@@ -52,26 +52,3 @@ class BaseViewController: UIViewController {
         
     }
 }
-
-extension BaseViewController {
-    func presentSimpleAlert(
-        title: String? = nil,
-        message: String,
-        handler: (() -> Void)? = nil
-    ) {
-        let alertController = UIAlertController(
-            title: title,
-            message: message,
-            preferredStyle: .alert
-        )
-        let alertAction = UIAlertAction(
-            title: "확인",
-            style: .default,
-            handler: { _ in
-                handler?()
-            }
-        )
-        alertController.addAction(alertAction)
-        present(alertController, animated: true)
-    }
-}
