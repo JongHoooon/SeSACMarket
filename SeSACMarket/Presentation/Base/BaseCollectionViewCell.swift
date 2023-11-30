@@ -7,7 +7,11 @@
 
 import UIKit
 
+import RxSwift
+
 class BaseCollectionViewCell: UICollectionViewCell {
+    
+    var disposeBag = DisposeBag()
     
     override init(frame: CGRect) {
         super.init(frame: frame)

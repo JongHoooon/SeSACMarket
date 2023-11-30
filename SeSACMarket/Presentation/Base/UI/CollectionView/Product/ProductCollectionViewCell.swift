@@ -27,7 +27,6 @@ final class ProductCollectionViewCell: BaseCollectionViewCell {
     }
     var type: ProductCellType?
     private var likeCheckTask: Task<(), Never>?
-    private let disposeBag = DisposeBag()
     
     // MARK: - UI
     private let productImageView: UIImageView = {
@@ -82,6 +81,7 @@ final class ProductCollectionViewCell: BaseCollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         productImageView.image = nil
+        disposeBag = DisposeBag()
     }
     
     // MARK: - Configure
