@@ -28,7 +28,7 @@ enum ProductAPI: APIProtocol {
         case let .fetchQuery(productQuery, start, display):
                 return [
                     URLQueryItem(name: "query", value: productQuery.query),
-                    URLQueryItem(name: "sort", value: productQuery.sortValue.parameter),
+                    URLQueryItem(name: "sort", value: sortValueQuery(productQuery.sortValue)),
                     URLQueryItem(name: "start", value: "\(start)"),
                     URLQueryItem(name: "display", value: "\(display)")
                 ]
@@ -64,3 +64,15 @@ enum ProductAPI: APIProtocol {
         return request
     }
 }
+
+private extension ProductAPI {
+    func sortValueQuery(_ sortValue: Product.SortValue) -> String {
+        switch sortValue {
+        case .similarity:               return "sim"
+        case .date:                     return "date"
+        case .priceDescending:          return "dsc"
+        case .priceAscending:           return "asc"
+        }
+    }
+}
+

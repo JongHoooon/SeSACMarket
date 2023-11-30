@@ -37,15 +37,6 @@ extension Product {
         case priceDescending
         case priceAscending
         
-        var parameter: String {
-            switch self {
-            case .similarity:               return "sim"
-            case .date:                     return "date"
-            case .priceDescending:          return "dsc"
-            case .priceAscending:           return "asc"
-            }
-        }
-        
         var title: String {
             switch self {
             case .similarity:               return "정확도"
