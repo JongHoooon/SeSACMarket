@@ -158,11 +158,11 @@ private extension DetailReactor {
         NotificationCenter.default.rx.notification(.likeProduct)
             .bind(with: self, onNext: { owner, notification in
                 let userInfo = notification.userInfo
-                guard let id = userInfo?["id"] as? Int,
+                guard let id = userInfo?["id"] as? String,
                       let isSelected = userInfo?["isSelected"] as? Bool
                 else { return }
                 
-                if owner.product.productID == id {
+                if owner.product.id == id {
                     self.notificationEventRelay.accept(.likeButtonTapped(isSelected))
                 }
             })
@@ -170,7 +170,7 @@ private extension DetailReactor {
     }
     
     func productURLRequest() -> Observable<URLRequest?> {
-        if let url = URL(string: "https://msearch.shopping.naver.com/product/\(product.productID)") {
+        if let url = URL(string: "https://msearch.shopping.naver.com/product/\(product.id)") {
             let request = URLRequest(url: url)
             return .just(request)
         } else {
@@ -182,7 +182,7 @@ private extension DetailReactor {
         return Observable.create { [weak self] observer in
             guard let self else { return Disposables.create() }
             Task {
-                let result = await self.likeUseCase.isLikeProduct(productID: self.product.productID)
+                let result = await self.likeUseCase.isLikeProduct(productID: self.product.id)
                 observer.onNext(result)
             }
             return Disposables.create()
@@ -197,7 +197,7 @@ private extension DetailReactor {
             case true: // 삭제
                 Task {
                     do {
-                        try await self.likeUseCase.deleteLikeProduct(productID: self.product.productID)
+                        try await self.likeUseCase.deleteLikeProduct(productID: self.product.id)
                         observer.onNext(false)
                     } catch {
                         self.errorEventRelay.accept(.error(error))

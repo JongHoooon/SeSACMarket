@@ -130,7 +130,7 @@ final class ProductCollectionViewCell: BaseCollectionViewCell {
             placeholder: ImageEnum.Placeholer.photo
         )
         let likeCheckTask = Task {
-            let isLike = await viewModel?.likeUseCase?.isLikeProduct(productID: product.productID)
+            let isLike = await viewModel?.likeUseCase?.isLikeProduct(productID: product.id)
 
             likeButton.isSelected = isLike ?? false
         }
@@ -161,11 +161,11 @@ private extension ProductCollectionViewCell {
             .observe(on: MainScheduler.asyncInstance)
             .bind(with: self, onNext: { owner, notification in
                 let userInfo = notification.userInfo
-                guard let id = userInfo?["id"] as? Int,
+                guard let id = userInfo?["id"] as? String,
                       let isSelected = userInfo?["isSelected"] as? Bool
                 else { return }
                 
-                if owner.viewModel?.prodcut.productID == id {
+                if owner.viewModel?.prodcut.id == id {
                     switch isSelected {
                     case true:
                         owner.likeButton.isSelected = true
@@ -187,7 +187,7 @@ private extension ProductCollectionViewCell {
         case true: // 삭제
             Task {
                 do {
-                    try await viewModel?.likeUseCase?.deleteLikeProduct(productID: product.productID)
+                    try await viewModel?.likeUseCase?.deleteLikeProduct(productID: product.id)
                     likeButton.isEnabled = true
                     if type == .favorite {
                         viewModel?.productsCellEventReplay?.accept(.needReload)

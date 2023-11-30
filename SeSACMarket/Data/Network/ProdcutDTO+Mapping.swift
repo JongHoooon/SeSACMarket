@@ -8,11 +8,11 @@
 import Foundation
 
 struct ProdcutDTO: Decodable {
-    let productID: String
-    let title: String
-    let imageURL: String
-    let mallName: String
-    let price: String
+    let productID: String?
+    let title: String?
+    let imageURL: String?
+    let mallName: String?
+    let price: String?
 
     enum CodingKeys: String, CodingKey {
         case productID = "productId"
@@ -24,11 +24,11 @@ struct ProdcutDTO: Decodable {
     
     func toDomain() -> Product {
         return Product(
-            productID: Int(productID) ?? 0,
-            title: title.htmlEscaped,
-            imageURL: imageURL,
-            mallName: mallName,
-            price: Int(price) ?? 0
+            id: productID ?? UUID().uuidString,
+            title: title?.htmlEscaped ?? "제목 없음",
+            imageURL: imageURL ?? "",
+            mallName: mallName ?? "이름 없음",
+            price: Int(price ?? "0") ?? 0
         )
     }
 }

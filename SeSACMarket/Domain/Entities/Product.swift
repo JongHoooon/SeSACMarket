@@ -6,7 +6,7 @@
 //
 
 struct Product {
-    let productID: Int
+    let id: String
     let title: String
     let imageURL: String
     let mallName: String
@@ -14,14 +14,14 @@ struct Product {
     let isLike: Bool?
 
     init(
-        productID: Int,
+        id: String,
         title: String,
         imageURL: String,
         mallName: String,
         price: Int,
         isLike: Bool = false
     ) {
-        self.productID = productID
+        self.id = id
         self.title = title
         self.imageURL = imageURL
         self.mallName = mallName

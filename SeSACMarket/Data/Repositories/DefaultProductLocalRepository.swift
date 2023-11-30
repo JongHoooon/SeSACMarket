@@ -33,7 +33,7 @@ final class DefaultProductLocalRepository: ProductLocalRepository {
             guard let self else { return }
             realmTaskQueue.async {
                 let productTable = ProductTable(
-                    productID: product.productID,
+                    productID: product.id,
                     title: product.title,
                     imageURL: product.imageURL,
                     mallName: product.mallName,
@@ -52,7 +52,7 @@ final class DefaultProductLocalRepository: ProductLocalRepository {
         }
     }
 
-    func deleteLikeProduct(productID: Int) async throws {
+    func deleteLikeProduct(productID: String) async throws {
         try await withCheckedThrowingContinuation { [weak self] continuation in
             guard let self else { return }
             realmTaskQueue.async {
@@ -103,7 +103,7 @@ final class DefaultProductLocalRepository: ProductLocalRepository {
         }
     }
 
-    func isLikeProduct(productID: Int) async -> Bool {
+    func isLikeProduct(productID: String) async -> Bool {
         await withCheckedContinuation { [weak self] continuation in
             guard let self else { return }
             realmTaskQueue.async {

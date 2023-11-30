@@ -9,8 +9,8 @@ import Foundation
 
 protocol LikeUseCase {
     func saveLikeProduct(product: Product) async throws
-    func deleteLikeProduct(productID: Int) async throws
-    func isLikeProduct(productID: Int) async -> Bool
+    func deleteLikeProduct(productID: String) async throws
+    func isLikeProduct(productID: String) async -> Bool
 }
 
 final class DefaultLikeUseCase: LikeUseCase {
@@ -28,13 +28,13 @@ final class DefaultLikeUseCase: LikeUseCase {
             name: .likeProduct,
             object: nil,
             userInfo: [
-                "id": product.productID,
+                "id": product.id,
                 "isSelected": true
             ]
         )
     }
     
-    func deleteLikeProduct(productID: Int) async throws {
+    func deleteLikeProduct(productID: String) async throws {
         try await productLocalRepository.deleteLikeProduct(productID: productID)
         NotificationCenter.default.post(
             name: .likeProduct,
@@ -46,7 +46,7 @@ final class DefaultLikeUseCase: LikeUseCase {
         )
     }
     
-    func isLikeProduct(productID: Int) async -> Bool {
+    func isLikeProduct(productID: String) async -> Bool {
         await productLocalRepository.isLikeProduct(productID: productID)
     }
 }

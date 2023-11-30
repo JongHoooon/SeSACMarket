@@ -10,7 +10,7 @@ import Foundation
 import RealmSwift
 
 final class ProductTable: Object {
-    @Persisted(primaryKey: true) var productID: Int
+    @Persisted(primaryKey: true) var productID: String
     @Persisted var title: String
     @Persisted var imageURL: String
     @Persisted var mallName: String
@@ -19,7 +19,7 @@ final class ProductTable: Object {
     @Persisted var enrolledDate: Date
     
     convenience init(
-        productID: Int,
+        productID: String,
         title: String,
         imageURL: String,
         mallName: String,
@@ -38,7 +38,7 @@ final class ProductTable: Object {
     
     func toDomain() -> Product {
         return Product(
-            productID: productID,
+            id: productID,
             title: title,
             imageURL: imageURL,
             mallName: mallName,
