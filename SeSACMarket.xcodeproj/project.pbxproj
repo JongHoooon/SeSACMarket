@@ -202,6 +202,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		ED0297442B18716E0012C07D /* ProductCollectionViewCell */ = {
+			isa = PBXGroup;
+			children = (
+				ED2A01362AAAF21E004A346D /* ProductCollectionViewCell.swift */,
+				ED4DACAE2AADFC070095CD77 /* ProductCollectionViewCellViewModel.swift */,
+			);
+			path = ProductCollectionViewCell;
+			sourceTree = "<group>";
+		};
 		ED2A00A42AA99CEC004A346D = {
 			isa = PBXGroup;
 			children = (
@@ -278,6 +287,7 @@
 			isa = PBXGroup;
 			children = (
 				ED2A00E62AA9AF56004A346D /* Base */,
+				ED0297442B18716E0012C07D /* ProductCollectionViewCell */,
 				ED2A00DE2AA9AEE5004A346D /* AuthScene */,
 				ED2A01002AA9BDAD004A346D /* TabBarScene */,
 				ED2A00F82AA9BC2B004A346D /* SearchScene */,
@@ -536,8 +546,6 @@
 			isa = PBXGroup;
 			children = (
 				ED2A01342AAAF20A004A346D /* ProductsCollectionView.swift */,
-				ED2A01362AAAF21E004A346D /* ProductCollectionViewCell.swift */,
-				ED4DACAE2AADFC070095CD77 /* ProductCollectionViewCellViewModel.swift */,
 			);
 			path = Product;
 			sourceTree = "<group>";
