@@ -6,8 +6,11 @@
 //
 
 import UIKit
+import RxSwift
 
 class BaseViewController: UIViewController {
+    
+    var disposeBag = DisposeBag()
     
     let indicatorBaseView: UIView = {
         let view = UIView()

@@ -14,7 +14,6 @@ final class SettingViewController: BaseViewController {
     
     // MARK: - Properties
     private let viewModel: SettingViewModel
-    private let disposeBag = DisposeBag()
     
     // MARK: - UI
     private let dismissBarButton: UIBarButtonItem = {

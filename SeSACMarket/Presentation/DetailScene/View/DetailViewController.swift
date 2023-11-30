@@ -14,9 +14,6 @@ import RxCocoa
 
 final class DetailViewController: BaseViewController, View {
     
-    // MARK: - Properties
-    var disposeBag = DisposeBag()
-    
     // MARK: - UI
     private let likeButton: LikeButton = {
         let button = LikeButton(isDetailView: true)

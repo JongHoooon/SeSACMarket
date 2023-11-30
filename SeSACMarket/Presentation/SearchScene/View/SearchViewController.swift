@@ -15,9 +15,6 @@ import SnapKit
 
 final class SearchViewController: BaseViewController, View {
     
-    // MARK: - Properties
-    var disposeBag = DisposeBag()
-    
     // MARK: - UI
     private let searchBar = DefaultSearchBar()
     private let cancelButton = ButtonStyle1(title: "취소")

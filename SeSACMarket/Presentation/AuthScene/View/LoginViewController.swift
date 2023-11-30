@@ -13,7 +13,6 @@ final class LoginViewController: BaseViewController {
     
     // MARK: - Properties
     private let viewModel: LoginViewModel
-    private let disposeBag = DisposeBag()
     
     // MARK: - UI
     private let loginButton: ButtonStyle1 = {

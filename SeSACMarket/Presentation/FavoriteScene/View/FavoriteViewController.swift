@@ -11,9 +11,6 @@ import ReactorKit
 import RxSwift
 
 final class FavoriteViewController: BaseViewController, View {
- 
-    // MARK: - Properties
-    var disposeBag = DisposeBag()
     
     // MARK: - UI
     private let searchBar = DefaultSearchBar()

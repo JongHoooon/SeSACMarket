@@ -14,7 +14,6 @@ final class LogoutViewController: BaseViewController {
     
     // MARK: - Properties
     private let viewModel: LogoutViewModel
-    private let disposeBag = DisposeBag()
     
     // MARK: - UI
     private let logoutButton: ButtonStyle1 = {
