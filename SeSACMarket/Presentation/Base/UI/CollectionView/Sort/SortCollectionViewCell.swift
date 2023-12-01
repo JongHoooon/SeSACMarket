@@ -26,7 +26,7 @@ final class SortCollectionViewCell: BaseCollectionViewCell {
     // MARK: - UI
     private let baseView: UIView = {
         let view = UIView()
-        view.layer.cornerRadius = Constant.CornerRadius.default
+        view.layer.cornerRadius = Constants.CornerRadius.default
         view.layer.borderColor = UIColor.Custom.mainTintColor.cgColor
         view.layer.borderWidth = 1.0
         view.clipsToBounds = true
@@ -50,11 +50,11 @@ final class SortCollectionViewCell: BaseCollectionViewCell {
 
         sortLabel.snp.makeConstraints {
             $0.center.equalTo(baseView)
-            $0.horizontalEdges.equalToSuperview().inset(Constant.Inset.medium)
+            $0.horizontalEdges.equalToSuperview().inset(Constants.Inset.medium)
         }
         
         baseView.snp.makeConstraints {
-            $0.height.equalTo(Constant.SortCell.height)
+            $0.height.equalTo(Constants.SortCell.height)
             $0.horizontalEdges.equalToSuperview()
         }
     }

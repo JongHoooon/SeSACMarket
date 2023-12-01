@@ -38,7 +38,7 @@ final class SearchReactor: Reactor {
     struct State {
         @Pulse
         var scrollContentOffset: CGPoint = .zero
-        var productsCellViewModels: [ProductCollectionViewCellViewModel] = []
+        var productsCellViewModels: [ProductCollectionViewCellReactor] = []
         var searchBarEndEditting: Void = Void()
         var isShowIndicator: Bool = false
         var currentPage: Int = 1
@@ -220,9 +220,9 @@ extension SearchReactor {
 }
 
 private extension SearchReactor {
-    func productsToViewModels(products: [Product]) -> [ProductCollectionViewCellViewModel] {
+    func productsToViewModels(products: [Product]) -> [ProductCollectionViewCellReactor] {
         return products.map {
-            ProductCollectionViewCellViewModel(
+            ProductCollectionViewCellReactor(
                 prodcut: $0,
                 likeUseCase: likeUseCase,
                 errorHandler: nil
@@ -263,7 +263,7 @@ private extension SearchReactor {
         let items = indexPathes.map { $0.item }
         var urls: [URL] = []
         items.forEach {
-            if let url = URL(string: currentState.productsCellViewModels[$0].prodcut.imageURL) {
+            if let url = URL(string: currentState.productsCellViewModels[$0].initialState.imageURL) {
                 urls.append(url)
             }
         }

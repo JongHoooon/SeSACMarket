@@ -28,7 +28,7 @@ final class SortCollectionView: UICollectionView {
         collectionViewLayout = UICollectionViewCompositionalLayout { (_, _) -> NSCollectionLayoutSection? in
             let itemSize = NSCollectionLayoutSize(
                 widthDimension: .estimated(60.0),
-                heightDimension: .estimated(Constant.SortCell.height))
+                heightDimension: .estimated(Constants.SortCell.height))
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
             let groupSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
@@ -37,10 +37,10 @@ final class SortCollectionView: UICollectionView {
                 layoutSize: groupSize,
                 subitems: [item]
             )
-            group.interItemSpacing = .fixed(Constant.Inset.medium)
+            group.interItemSpacing = .fixed(Constants.Inset.medium)
             let section = NSCollectionLayoutSection(group: group)
-            section.contentInsets.leading = Constant.Inset.defaultInset
-            section.contentInsets.trailing = Constant.Inset.defaultInset
+            section.contentInsets.leading = Constants.Inset.defaultInset
+            section.contentInsets.trailing = Constants.Inset.defaultInset
             return section
         }
     }

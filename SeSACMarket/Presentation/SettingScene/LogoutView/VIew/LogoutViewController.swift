@@ -63,7 +63,7 @@ final class LogoutViewController: BaseViewController {
     override func configureLayout() {
         logoutButton.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.horizontalEdges.equalToSuperview().inset(Constant.Inset.large)
+            $0.horizontalEdges.equalToSuperview().inset(Constants.Inset.large)
         }
     }
     

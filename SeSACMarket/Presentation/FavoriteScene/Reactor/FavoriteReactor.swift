@@ -25,14 +25,14 @@ final class FavoriteReactor: Reactor {
     enum Mutation {
         case setQuery(String)
         case scrollToTop
-        case setProductsCellViewModels([ProductCollectionViewCellViewModel])
+        case setProductsCellViewModels([ProductCollectionViewCellReactor])
     }
     
     struct State {
         @Pulse
         var scrollContentOffset: CGPoint?
         var query: String?
-        var productsCellViewModels: [ProductCollectionViewCellViewModel]?
+        var productsCellViewModels: [ProductCollectionViewCellReactor]?
     }
         
     private let productLocalUseCase: ProductLocalFetchUseCase
@@ -117,7 +117,7 @@ extension FavoriteReactor {
 }
 
 private extension FavoriteReactor {
-    func fetchProduct() -> Observable<[ProductCollectionViewCellViewModel]> {
+    func fetchProduct() -> Observable<[ProductCollectionViewCellReactor]> {
         
         return Observable.create { [weak self] observer in
             guard let self,
@@ -131,7 +131,7 @@ private extension FavoriteReactor {
                 Task {
                     let products = await self.productLocalUseCase.fetchAllLikeProducts()
                     let viewModels = products.map {
-                        ProductCollectionViewCellViewModel(
+                        ProductCollectionViewCellReactor(
                             prodcut: $0,
                             likeUseCase: self.likeUseCase,
                             errorHandler: errorHandler,
@@ -144,7 +144,7 @@ private extension FavoriteReactor {
                 Task {
                     let products = await self.productLocalUseCase.fetchQueryLikeProducts(query: query)
                     let viewModels = products.map {
-                        ProductCollectionViewCellViewModel(
+                        ProductCollectionViewCellReactor(
                             prodcut: $0,
                             likeUseCase: self.likeUseCase,
                             errorHandler: errorHandler,

@@ -7,10 +7,10 @@
 
 import Foundation
 
-enum Constant {}
+enum Constants {}
 
 // MARK: - Font Size
-extension Constant {
+extension Constants {
     enum FontSize {
         static let caption: CGFloat = 13.0
         static let title: CGFloat = 15.0
@@ -30,5 +30,10 @@ extension Constant {
     
     enum SortCell {
         static let height: CGFloat = 32.0
+    }
+    
+    enum NotificationCenterUserInfoKey {
+        static let id = "id"
+        static let isSelected = "isSelected"
     }
 }

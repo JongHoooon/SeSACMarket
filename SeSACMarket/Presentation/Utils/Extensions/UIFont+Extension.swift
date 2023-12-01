@@ -9,8 +9,8 @@ import UIKit
 
 extension UIFont {
     enum CustomFont {
-        static let caption = systemFont(ofSize: Constant.FontSize.caption)
-        static let title = systemFont(ofSize: Constant.FontSize.title)
-        static let bold = systemFont(ofSize: Constant.FontSize.bold)
+        static let caption = systemFont(ofSize: Constants.FontSize.caption)
+        static let title = systemFont(ofSize: Constants.FontSize.title)
+        static let bold = systemFont(ofSize: Constants.FontSize.bold)
     }
 }

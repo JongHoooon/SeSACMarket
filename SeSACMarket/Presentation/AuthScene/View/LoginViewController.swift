@@ -52,7 +52,7 @@ final class LoginViewController: BaseViewController {
     override func configureLayout() {
         loginButton.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.horizontalEdges.equalToSuperview().inset(Constant.Inset.large)
+            $0.horizontalEdges.equalToSuperview().inset(Constants.Inset.large)
         }
     }
 }

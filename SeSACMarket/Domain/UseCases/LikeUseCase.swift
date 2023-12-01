@@ -7,10 +7,13 @@
 
 import Foundation
 
+import RxSwift
+
 protocol LikeUseCase {
     func saveLikeProduct(product: Product) async throws
     func deleteLikeProduct(productID: String) async throws
     func isLikeProduct(productID: String) async -> Bool
+    func toggleProductLike(product: Product, current: Bool) -> Single<Bool>
 }
 
 final class DefaultLikeUseCase: LikeUseCase {
@@ -20,6 +23,35 @@ final class DefaultLikeUseCase: LikeUseCase {
     
     init(productLocalRepository: ProductLocalRepository) {
         self.productLocalRepository = productLocalRepository
+    }
+    
+    func toggleProductLike(product: Product, current: Bool) -> Single<Bool> {
+        Single.create { [weak self] single in
+            guard let self else { return Disposables.create() }
+            
+            switch current {
+            case true:
+                Task {
+                    do {
+                        try await self.productLocalRepository.deleteLikeProduct(productID: product.id)
+                        single(.success(false))
+                    } catch {
+                        single(.failure(error))
+                    }
+                }
+                
+            case false:
+                Task {
+                    do {
+                        try await self.productLocalRepository.saveLikeProduct(product: product)
+                        single(.success(true))
+                    } catch {
+                        single(.failure(error))
+                    }
+                }
+            }
+            return Disposables.create()
+        }
     }
     
     func saveLikeProduct(product: Product) async throws {

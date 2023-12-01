@@ -8,6 +8,7 @@
 import UIKit
 
 import Kingfisher
+import ReactorKit
 import RxSwift
 import SnapKit
 
@@ -16,15 +17,9 @@ enum ProductCellType {
     case favorite
 }
 
-final class ProductCollectionViewCell: BaseCollectionViewCell {
+final class ProductCollectionViewCell: BaseCollectionViewCell, View {
     
     // MARK: - Properties
-    var viewModel: ProductCollectionViewCellViewModel? {
-        didSet {
-            guard let product = viewModel?.prodcut else { return }
-            configureCell(product: product)
-        }
-    }
     var type: ProductCellType?
     private var likeCheckTask: Task<(), Never>?
     
@@ -33,7 +28,7 @@ final class ProductCollectionViewCell: BaseCollectionViewCell {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = Constant.CornerRadius.default
+        imageView.layer.cornerRadius = Constants.CornerRadius.default
         imageView.backgroundColor = .Custom.grayBackground
         return imageView
     }()
@@ -99,7 +94,6 @@ final class ProductCollectionViewCell: BaseCollectionViewCell {
             labelStackView,
             likeButton
         ].forEach { contentView.addSubview($0) }
-        registerLikeObserver()
     }
     
     override func configureLayout() {
@@ -110,34 +104,35 @@ final class ProductCollectionViewCell: BaseCollectionViewCell {
         
         labelStackView.snp.makeConstraints {
             $0.top.equalTo(productImageView.snp.bottom).offset(4.0)
-            $0.leading.equalToSuperview().inset(Constant.Inset.small)
+            $0.leading.equalToSuperview().inset(Constants.Inset.small)
             $0.trailing.equalToSuperview()
             $0.bottom.equalToSuperview()
         }
         
         likeButton.snp.makeConstraints {
             $0.size.equalTo(36.0)
-            $0.trailing.equalToSuperview().inset(Constant.Inset.medium)
-            $0.bottom.equalTo(productImageView.snp.bottom).offset(-Constant.Inset.medium)
+            $0.trailing.equalToSuperview().inset(Constants.Inset.medium)
+            $0.bottom.equalTo(productImageView.snp.bottom).offset(-Constants.Inset.medium)
         }
         likeButton.layer.cornerRadius = 36.0 / 2
         
     }
     
-    func configureCell(product: Product) {
+    func bind(reactor: ProductCollectionViewCellReactor) {
         productImageView.kf.setImage(
-            with: URL(string: product.imageURL),
+            with: URL(string: reactor.initialState.imageURL),
             placeholder: ImageEnum.Placeholer.photo
         )
         let likeCheckTask = Task {
-            let isLike = await viewModel?.likeUseCase?.isLikeProduct(productID: product.id)
+            let isLike = await reactor.likeUseCase?.isLikeProduct(productID: reactor.initialState.id)
 
             likeButton.isSelected = isLike ?? false
         }
         self.likeCheckTask = likeCheckTask
-        mallNameLabel.text = product.mallName.mallNameFormat
-        titleNameLabel.text = product.title
-        priceNameLabel.text = product.price.priceFormat
+        mallNameLabel.text = reactor.initialState.mallName.mallNameFormat
+        titleNameLabel.text = reactor.initialState.title
+        priceNameLabel.text = reactor.initialState.price.priceFormat
+        registerLikeObserver()
     }
     
     func cancelTask() {
@@ -158,6 +153,7 @@ private extension ProductCollectionViewCell {
     
     func registerLikeObserver() {
         NotificationCenter.default.rx.notification(.likeProduct)
+            .debug()
             .observe(on: MainScheduler.asyncInstance)
             .bind(with: self, onNext: { owner, notification in
                 let userInfo = notification.userInfo
@@ -165,12 +161,11 @@ private extension ProductCollectionViewCell {
                       let isSelected = userInfo?["isSelected"] as? Bool
                 else { return }
                 
-                if owner.viewModel?.prodcut.id == id {
+                if owner.reactor?.initialState.id == id {
                     switch isSelected {
                     case true:
                         owner.likeButton.isSelected = true
                         owner.likeButton.playAnimation()
-                        break
                     case false :
                         owner.likeButton.isSelected = false
                     }
@@ -182,26 +177,29 @@ private extension ProductCollectionViewCell {
     @objc
     func likeButtonClicked() {
         likeButton.isEnabled = false
-        guard let product = viewModel?.prodcut else { return }
+        guard let product = reactor?.initialState else { return }
         switch likeButton.isSelected {
         case true: // 삭제
             Task {
                 do {
-                    try await viewModel?.likeUseCase?.deleteLikeProduct(productID: product.id)
+                    try await reactor?.likeUseCase?.deleteLikeProduct(productID: product.id)
                     likeButton.isEnabled = true
+                    likeButton.isSelected = false
                     if type == .favorite {
-                        viewModel?.productsCellEventReplay?.accept(.needReload)
+                        reactor?.productsCellEventReplay?.accept(.needReload)
                     }
                 } catch {
-                    viewModel?.productsCellEventReplay?.accept(.error(error))
+                    reactor?.productsCellEventReplay?.accept(.error(error))
                 }
             }
         case false: // 저장
             Task {
                 do {
-                    try await viewModel?.likeUseCase?.saveLikeProduct(product: product)
+                    try await reactor?.likeUseCase?.saveLikeProduct(product: product)
+                    likeButton.isEnabled = true
+                    likeButton.isSelected = true
                 } catch {
-                    viewModel?.productsCellEventReplay?.accept(.error(error))
+                    reactor?.productsCellEventReplay?.accept(.error(error))
                 }
             }
         }

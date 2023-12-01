@@ -66,13 +66,13 @@ final class FavoriteViewController: BaseViewController, View {
     override func configureLayout() {
         searchBar.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
-            $0.leading.equalToSuperview().inset(Constant.Inset.medium)
+            $0.leading.equalToSuperview().inset(Constants.Inset.medium)
             $0.trailing.equalTo(cancelButton.snp.leading)
         }
         
         cancelButton.snp.makeConstraints {
             $0.centerY.equalTo(searchBar)
-            $0.trailing.equalToSuperview().inset(Constant.Inset.medium)
+            $0.trailing.equalToSuperview().inset(Constants.Inset.medium)
         }
         cancelButton.setContentCompressionResistancePriority(
             .defaultHigh,
@@ -80,7 +80,7 @@ final class FavoriteViewController: BaseViewController, View {
         )
         
         productsCollectionView.snp.makeConstraints {
-            $0.top.equalTo(searchBar.snp.bottom).offset(Constant.Inset.defaultInset)
+            $0.top.equalTo(searchBar.snp.bottom).offset(Constants.Inset.defaultInset)
             $0.horizontalEdges.equalToSuperview()
             $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
@@ -111,8 +111,8 @@ private extension FavoriteViewController {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
-        productsCollectionView.rx.modelSelected(ProductCollectionViewCellViewModel.self)
-            .map(\.prodcut)
+        productsCollectionView.rx.modelSelected(ProductCollectionViewCellReactor.self)
+            .map(\.initialState)
             .map { Reactor.Action.productCellSelected($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
@@ -141,8 +141,8 @@ private extension FavoriteViewController {
             .bind(to: productsCollectionView.rx.items(
                 cellIdentifier: ProductCollectionViewCell.identifier,
                 cellType: ProductCollectionViewCell.self
-            )) { _, viewModel, cell in
-                cell.viewModel = viewModel
+            )) { _, reactor, cell in
+                cell.reactor = reactor
                 cell.type = .favorite
             }
             .disposed(by: disposeBag)

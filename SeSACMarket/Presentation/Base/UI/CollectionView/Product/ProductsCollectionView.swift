@@ -26,14 +26,14 @@ final class ProductsCollectionView: UICollectionView {
     func configureLayout() {
         collectionViewLayout = UICollectionViewCompositionalLayout { (_, _) -> NSCollectionLayoutSection? in
             
-            let horizontalInsets = Constant.Inset.defaultInset * 3
+            let horizontalInsets = Constants.Inset.defaultInset * 3
             let itemWidth = (self.frame.width - horizontalInsets) / 2
             
             let heightOfImageView = itemWidth
-            let heightOfLabels = Constant.FontSize.caption +
-            Constant.FontSize.title * 2 +
-            Constant.FontSize.bold
-            let verticalInsets = Constant.Inset.small * 4
+            let heightOfLabels = Constants.FontSize.caption +
+            Constants.FontSize.title * 2 +
+            Constants.FontSize.bold
+            let verticalInsets = Constants.Inset.small * 4
             let cellHeight = heightOfImageView +
                 heightOfLabels +
                 verticalInsets
@@ -52,11 +52,11 @@ final class ProductsCollectionView: UICollectionView {
                 layoutSize: groupSize,
                 subitems: [item]
             )
-            group.interItemSpacing = .fixed(Constant.Inset.defaultInset)
-            group.contentInsets.leading = Constant.Inset.defaultInset
-            group.contentInsets.trailing = Constant.Inset.defaultInset
+            group.interItemSpacing = .fixed(Constants.Inset.defaultInset)
+            group.contentInsets.leading = Constants.Inset.defaultInset
+            group.contentInsets.trailing = Constants.Inset.defaultInset
             let section = NSCollectionLayoutSection(group: group)
-            section.interGroupSpacing = Constant.Inset.defaultInset
+            section.interGroupSpacing = Constants.Inset.defaultInset
             
             return section
         }
