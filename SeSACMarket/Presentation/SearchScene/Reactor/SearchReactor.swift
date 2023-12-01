@@ -38,7 +38,7 @@ final class SearchReactor: Reactor {
     struct State {
         @Pulse
         var scrollContentOffset: CGPoint = .zero
-        var productsCellViewModels: [ProductCollectionViewCellReactor] = []
+        var productsCellReactors: [ProductCollectionViewCellReactor] = []
         var searchBarEndEditting: Void = Void()
         var isShowIndicator: Bool = false
         var currentPage: Int = 1
@@ -191,15 +191,15 @@ extension SearchReactor {
         case let .setFirstProductsPage(productsPage):
             newState.currentPage = 1
             newState.isEndPage = productsPage.items.isEmpty
-            newState.productsCellViewModels = productsToViewModels(products: productsPage.items)
+            newState.productsCellReactors = productsToReactors(products: productsPage.items)
             
         case .scrollToTop:
             newState.scrollContentOffset = .zero
             
         case let .setProductsPage(productPage):
             newState.isEndPage = productPage.items.isEmpty
-            let newViewModels = productsToViewModels(products: productPage.items)
-            newState.productsCellViewModels.append(contentsOf: newViewModels)
+            let newViewModels = productsToReactors(products: productPage.items)
+            newState.productsCellReactors.append(contentsOf: newViewModels)
             
         case let .setIsFetchEnable(bool):
             newState.isFetchEnable = bool
@@ -220,10 +220,10 @@ extension SearchReactor {
 }
 
 private extension SearchReactor {
-    func productsToViewModels(products: [Product]) -> [ProductCollectionViewCellReactor] {
+    func productsToReactors(products: [Product]) -> [ProductCollectionViewCellReactor] {
         return products.map {
             ProductCollectionViewCellReactor(
-                prodcut: $0,
+                product: $0,
                 likeUseCase: likeUseCase,
                 errorHandler: nil
             )
@@ -263,7 +263,7 @@ private extension SearchReactor {
         let items = indexPathes.map { $0.item }
         var urls: [URL] = []
         items.forEach {
-            if let url = URL(string: currentState.productsCellViewModels[$0].initialState.imageURL) {
+            if let url = URL(string: currentState.productsCellReactors[$0].initialState.product.imageURL) {
                 urls.append(url)
             }
         }
@@ -271,7 +271,7 @@ private extension SearchReactor {
     }
     
     func isEnablePrefetch(indexPath: IndexPath) -> Bool {
-        let maxIndex = currentState.productsCellViewModels.count
+        let maxIndex = currentState.productsCellReactors.count
         if currentState.isEndPage == false
             && currentState.isFetchEnable == true
             && maxIndex - 8 <= indexPath.item {

@@ -34,7 +34,8 @@ final class DefaultLikeUseCase: LikeUseCase {
                 Task {
                     do {
                         try await self.productLocalRepository.deleteLikeProduct(productID: product.id)
-                        single(.success(false))
+                        single(.success(!current))
+                        self.postProductSelectedNotification(id: product.id, selected: !current)
                     } catch {
                         single(.failure(error))
                     }
@@ -44,7 +45,8 @@ final class DefaultLikeUseCase: LikeUseCase {
                 Task {
                     do {
                         try await self.productLocalRepository.saveLikeProduct(product: product)
-                        single(.success(true))
+                        single(.success(!current))
+                        self.postProductSelectedNotification(id: product.id, selected: !current)
                     } catch {
                         single(.failure(error))
                     }
@@ -80,5 +82,18 @@ final class DefaultLikeUseCase: LikeUseCase {
     
     func isLikeProduct(productID: String) async -> Bool {
         await productLocalRepository.isLikeProduct(productID: productID)
+    }
+}
+
+private extension LikeUseCase {
+    func postProductSelectedNotification(id: String, selected: Bool) {
+        NotificationCenter.default.post(
+            name: .likeProduct,
+            object: nil,
+            userInfo: [
+                "id": id,
+                "isSelected": selected
+            ]
+        )
     }
 }

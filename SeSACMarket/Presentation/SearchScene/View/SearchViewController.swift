@@ -132,7 +132,7 @@ private extension SearchViewController {
             .disposed(by: disposeBag)
         
         productsCollectionView.rx.modelSelected(ProductCollectionViewCellReactor.self)
-            .map(\.initialState)
+            .map(\.initialState.product)
             .map { Reactor.Action.productsCellSelected($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
@@ -155,7 +155,7 @@ private extension SearchViewController {
             }
             .disposed(by: disposeBag)
         
-        reactor.state.map { $0.productsCellViewModels }
+        reactor.state.map { $0.productsCellReactors }
             .bind(to: productsCollectionView.rx.items(
                 cellIdentifier: ProductCollectionViewCell.identifier,
                 cellType: ProductCollectionViewCell.self

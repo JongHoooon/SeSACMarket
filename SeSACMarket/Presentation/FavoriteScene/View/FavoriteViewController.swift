@@ -112,7 +112,7 @@ private extension FavoriteViewController {
             .disposed(by: disposeBag)
         
         productsCollectionView.rx.modelSelected(ProductCollectionViewCellReactor.self)
-            .map(\.initialState)
+            .map(\.initialState.product)
             .map { Reactor.Action.productCellSelected($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)

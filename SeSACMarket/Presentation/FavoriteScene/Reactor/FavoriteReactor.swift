@@ -118,7 +118,6 @@ extension FavoriteReactor {
 
 private extension FavoriteReactor {
     func fetchProduct() -> Observable<[ProductCollectionViewCellReactor]> {
-        
         return Observable.create { [weak self] observer in
             guard let self,
                   let errorHandler = coordinator?.presnetErrorMessageAlert(error:),
@@ -130,32 +129,52 @@ private extension FavoriteReactor {
             if query.isEmpty {
                 Task {
                     let products = await self.productLocalUseCase.fetchAllLikeProducts()
-                    let viewModels = products.map {
-                        ProductCollectionViewCellReactor(
-                            prodcut: $0,
-                            likeUseCase: self.likeUseCase,
-                            errorHandler: errorHandler,
-                            productsCellEventReplay: self.productsCellEventRelay
-                        )
-                    }
-                    observer.onNext(viewModels)
+//                    let reactors = try? await products.asyncMap {
+//
+//                        let isLike = await self.likeUseCase.isLikeProduct(productID: $0.id)
+//                        
+//                        ProductCollectionViewCellReactor(
+//                            product: $0, 
+//                            isLike: isLike,
+//                            likeUseCase: self.likeUseCase,
+//                            errorHandler: errorHandler,
+//                            productsCellEventReplay: self.productsCellEventRelay
+//                        )
+//                    }
+                    observer.onNext([])
                 }
             } else {
-                Task {
-                    let products = await self.productLocalUseCase.fetchQueryLikeProducts(query: query)
-                    let viewModels = products.map {
-                        ProductCollectionViewCellReactor(
-                            prodcut: $0,
-                            likeUseCase: self.likeUseCase,
-                            errorHandler: errorHandler,
-                            productsCellEventReplay: self.productsCellEventRelay
-                        )
-                    }
-                    observer.onNext(viewModels)
-                }
+//                Task {
+//                    let products = await self.productLocalUseCase.fetchQueryLikeProducts(query: query)
+//                    let viewModels = products.map {
+//                        ProductCollectionViewCellReactor(
+//                            product: $0, 
+//                            isLike: <#Bool#>,
+//                            likeUseCase: self.likeUseCase,
+//                            errorHandler: errorHandler,
+//                            productsCellEventReplay: self.productsCellEventRelay
+//                        )
+//                    }
+//                    observer.onNext(viewModels)
+//                }
+                observer.onCompleted()
             }
             
             return Disposables.create()
         }
+    }
+}
+
+extension Sequence {
+    func asyncMap<T>(
+        _ transform: (Element) async throws -> T
+    ) async rethrows -> [T] {
+        var values = [T]()
+
+        for element in self {
+            try await values.append(transform(element))
+        }
+
+        return values
     }
 }

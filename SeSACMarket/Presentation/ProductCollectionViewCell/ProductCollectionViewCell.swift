@@ -81,8 +81,6 @@ final class ProductCollectionViewCell: BaseCollectionViewCell, View {
     
     // MARK: - Configure
     override func configure() {
-        addActions()
-        
         [
             mallNameLabel,
             titleNameLabel,
@@ -119,20 +117,22 @@ final class ProductCollectionViewCell: BaseCollectionViewCell, View {
     }
     
     func bind(reactor: ProductCollectionViewCellReactor) {
-        productImageView.kf.setImage(
-            with: URL(string: reactor.initialState.imageURL),
-            placeholder: ImageEnum.Placeholer.photo
-        )
-        let likeCheckTask = Task {
-            let isLike = await reactor.likeUseCase?.isLikeProduct(productID: reactor.initialState.id)
-
-            likeButton.isSelected = isLike ?? false
-        }
-        self.likeCheckTask = likeCheckTask
-        mallNameLabel.text = reactor.initialState.mallName.mallNameFormat
-        titleNameLabel.text = reactor.initialState.title
-        priceNameLabel.text = reactor.initialState.price.priceFormat
-        registerLikeObserver()
+//        productImageView.kf.setImage(
+//            with: URL(string: reactor.initialState.imageURL),
+//            placeholder: ImageEnum.Placeholer.photo
+//        )
+//        let likeCheckTask = Task {
+//            let isLike = await reactor.likeUseCase?.isLikeProduct(productID: reactor.initialState.id)
+//
+//            likeButton.isSelected = isLike ?? false
+//        }
+//        self.likeCheckTask = likeCheckTask
+//        mallNameLabel.text = reactor.initialState.mallName.mallNameFormat
+//        titleNameLabel.text = reactor.initialState.title
+//        priceNameLabel.text = reactor.initialState.price.priceFormat
+//        registerLikeObserver()
+        bindAction(reactor)
+        bindState(reactor)
     }
     
     func cancelTask() {
@@ -143,6 +143,46 @@ final class ProductCollectionViewCell: BaseCollectionViewCell, View {
 
 private extension ProductCollectionViewCell {
     
+    func bindAction(_ reactor: ProductCollectionViewCellReactor) {
+        likeButton.rx.tap
+            .map { Reactor.Action.likeButtonTapped }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+    
+    func bindState(_ reactor: ProductCollectionViewCellReactor) {
+        reactor.state.map { $0.likeButtonIsEnable }
+            .distinctUntilChanged()
+            .bind(to: likeButton.rx.isEnabled)
+            .disposed(by: disposeBag)
+        
+        reactor.state.map { $0.isLike }
+            .distinctUntilChanged()
+            .compactMap { $0 }
+            .bind(to: likeButton.rx.selectWithAnimation)
+            .disposed(by: disposeBag)
+        
+        reactor.state.map { $0.product }
+            .distinctUntilChanged { $0.id == $1.id }
+            .bind { [weak self] product in
+                self?.productImageView.kf.setImage(
+                    with: URL(string: reactor.initialState.product.imageURL)!,
+                    placeholder: ImageEnum.Placeholer.photo
+                )
+//                let likeCheckTask = Task {
+//                    let isLike = await reactor.likeUseCase?.isLikeProduct(productID: reactor.initialState.id)
+//                    
+//                    likeButton.isSelected = isLike ?? false
+//                }
+//                self.likeCheckTask = likeCheckTask
+                self?.mallNameLabel.text = reactor.initialState.product.mallName
+                self?.titleNameLabel.text = reactor.initialState.product.title
+                self?.priceNameLabel.text = reactor.initialState.product.price.priceFormat
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    /*
     func addActions() {
         likeButton.addTarget(
             self,
@@ -173,35 +213,36 @@ private extension ProductCollectionViewCell {
             })
             .disposed(by: disposeBag)
     }
+     */
     
-    @objc
-    func likeButtonClicked() {
-        likeButton.isEnabled = false
-        guard let product = reactor?.initialState else { return }
-        switch likeButton.isSelected {
-        case true: // 삭제
-            Task {
-                do {
-                    try await reactor?.likeUseCase?.deleteLikeProduct(productID: product.id)
-                    likeButton.isEnabled = true
-                    likeButton.isSelected = false
-                    if type == .favorite {
-                        reactor?.productsCellEventReplay?.accept(.needReload)
-                    }
-                } catch {
-                    reactor?.productsCellEventReplay?.accept(.error(error))
-                }
-            }
-        case false: // 저장
-            Task {
-                do {
-                    try await reactor?.likeUseCase?.saveLikeProduct(product: product)
-                    likeButton.isEnabled = true
-                    likeButton.isSelected = true
-                } catch {
-                    reactor?.productsCellEventReplay?.accept(.error(error))
-                }
-            }
-        }
-    }
+//    @objc
+//    func likeButtonClicked() {
+//        likeButton.isEnabled = false
+//        guard let product = reactor?.initialState else { return }
+//        switch likeButton.isSelected {
+//        case true: // 삭제
+//            Task {
+//                do {
+//                    try await reactor?.likeUseCase?.deleteLikeProduct(productID: product.id)
+//                    likeButton.isEnabled = true
+//                    likeButton.isSelected = false
+//                    if type == .favorite {
+//                        reactor?.productsCellEventReplay?.accept(.needReload)
+//                    }
+//                } catch {
+//                    reactor?.productsCellEventReplay?.accept(.error(error))
+//                }
+//            }
+//        case false: // 저장
+//            Task {
+//                do {
+//                    try await reactor?.likeUseCase?.saveLikeProduct(product: product)
+//                    likeButton.isEnabled = true
+//                    likeButton.isSelected = true
+//                } catch {
+//                    reactor?.productsCellEventReplay?.accept(.error(error))
+//                }
+//            }
+//        }
+//    }
 }
