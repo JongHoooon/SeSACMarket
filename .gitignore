@@ -51,3 +51,4 @@ DerivedData/
 
 ## Various
 .DS_Store
+*.xcbkptlist
