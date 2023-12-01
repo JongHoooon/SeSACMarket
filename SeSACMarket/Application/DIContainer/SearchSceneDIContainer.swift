@@ -20,8 +20,8 @@ final class SearchSceneDIContainer {
 extension SearchSceneDIContainer: SearchCoordinatorDependencies {
     
     // MARK: - Use Cases
-    private func makeProductRemoteUseCase() -> ProductRemoteFetchUseCase {
-        return DefaultProductRemoteFetchUseCase(
+    private func makeProductRemoteUseCase() -> SearchUseCase {
+        return DefaultSearchUseCase(
             productRemoteRepository: makeProductRemoteRepository()
         )
     }

@@ -1,5 +1,5 @@
 //
-//  ProductRemoteFetchUseCase.swift
+//  SearchUseCase.swift
 //  SeSACMarket
 //
 //  Created by JongHoon on 2023/09/08.
@@ -7,11 +7,11 @@
 
 import RxSwift
 
-protocol ProductRemoteFetchUseCase {
+protocol SearchUseCase {
     func fetchProducts(productsQuery: ProductQuery, start: Int) -> Single<ProductsPage>
 }
 
-final class DefaultProductRemoteFetchUseCase: ProductRemoteFetchUseCase {
+final class DefaultSearchUseCase: SearchUseCase {
     
     private let productRemoteRepository: ProductRemoteRepository
     

@@ -42,8 +42,8 @@
 		ED2A01282AAADE37004A346D /* Product.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A01272AAADE37004A346D /* Product.swift */; };
 		ED2A012A2AAAE276004A346D /* ProductRemoteRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A01292AAAE276004A346D /* ProductRemoteRepository.swift */; };
 		ED2A012D2AAAE28D004A346D /* ProductLocalRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A012C2AAAE28D004A346D /* ProductLocalRepository.swift */; };
-		ED2A012F2AAAE5E0004A346D /* ProductRemoteFetchUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A012E2AAAE5E0004A346D /* ProductRemoteFetchUseCase.swift */; };
-		ED2A01312AAAEBAF004A346D /* ProductLocalFetchUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A01302AAAEBAF004A346D /* ProductLocalFetchUseCase.swift */; };
+		ED2A012F2AAAE5E0004A346D /* SearchUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A012E2AAAE5E0004A346D /* SearchUseCase.swift */; };
+		ED2A01312AAAEBAF004A346D /* FavoriteUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A01302AAAEBAF004A346D /* FavoriteUseCase.swift */; };
 		ED2A01332AAAF0E7004A346D /* ButtonStyle1.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A01322AAAF0E7004A346D /* ButtonStyle1.swift */; };
 		ED2A01352AAAF20A004A346D /* ProductsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A01342AAAF20A004A346D /* ProductsCollectionView.swift */; };
 		ED2A01372AAAF21E004A346D /* ProductCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2A01362AAAF21E004A346D /* ProductCollectionViewCell.swift */; };
@@ -130,8 +130,8 @@
 		ED2A01272AAADE37004A346D /* Product.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Product.swift; sourceTree = "<group>"; };
 		ED2A01292AAAE276004A346D /* ProductRemoteRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductRemoteRepository.swift; sourceTree = "<group>"; };
 		ED2A012C2AAAE28D004A346D /* ProductLocalRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductLocalRepository.swift; sourceTree = "<group>"; };
-		ED2A012E2AAAE5E0004A346D /* ProductRemoteFetchUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductRemoteFetchUseCase.swift; sourceTree = "<group>"; };
-		ED2A01302AAAEBAF004A346D /* ProductLocalFetchUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductLocalFetchUseCase.swift; sourceTree = "<group>"; };
+		ED2A012E2AAAE5E0004A346D /* SearchUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchUseCase.swift; sourceTree = "<group>"; };
+		ED2A01302AAAEBAF004A346D /* FavoriteUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteUseCase.swift; sourceTree = "<group>"; };
 		ED2A01322AAAF0E7004A346D /* ButtonStyle1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyle1.swift; sourceTree = "<group>"; };
 		ED2A01342AAAF20A004A346D /* ProductsCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductsCollectionView.swift; sourceTree = "<group>"; };
 		ED2A01362AAAF21E004A346D /* ProductCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -474,8 +474,8 @@
 		ED2A01252AAADE0F004A346D /* UseCases */ = {
 			isa = PBXGroup;
 			children = (
-				ED2A012E2AAAE5E0004A346D /* ProductRemoteFetchUseCase.swift */,
-				ED2A01302AAAEBAF004A346D /* ProductLocalFetchUseCase.swift */,
+				ED2A012E2AAAE5E0004A346D /* SearchUseCase.swift */,
+				ED2A01302AAAEBAF004A346D /* FavoriteUseCase.swift */,
 				ED59167D2AB327170033F3CC /* LikeUseCase.swift */,
 			);
 			path = UseCases;
@@ -846,7 +846,7 @@
 				ED6E20222AB082D5008D34F2 /* SettingSceneDIContainer.swift in Sources */,
 				EDDB52F42B13A0A6003CB7D4 /* DetailReactor.swift in Sources */,
 				ED2A00E52AA9AF3D004A346D /* LoginViewController.swift in Sources */,
-				ED2A012F2AAAE5E0004A346D /* ProductRemoteFetchUseCase.swift in Sources */,
+				ED2A012F2AAAE5E0004A346D /* SearchUseCase.swift in Sources */,
 				ED4DACAB2AADEE4E0095CD77 /* FavoriteCoordinator.swift in Sources */,
 				ED4DAC992AAD8F0E0095CD77 /* DefaultProductLocalRepository.swift in Sources */,
 				ED9FBD722AACB46F00B63CC5 /* SortCollectionView.swift in Sources */,
@@ -858,7 +858,7 @@
 				ED59167E2AB327170033F3CC /* LikeUseCase.swift in Sources */,
 				ED2A01352AAAF20A004A346D /* ProductsCollectionView.swift in Sources */,
 				ED2A011E2AA9F575004A346D /* Endpoint.swift in Sources */,
-				ED2A01312AAAEBAF004A346D /* ProductLocalFetchUseCase.swift in Sources */,
+				ED2A01312AAAEBAF004A346D /* FavoriteUseCase.swift in Sources */,
 				ED6E202A2AB08A51008D34F2 /* LogoutViewModel.swift in Sources */,
 				ED4DAC9F2AAD91AA0095CD77 /* ProdcutDTO+Mapping.swift in Sources */,
 				ED2A010A2AA9C296004A346D /* ImageEnum.swift in Sources */,

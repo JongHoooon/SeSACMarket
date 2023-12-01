@@ -20,8 +20,8 @@ final class FavoriteSceneDIContainer {
 extension FavoriteSceneDIContainer: FavoriteCoordinatorDependencies {
     
     // MARK: - Use Cases
-    private func makeProductLocalUseCase() -> ProductLocalFetchUseCase {
-        return DefaultProductLocalFetchUseCase(productLocalRepository: makeLocalRepository())
+    private func makeProductLocalUseCase() -> FavoriteUseCase {
+        return DefaultFavoriteUseCase(productLocalRepository: makeLocalRepository())
     }
     
     private func makeLikeUseCase() -> LikeUseCase {

@@ -35,14 +35,14 @@ final class FavoriteReactor: Reactor {
         var productsCellViewModels: [ProductCollectionViewCellReactor]?
     }
         
-    private let productLocalUseCase: ProductLocalFetchUseCase
+    private let productLocalUseCase: FavoriteUseCase
     private let likeUseCase: LikeUseCase
     private weak var coordinator: FavoriteCoordinator?
     private let productsCellEventRelay: PublishRelay<ProductsCellEvent>
     let initialState: State
     
     init(
-        productLocalUseCase: ProductLocalFetchUseCase,
+        productLocalUseCase: FavoriteUseCase,
         likeUseCase: LikeUseCase,
         coordinator: FavoriteCoordinator
     ) {

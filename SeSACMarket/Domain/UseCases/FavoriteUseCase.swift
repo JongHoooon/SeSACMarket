@@ -1,5 +1,5 @@
 //
-//  ProductLocalFetchUseCase.swift
+//  FavoriteUseCase.swift
 //  SeSACMarket
 //
 //  Created by JongHoon on 2023/09/08.
@@ -9,12 +9,12 @@ import Foundation
 
 import RxSwift
 
-protocol ProductLocalFetchUseCase {
+protocol FavoriteUseCase {
     func fetchAllLikeProducts() -> Single<[Product]>
     func fetchQueryLikeProducts(query: String) -> Single<[Product]>
 }
 
-final class DefaultProductLocalFetchUseCase: ProductLocalFetchUseCase {
+final class DefaultFavoriteUseCase: FavoriteUseCase {
     
     private let productLocalRepository: ProductLocalRepository
     

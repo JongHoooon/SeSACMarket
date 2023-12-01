@@ -57,14 +57,14 @@ final class SearchReactor: Reactor {
     
     let sorItems = Product.SortValue.allCases
     
-    private let productRemoteFetchUseCase: ProductRemoteFetchUseCase
+    private let productRemoteFetchUseCase: SearchUseCase
     private let likeUseCase: LikeUseCase
     private weak var coordinator: SearchCoordinator?
     private let networkEventRelay: PublishRelay<NetworkEvent>
     let initialState: State
     
     init(
-        productRemoteUseCase: ProductRemoteFetchUseCase,
+        productRemoteUseCase: SearchUseCase,
         likeUseCase: LikeUseCase,
         coordinator: SearchCoordinator
     ) {
