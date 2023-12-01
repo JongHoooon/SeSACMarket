@@ -10,78 +10,41 @@ import Foundation
 import RxSwift
 
 protocol LikeUseCase {
-    func saveLikeProduct(product: Product) async throws
-    func deleteLikeProduct(productID: String) async throws
-    func isLikeProduct(productID: String) async -> Bool
+    func isLikeProduct(id: String) -> Single<Bool>
     func toggleProductLike(product: Product, current: Bool) -> Single<Bool>
 }
 
 final class DefaultLikeUseCase: LikeUseCase {
     
-    // MARK: - Repository
+    // MARK: - Properties
     private let productLocalRepository: ProductLocalRepository
+    private let disposeBag: DisposeBag
     
     init(productLocalRepository: ProductLocalRepository) {
         self.productLocalRepository = productLocalRepository
+        self.disposeBag = DisposeBag()
     }
     
     func toggleProductLike(product: Product, current: Bool) -> Single<Bool> {
-        Single.create { [weak self] single in
-            guard let self else { return Disposables.create() }
+        switch current {
+        case true:
+            return productLocalRepository.deleteLikeProduct(id: product.id)
+                .map { _ in !current }
+                .do(onSuccess: { [weak self] _ in
+                    self?.postProductSelectedNotification(id: product.id, selected: !current)
+                })
             
-            switch current {
-            case true:
-                Task {
-                    do {
-                        try await self.productLocalRepository.deleteLikeProduct(productID: product.id)
-                        single(.success(!current))
-                        self.postProductSelectedNotification(id: product.id, selected: !current)
-                    } catch {
-                        single(.failure(error))
-                    }
-                }
-                
-            case false:
-                Task {
-                    do {
-                        try await self.productLocalRepository.saveLikeProduct(product: product)
-                        single(.success(!current))
-                        self.postProductSelectedNotification(id: product.id, selected: !current)
-                    } catch {
-                        single(.failure(error))
-                    }
-                }
-            }
-            return Disposables.create()
+        case false:
+            return productLocalRepository.saveLikeProduct(product: product)
+                .map { _ in !current }
+                .do(onSuccess: { [weak self] _ in
+                    self?.postProductSelectedNotification(id: product.id, selected: !current)
+                })
         }
     }
     
-    func saveLikeProduct(product: Product) async throws {
-        try await productLocalRepository.saveLikeProduct(product: product)
-        NotificationCenter.default.post(
-            name: .likeProduct,
-            object: nil,
-            userInfo: [
-                "id": product.id,
-                "isSelected": true
-            ]
-        )
-    }
-    
-    func deleteLikeProduct(productID: String) async throws {
-        try await productLocalRepository.deleteLikeProduct(productID: productID)
-        NotificationCenter.default.post(
-            name: .likeProduct,
-            object: nil,
-            userInfo: [
-                "id": productID,
-                "isSelected": false
-            ]
-        )
-    }
-    
-    func isLikeProduct(productID: String) async -> Bool {
-        return false
+    func isLikeProduct(id: String) -> Single<Bool> {
+        return productLocalRepository.isLikeProduct(id: id)
     }
 }
 

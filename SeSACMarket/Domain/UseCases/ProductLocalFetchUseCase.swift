@@ -7,7 +7,14 @@
 
 import Foundation
 
-final class ProductLocalFetchUseCase {
+import RxSwift
+
+protocol ProductLocalFetchUseCase {
+    func fetchAllLikeProducts() -> Single<[Product]>
+    func fetchQueryLikeProducts(query: String) -> Single<[Product]>
+}
+
+final class DefaultProductLocalFetchUseCase: ProductLocalFetchUseCase {
     
     private let productLocalRepository: ProductLocalRepository
     
@@ -15,13 +22,11 @@ final class ProductLocalFetchUseCase {
         self.productLocalRepository = productLocalRepository
     }
     
-    func fetchAllLikeProducts() async -> [Product] {
-//        await productLocalRepository.fetchAllLikeProducts()
-        return []
+    func fetchAllLikeProducts() -> Single<[Product]> {
+        return productLocalRepository.fetchAllLikeProducts()
     }
     
-    func fetchQueryLikeProducts(query: String) async -> [Product] {
-        await productLocalRepository.fetchQueryLikeProducts(query: query)
-        return []
+    func fetchQueryLikeProducts(query: String) -> Single<[Product]> {
+        return productLocalRepository.fetchQueryLikeProducts(query: query)
     }
 }

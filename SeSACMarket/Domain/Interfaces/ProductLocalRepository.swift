@@ -9,8 +9,8 @@ import RxSwift
 
 protocol ProductLocalRepository {
     func saveLikeProduct(product: Product) -> Single<Product>
-    func deleteLikeProduct(productID: String) -> Single<String>
+    func deleteLikeProduct(id: String) -> Single<String>
     func fetchAllLikeProducts() -> Single<[Product]>
     func fetchQueryLikeProducts(query: String) -> Single<[Product]>
-    func isLikeProduct(productID: String) -> Single<Bool>
+    func isLikeProduct(id: String) -> Single<Bool>
 }

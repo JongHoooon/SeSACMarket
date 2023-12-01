@@ -11,7 +11,7 @@ struct Product {
     let imageURL: String
     let mallName: String
     let price: Int
-    let isLike: Bool
+    var isLike: Bool
 
     init(
         id: String,
@@ -42,5 +42,5 @@ extension Product {
 struct ProductsPage {
     let start: Int
     let display: Int
-    let items: [Product]
+    var items: [Product]
 }

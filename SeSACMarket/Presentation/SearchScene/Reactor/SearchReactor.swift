@@ -241,8 +241,7 @@ private extension SearchReactor {
                 query: query,
                 sortValue: sortValue
             ),
-            start: start,
-            display: display
+            start: start
         )
         .do(
             onSuccess: { [weak self] page in

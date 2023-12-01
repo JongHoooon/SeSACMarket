@@ -55,18 +55,18 @@ final class DefaultProductLocalRepository: ProductLocalRepository {
         .subscribe(on: ConcurrentDispatchQueueScheduler(queue: realmTaskQueue))
     }
     
-    func deleteLikeProduct(productID: String) -> Single<String> {
+    func deleteLikeProduct(id: String) -> Single<String> {
         return Single.create { [weak self] single in
             guard let self else { return Disposables.create() }
                 guard let object = self.realm.object(
                     ofType: ProductTable.self,
-                    forPrimaryKey: productID
+                    forPrimaryKey: id
                 ) else { return Disposables.create() }
                 do {
                     try self.realm.write {
                         self.realm.delete(object)
                     }
-                    single(.success(productID))
+                    single(.success(id))
                 } catch {
                     single(.failure(error))
                 }
@@ -105,12 +105,12 @@ final class DefaultProductLocalRepository: ProductLocalRepository {
         .subscribe(on: ConcurrentDispatchQueueScheduler(queue: realmTaskQueue))
     }
 
-    func isLikeProduct(productID: String) -> Single<Bool> {
+    func isLikeProduct(id: String) -> Single<Bool> {
         return Single<Bool>.create { [weak self] single in
             guard let self else { return Disposables.create() }
             if let _ = self.realm.object(
                 ofType: ProductTable.self,
-                forPrimaryKey: productID
+                forPrimaryKey: id
             ) {
                 single(.success(true))
             } else {

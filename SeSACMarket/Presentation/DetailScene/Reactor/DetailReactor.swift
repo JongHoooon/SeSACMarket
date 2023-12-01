@@ -179,42 +179,44 @@ private extension DetailReactor {
     }
     
     func isLike() -> Observable<Bool> {
-        return Observable.create { [weak self] observer in
-            guard let self else { return Disposables.create() }
-            Task {
-                let result = await self.likeUseCase.isLikeProduct(productID: self.product.id)
-                observer.onNext(result)
-            }
-            return Disposables.create()
-        }
+//        return Observable.create { [weak self] observer in
+//            guard let self else { return Disposables.create() }
+//            Task {
+//                let result = await self.likeUseCase.isLikeProduct(productID: self.product.id)
+//                observer.onNext(result)
+//            }
+//            return Disposables.create()
+//        }
+        return .just(false)
     }
     
     func toggleLike(currentSelected: Bool) -> Observable<Bool> {
-        return Observable.create { [weak self] observer in
-            guard let self else { return Disposables.create() }
-            
-            switch currentSelected {
-            case true: // 삭제
-                Task {
-                    do {
-                        try await self.likeUseCase.deleteLikeProduct(productID: self.product.id)
-                        observer.onNext(false)
-                    } catch {
-                        self.errorEventRelay.accept(.error(error))
-                    }
-                }
-            case false: // 저장
-                Task {
-                    do {
-                        try await self.likeUseCase.saveLikeProduct(product: self.product)
-                        observer.onNext(true)
-                    } catch {
-                        self.errorEventRelay.accept(.error(error))
-                    }
-                }
-            }
-            
-            return Disposables.create()
-        }
+        return .just(false)
+//        return Observable.create { [weak self] observer in
+//            guard let self else { return Disposables.create() }
+//            
+//            switch currentSelected {
+//            case true: // 삭제
+//                Task {
+//                    do {
+//                        try await self.likeUseCase.deleteLikeProduct(productID: self.product.id)
+//                        observer.onNext(false)
+//                    } catch {
+//                        self.errorEventRelay.accept(.error(error))
+//                    }
+//                }
+//            case false: // 저장
+//                Task {
+//                    do {
+//                        try await self.likeUseCase.saveLikeProduct(product: self.product)
+//                        observer.onNext(true)
+//                    } catch {
+//                        self.errorEventRelay.accept(.error(error))
+//                    }
+//                }
+//            }
+//            
+//            return Disposables.create()
+//        }
     }
 }
