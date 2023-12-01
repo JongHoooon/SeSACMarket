@@ -5,10 +5,12 @@
 //  Created by JongHoon on 2023/09/08.
 //
 
+import RxSwift
+
 protocol ProductLocalRepository {
-    func saveLikeProduct(product: Product) async throws
-    func deleteLikeProduct(productID: String) async throws
-    func fetchAllLikeProducts() async -> [Product]
-    func fetchQueryLikeProducts(query: String) async -> [Product]
-    func isLikeProduct(productID: String) async -> Bool
+    func saveLikeProduct(product: Product) -> Single<Product>
+    func deleteLikeProduct(productID: String) -> Single<String>
+    func fetchAllLikeProducts() -> Single<[Product]>
+    func fetchQueryLikeProducts(query: String) -> Single<[Product]>
+    func isLikeProduct(productID: String) -> Single<Bool>
 }

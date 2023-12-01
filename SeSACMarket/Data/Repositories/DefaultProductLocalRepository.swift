@@ -8,6 +8,7 @@
 import Foundation
 
 import RealmSwift
+import RxSwift
 
 final class DefaultProductLocalRepository: ProductLocalRepository {
 
@@ -27,10 +28,10 @@ final class DefaultProductLocalRepository: ProductLocalRepository {
             fatalError(error.localizedDescription)
         }
     }
-
-    func saveLikeProduct(product: Product) async throws {
-        try await withCheckedThrowingContinuation { [weak self] continuation in
-            guard let self else { return }
+    
+    func saveLikeProduct(product: Product) -> Single<Product> {
+        return Single.create { [weak self] single in
+            guard let self else { return Disposables.create() }
             realmTaskQueue.async {
                 let productTable = ProductTable(
                     productID: product.id,
@@ -44,78 +45,79 @@ final class DefaultProductLocalRepository: ProductLocalRepository {
                     try self.realm.write {
                         self.realm.add(productTable)
                     }
-                    continuation.resume()
+                    single(.success(product))
                 } catch {
-                    continuation.resume(throwing: error)
+                    single(.failure(error))
                 }
             }
+            return Disposables.create()
         }
+        .subscribe(on: ConcurrentDispatchQueueScheduler(queue: realmTaskQueue))
     }
-
-    func deleteLikeProduct(productID: String) async throws {
-        try await withCheckedThrowingContinuation { [weak self] continuation in
-            guard let self else { return }
-            realmTaskQueue.async {
+    
+    func deleteLikeProduct(productID: String) -> Single<String> {
+        return Single.create { [weak self] single in
+            guard let self else { return Disposables.create() }
                 guard let object = self.realm.object(
                     ofType: ProductTable.self,
                     forPrimaryKey: productID
-                ) else { return }
+                ) else { return Disposables.create() }
                 do {
                     try self.realm.write {
                         self.realm.delete(object)
                     }
-                    continuation.resume()
+                    single(.success(productID))
                 } catch {
-                    continuation.resume(throwing: error)
+                    single(.failure(error))
                 }
-            }
+            return Disposables.create()
         }
+        .subscribe(on: ConcurrentDispatchQueueScheduler(queue: realmTaskQueue))
+    }
+    
+    func fetchAllLikeProducts() -> Single<[Product]> {
+        return Single.create { [weak self] single in
+            guard let self else { return Disposables.create() }
+            let objects = self.realm
+                .objects(ProductTable.self)
+                .sorted(
+                    byKeyPath: "enrolledDate",
+                    ascending: false
+                )
+            single(.success(objects.map { $0.toDomain() }))
+            return Disposables.create()
+        }
+        .subscribe(on: ConcurrentDispatchQueueScheduler(queue: realmTaskQueue))
+    }
+    
+    func fetchQueryLikeProducts(query: String) -> Single<[Product]> {
+        return Single.create { single in
+            let objets = self.realm
+                .objects(ProductTable.self)
+                .where { $0.title.contains(query) }
+                .sorted(
+                    byKeyPath: "enrolledDate",
+                    ascending: false
+                )
+            single(.success(objets.map { $0.toDomain() }))
+            return Disposables.create()
+        }
+        .subscribe(on: ConcurrentDispatchQueueScheduler(queue: realmTaskQueue))
     }
 
-    func fetchAllLikeProducts() async -> [Product] {
-        await withCheckedContinuation { [weak self] continuation in
-            guard let self else { return }
-            realmTaskQueue.async {
-                let objects = self.realm
-                    .objects(ProductTable.self)
-                    .sorted(
-                        byKeyPath: "enrolledDate",
-                        ascending: false
-                    )
-                continuation.resume(returning: objects.map { $0.toDomain() })
+    func isLikeProduct(productID: String) -> Single<Bool> {
+        return Single<Bool>.create { [weak self] single in
+            guard let self else { return Disposables.create() }
+            if let _ = self.realm.object(
+                ofType: ProductTable.self,
+                forPrimaryKey: productID
+            ) {
+                single(.success(true))
+            } else {
+                single(.success(false))
             }
+            return Disposables.create()
         }
-    }
-
-    func fetchQueryLikeProducts(query: String) async -> [Product] {
-        await withCheckedContinuation { [weak self] continuation in
-            guard let self else { return }
-            realmTaskQueue.async {
-                let objets = self.realm
-                    .objects(ProductTable.self)
-                    .where { $0.title.contains(query) }
-                    .sorted(
-                        byKeyPath: "enrolledDate",
-                        ascending: false
-                    )
-                continuation.resume(returning: objets.map { $0.toDomain() })
-            }
-        }
-    }
-
-    func isLikeProduct(productID: String) async -> Bool {
-        await withCheckedContinuation { [weak self] continuation in
-            guard let self else { return }
-            realmTaskQueue.async {
-                if let _ = self.realm.object(
-                    ofType: ProductTable.self,
-                    forPrimaryKey: productID
-                ) {
-                    continuation.resume(returning: true)
-                } else {
-                    continuation.resume(returning: false)
-                }
-            }
-        }
+        .subscribe(on: ConcurrentDispatchQueueScheduler(queue: realmTaskQueue))
     }
 }

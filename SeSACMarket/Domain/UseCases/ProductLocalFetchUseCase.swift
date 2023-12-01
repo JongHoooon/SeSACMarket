@@ -16,10 +16,12 @@ final class ProductLocalFetchUseCase {
     }
     
     func fetchAllLikeProducts() async -> [Product] {
-        await productLocalRepository.fetchAllLikeProducts()
+//        await productLocalRepository.fetchAllLikeProducts()
+        return []
     }
     
     func fetchQueryLikeProducts(query: String) async -> [Product] {
         await productLocalRepository.fetchQueryLikeProducts(query: query)
+        return []
     }
 }

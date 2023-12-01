@@ -11,7 +11,7 @@ struct Product {
     let imageURL: String
     let mallName: String
     let price: Int
-    let isLike: Bool?
+    let isLike: Bool
 
     init(
         id: String,

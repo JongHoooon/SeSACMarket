@@ -81,7 +81,7 @@ final class DefaultLikeUseCase: LikeUseCase {
     }
     
     func isLikeProduct(productID: String) async -> Bool {
-        await productLocalRepository.isLikeProduct(productID: productID)
+        return false
     }
 }
 
