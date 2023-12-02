@@ -8,6 +8,6 @@
 import Foundation
 
 enum ProductsCellEvent {
-    case needReload
+    case needDelete(id: String)
     case error(Error)
 }

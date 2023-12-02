@@ -257,7 +257,6 @@ private extension SearchReactor {
             ProductCollectionViewCellReactor(
                 product: $0,
                 likeUseCase: likeUseCase,
-                errorHandler: nil,
                 productsCellEventReplay: productsCellEventRelay
             )
         }

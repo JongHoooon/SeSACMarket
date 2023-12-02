@@ -26,20 +26,28 @@ final class FavoriteReactor: Reactor {
         case setQuery(String)
         case scrollToTop
         case setProductsCellViewModels([ProductCollectionViewCellReactor])
+        case deleteProducts(id: String)
     }
     
     struct State {
         @Pulse
         var scrollContentOffset: CGPoint?
         var query: String?
-        var productsCellViewModels: [ProductCollectionViewCellReactor]?
+        var productsCellReactors: [ProductCollectionViewCellReactor]?
+    }
+    
+    enum SideEffectEvent {
+        case error(Error)
+        case setQuery(String)
     }
         
     private let productLocalUseCase: FavoriteUseCase
     private let likeUseCase: LikeUseCase
     private weak var coordinator: FavoriteCoordinator?
-    private let productsCellEventRelay: PublishRelay<ProductsCellEvent>
     let initialState: State
+    
+    private let productsCellEventRelay: PublishRelay<ProductsCellEvent>
+    private let sideEffectEventRelay: PublishRelay<SideEffectEvent>
     
     init(
         productLocalUseCase: FavoriteUseCase,
@@ -50,6 +58,7 @@ final class FavoriteReactor: Reactor {
         self.likeUseCase = likeUseCase
         self.coordinator = coordinator
         self.productsCellEventRelay = PublishRelay()
+        self.sideEffectEventRelay = PublishRelay()
         self.initialState = State()
     }
 }
@@ -62,18 +71,27 @@ extension FavoriteReactor {
                 self?.muate(productsCellEvent: productsCellEvent) ?? .empty()
             }
         
-        return .merge(mutation, productsCellEventMutation)
+        let sideEffectEventMutation = sideEffectEventRelay
+            .flatMap { [weak self] sideEffectEvent in
+                self?.mutate(sideEffectEvent: sideEffectEvent) ?? .empty()
+            }
+        
+        return .merge(mutation, productsCellEventMutation, sideEffectEventMutation)
     }
     
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewWillAppear:
-            return fetchProduct().map { .setProductsCellViewModels($0) }
+            return productLocalUseCase.fetchAllLikeProducts()
+                .asObservable()
+                .compactMap { [weak self] in self?.productsToReactors(products: $0)}
+                .map { .setProductsCellViewModels($0) }
+                .do(onError: { [weak self] in self?.sideEffectEventRelay.accept(.error($0)) })
             
         case let .searchTextInput(query):
             return .concat([
-                .just(.setQuery(query)),
-                fetchProduct().map { .setProductsCellViewModels($0) },
+                fetchItem(query: query)
+                    .map { .setProductsCellViewModels($0) },
                 .just(.scrollToTop)
             ])
             
@@ -89,12 +107,24 @@ extension FavoriteReactor {
     
     func muate(productsCellEvent: ProductsCellEvent) -> Observable<Mutation> {
         switch productsCellEvent {
-        case .needReload:
-            return fetchProduct().map { .setProductsCellViewModels($0) }
+        case let .needDelete(id):
+            return .just(.deleteProducts(id: id))
+            
         case let .error(error):
             print(error.localizedDescription)
             coordinator?.presnetErrorMessageAlert(error: error)
             return .empty()
+        }
+    }
+    
+    func mutate(sideEffectEvent: SideEffectEvent) -> Observable<Mutation> {
+        switch sideEffectEvent {
+        case .error(let error):
+            print(error.localizedDescription)
+            coordinator?.presnetErrorMessageAlert(error: error)
+            return .empty()
+        case let .setQuery(query):
+            return .just(.setQuery(query))
         }
     }
     
@@ -106,10 +136,14 @@ extension FavoriteReactor {
             newState.scrollContentOffset = .zero
             
         case let .setProductsCellViewModels(viewModels):
-            newState.productsCellViewModels = viewModels
+            newState.productsCellReactors = viewModels
             
         case let .setQuery(query):
             newState.query = query
+            
+        case let .deleteProducts(id):
+            let newReactors = newState.productsCellReactors?.filter { $0.currentState.product.id != id }
+            newState.productsCellReactors = newReactors
         }
         
         return newState
@@ -117,64 +151,30 @@ extension FavoriteReactor {
 }
 
 private extension FavoriteReactor {
-    func fetchProduct() -> Observable<[ProductCollectionViewCellReactor]> {
-        return Observable.create { [weak self] observer in
-            guard let self,
-                  let errorHandler = coordinator?.presnetErrorMessageAlert(error:),
-                  let query = currentState.query
-            else {
-                return Disposables.create()
-            }
-            
-            if query.isEmpty {
-                Task {
-                    let products = await self.productLocalUseCase.fetchAllLikeProducts()
-//                    let reactors = try? await products.asyncMap {
-//
-//                        let isLike = await self.likeUseCase.isLikeProduct(productID: $0.id)
-//                        
-//                        ProductCollectionViewCellReactor(
-//                            product: $0, 
-//                            isLike: isLike,
-//                            likeUseCase: self.likeUseCase,
-//                            errorHandler: errorHandler,
-//                            productsCellEventReplay: self.productsCellEventRelay
-//                        )
-//                    }
-                    observer.onNext([])
-                }
-            } else {
-//                Task {
-//                    let products = await self.productLocalUseCase.fetchQueryLikeProducts(query: query)
-//                    let viewModels = products.map {
-//                        ProductCollectionViewCellReactor(
-//                            product: $0, 
-//                            isLike: <#Bool#>,
-//                            likeUseCase: self.likeUseCase,
-//                            errorHandler: errorHandler,
-//                            productsCellEventReplay: self.productsCellEventRelay
-//                        )
-//                    }
-//                    observer.onNext(viewModels)
-//                }
-                observer.onCompleted()
-            }
-            
-            return Disposables.create()
+    func productsToReactors(products: [Product]) -> [ProductCollectionViewCellReactor] {
+        return products.map {
+            ProductCollectionViewCellReactor(
+                product: $0,
+                likeUseCase: likeUseCase,
+                productsCellEventReplay: productsCellEventRelay
+            )
         }
     }
-}
-
-extension Sequence {
-    func asyncMap<T>(
-        _ transform: (Element) async throws -> T
-    ) async rethrows -> [T] {
-        var values = [T]()
-
-        for element in self {
-            try await values.append(transform(element))
+    
+    func fetchItem(query: String) -> Observable<[ProductCollectionViewCellReactor]> {
+        let products = if query.isEmpty {
+            productLocalUseCase.fetchAllLikeProducts()
+        } else {
+            productLocalUseCase.fetchQueryLikeProducts(query: query)
         }
-
-        return values
+        
+        return products
+            .asObservable()
+            .compactMap { [weak self] in self?.productsToReactors(products: $0)}
+            .do(
+                onNext: { [weak self] _ in self?.sideEffectEventRelay.accept(.setQuery(query)) },
+                onError: { [weak self] in self?.sideEffectEventRelay.accept(.error($0)) }
+            )
     }
 }
+    

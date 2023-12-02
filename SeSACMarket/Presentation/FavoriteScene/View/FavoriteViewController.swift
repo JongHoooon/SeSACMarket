@@ -100,6 +100,7 @@ final class FavoriteViewController: BaseViewController, View {
 
 private extension FavoriteViewController {
     func bindAction(reactor: FavoriteReactor) {
+        
         self.rx.viewWillAppear
             .map { Reactor.Action.viewWillAppear }
             .bind(to: reactor.action)
@@ -107,6 +108,7 @@ private extension FavoriteViewController {
         
         searchBar.rx.text
             .orEmpty
+            .debounce(.milliseconds(500), scheduler: MainScheduler.asyncInstance)
             .map { Reactor.Action.searchTextInput($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
@@ -136,7 +138,7 @@ private extension FavoriteViewController {
     
     func bindState(reactor: FavoriteReactor) {
         
-        reactor.state.map { $0.productsCellViewModels }
+        reactor.state.map { $0.productsCellReactors }
             .compactMap { $0 }
             .bind(to: productsCollectionView.rx.items(
                 cellIdentifier: ProductCollectionViewCell.identifier,

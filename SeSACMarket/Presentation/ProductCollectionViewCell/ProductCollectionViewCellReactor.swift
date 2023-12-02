@@ -31,7 +31,6 @@ final class ProductCollectionViewCellReactor: Reactor {
     
     let initialState: State
     private let likeUseCase: LikeUseCase
-    private let errorHandler: ((_ error: Error) -> Void)?
     private let productsCellEventReplay: PublishRelay<ProductsCellEvent>
     private let notificationEventRelay: PublishRelay<NotificationEvent>
     private let disposeBag: DisposeBag
@@ -39,11 +38,9 @@ final class ProductCollectionViewCellReactor: Reactor {
     init(
         product: Product,
         likeUseCase: LikeUseCase,
-        errorHandler: ((_ error: Error) -> Void)?,
         productsCellEventReplay: PublishRelay<ProductsCellEvent>
     ) {
         self.likeUseCase = likeUseCase
-        self.errorHandler = errorHandler
         self.productsCellEventReplay = productsCellEventReplay
         self.notificationEventRelay = PublishRelay()
         self.disposeBag = DisposeBag()
@@ -56,7 +53,6 @@ final class ProductCollectionViewCellReactor: Reactor {
 }
 
 extension ProductCollectionViewCellReactor {
-    
     
     func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
         let notificationEventMutation = notificationEventRelay
@@ -77,7 +73,15 @@ extension ProductCollectionViewCellReactor {
                 
                 likeUseCase.toggleProductLike(product: currentState.product, current: isLike)
                     .asObservable()
-                    .do(onError: { [weak self] in self?.productsCellEventReplay.accept(.error($0)) })
+                    .do(
+                        onNext: { [weak self] bool in
+                            if bool == false,
+                               let id = self?.currentState.product.id {
+                                self?.productsCellEventReplay.accept(.needDelete(id: id))
+                            }
+                        },
+                        onError: { [weak self] in self?.productsCellEventReplay.accept(.error($0)) }
+                       )
                     .map { .setIsLike($0) },
                     
                 .just(.setLikeButtonIsEnable(true))
