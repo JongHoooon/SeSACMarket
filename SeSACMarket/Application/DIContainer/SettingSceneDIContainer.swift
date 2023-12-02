@@ -22,10 +22,10 @@ extension SettingSceneDIContainer: SettingCoordinatorDependencies {
     
     // MARK: - Setting View
     func makeSettingViewController(coordinator: SettingCoordinator) -> SettingViewController {
-        return SettingViewController(viewModel: makeSettingViewMode(coordinator: coordinator))
+        return SettingViewController(viewModel: makeSettingViewModel(coordinator: coordinator))
     }
     
-    private func makeSettingViewMode(coordinator: SettingCoordinator) -> SettingViewModel {
+    private func makeSettingViewModel(coordinator: SettingCoordinator) -> SettingViewModel {
         return SettingViewModel(coordinator: coordinator)
     }
     
