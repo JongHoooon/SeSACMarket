@@ -37,10 +37,6 @@ final class DetailReactor: Reactor {
         case error(Error)
     }
     
-    enum NotificationEvent {
-        case likeButtonTapped(Bool)
-    }
-    
     private let product: Product
     private let likeUseCase: LikeUseCase
     private weak var coordinator: DetailCoordinator?
