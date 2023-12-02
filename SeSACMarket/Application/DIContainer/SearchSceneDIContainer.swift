@@ -20,7 +20,7 @@ final class SearchSceneDIContainer {
 extension SearchSceneDIContainer: SearchCoordinatorDependencies {
     
     // MARK: - Use Cases
-    private func makeProductRemoteUseCase() -> SearchUseCase {
+    private func makeSearchUseCase() -> SearchUseCase {
         return DefaultSearchUseCase(
             productRemoteRepository: makeProductRemoteRepository(), 
             productLocalRepository: makeProductLocalRepository()
@@ -47,7 +47,7 @@ extension SearchSceneDIContainer: SearchCoordinatorDependencies {
     
     private func makeSearchReactor(coordinator: SearchCoordinator) -> SearchReactor {
         return SearchReactor(
-            productRemoteUseCase: makeProductRemoteUseCase(),
+            searchUseCase: makeSearchUseCase(),
             likeUseCase: makeLikeUseCase(),
             coordinator: coordinator
         )

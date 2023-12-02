@@ -13,12 +13,12 @@ import RxRelay
 final class ProductCollectionViewCellReactor: Reactor {
     
     enum Action {
-        case checkIsLike
         case likeButtonTapped
+        case checkIsLike
     }
     
     enum Mutation {
-        case toggleLike
+        case setIsLike(Bool)
         case setLikeButtonIsEnable(Bool)
         case setProduct(Product)
     }
@@ -55,9 +55,6 @@ extension ProductCollectionViewCellReactor {
     func mutate(action: Action) -> Observable<Mutation> {
         
         switch action {
-        case .checkIsLike:
-            return .empty()
-            
         case .likeButtonTapped:
             guard let isLike = currentState.isLike else { return .empty() }
             return .concat([
@@ -65,10 +62,17 @@ extension ProductCollectionViewCellReactor {
                 
                 likeUseCase.toggleProductLike(product: currentState.product, current: isLike)
                     .asObservable()
-                    .map { .setLikeButtonIsEnable($0) },
+                    .do(onError: { [weak self] in self?.productsCellEventReplay?.accept(.error($0)) })
+                    .map { .setIsLike($0) },
                     
                 .just(.setLikeButtonIsEnable(true))
             ])
+            
+        case .checkIsLike:
+            return likeUseCase.isLikeProduct(id: currentState.product.id)
+                .asObservable()
+                .do(onError: { [weak self] in self?.productsCellEventReplay?.accept(.error($0)) })
+                .map { .setIsLike($0) }
         }
     }
     
@@ -76,17 +80,16 @@ extension ProductCollectionViewCellReactor {
         var newState = state
         
         switch mutation {
-        case .toggleLike:
-            newState.isLike?.toggle()
+        case let .setIsLike(bool):
+            newState.isLike = bool
             
         case let .setLikeButtonIsEnable(isEnable):
-            print(isEnable)
             newState.likeButtonIsEnable = isEnable
             
         case let .setProduct(product):
             newState.product = product
         }
         
-        return state
+        return newState
     }
 }

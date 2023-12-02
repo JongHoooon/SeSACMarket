@@ -105,11 +105,6 @@ final class SearchViewController: BaseViewController, View {
 // MARK: - Bind
 private extension SearchViewController {
     func bindAction(_ reactor: SearchReactor) {
-        self.rx.viewDidLoad
-            .map { Reactor.Action.viewDidLoad }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-        
         searchBar.rx.searchButtonClicked
             .withLatestFrom(searchBar.rx.text.orEmpty)
             .map { Reactor.Action.searchButtonClicked(query: $0) }

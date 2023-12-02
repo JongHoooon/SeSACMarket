@@ -15,7 +15,6 @@ import RxRelay
 
 final class SearchReactor: Reactor {
     enum Action {
-        case viewDidLoad
         case searchButtonClicked(query: String)
         case sortSelected(Product.SortValue)
         case prefetchItems([IndexPath])
@@ -57,18 +56,18 @@ final class SearchReactor: Reactor {
     
     let sorItems = Product.SortValue.allCases
     
-    private let productRemoteFetchUseCase: SearchUseCase
+    private let searchUseCase: SearchUseCase
     private let likeUseCase: LikeUseCase
     private weak var coordinator: SearchCoordinator?
     private let networkEventRelay: PublishRelay<NetworkEvent>
     let initialState: State
     
     init(
-        productRemoteUseCase: SearchUseCase,
+        searchUseCase: SearchUseCase,
         likeUseCase: LikeUseCase,
         coordinator: SearchCoordinator
     ) {
-        self.productRemoteFetchUseCase = productRemoteUseCase
+        self.searchUseCase = searchUseCase
         self.likeUseCase = likeUseCase
         self.coordinator = coordinator
         self.networkEventRelay = PublishRelay()
@@ -92,45 +91,53 @@ extension SearchReactor {
     }
     
     func mutate(action: Action) -> Observable<Mutation> {
-        switch action {
-        case .viewDidLoad:
-            print("viewdid load")
-            return .empty()
-            
+        switch action {            
         case let .searchButtonClicked(query):
             return .concat([
-                .just(.setIndicator(true)),
                 .just(.setIsFetchEnable(false)),
+                .just(.setIndicator(true)),
                 
-                searchProducts(
-                    query: query,
-                    sortValue: currentState.selectedSortValue,
-                    start: 1,
-                    display: 30
+                searchUseCase.fetchProducts(
+                    productsQuery: ProductQuery(query: query, sortValue: currentState.selectedSortValue),
+                    start: 1
+                )
+                .asObservable()
+                .do(
+                    onNext: { [weak self] _ in
+                        self?.networkEventRelay.accept(.setSearchQuery(query: query))
+                    },
+                    onError: { [weak self] in self?.networkEventRelay.accept(.error($0)) }
                 )
                 .map { page in .setFirstProductsPage(page) },
                 
                 .just(.setIndicator(false)),
-                .just(.scrollToTop)
+                .just(.scrollToTop),
+                .just(.setIsFetchEnable(true))
             ])
             
         case let .sortSelected(sortValue):
             guard let query = currentState.searchQuery else { return .empty() }
             return .concat([
+                .just(.setIsFetchEnable(false)),
                 .just(.setSelectedSortValue(sortValue)),
                 .just(.setIndicator(true)),
-                .just(.setIsFetchEnable(false)),
                 
-                searchProducts(
-                    query: query,
-                    sortValue: sortValue,
-                    start: 1,
-                    display: 30
+                searchUseCase.fetchProducts(
+                    productsQuery: ProductQuery(query: query, sortValue: sortValue),
+                    start: 1
+                )
+                .asObservable()
+                .do(
+                    onNext: { [weak self] _ in
+                        self?.networkEventRelay.accept(.setSearchQuery(query: query))
+                    },
+                    onError: { [weak self] in self?.networkEventRelay.accept(.error($0)) }
                 )
                 .map { page in .setFirstProductsPage(page) },
                 
                 .just(.setIndicator(false)),
-                .just(.scrollToTop)
+                .just(.scrollToTop),
+                .just(.setIsFetchEnable(true))
             ])
             
         case let .prefetchItems(indexPathes):
@@ -144,15 +151,22 @@ extension SearchReactor {
             
             return .concat([
                 .just(.setIsFetchEnable(false)),
-                .just(.setCurrentPage(currentState.currentPage + 1)),
                 
-                searchProducts(
-                    query: query,
-                    sortValue: currentState.selectedSortValue,
-                    start: currentState.currentPage + 1,
-                    display: 30
+                searchUseCase.fetchProducts(
+                    productsQuery: ProductQuery(query: query, sortValue: currentState.selectedSortValue),
+                    start: currentState.currentPage + 1
                 )
-                .map { .setProductsPage($0) }
+                .asObservable()
+                .do(
+                    onNext: { [weak self] _ in
+                        guard let self else { return }
+                        self.networkEventRelay.accept(.setCurrentPage(self.currentState.currentPage + 1))
+                    },
+                    onError: { [weak self] in self?.networkEventRelay.accept(.error($0)) }
+                )
+                .map { .setProductsPage($0) },
+                
+                .just(.setIsFetchEnable(true)),
             ])
             
         case let .productsCellSelected(product):
@@ -198,8 +212,8 @@ extension SearchReactor {
             
         case let .setProductsPage(productPage):
             newState.isEndPage = productPage.items.isEmpty
-            let newViewModels = productsToReactors(products: productPage.items)
-            newState.productsCellReactors.append(contentsOf: newViewModels)
+            let newReactors = productsToReactors(products: productPage.items)
+            newState.productsCellReactors.append(contentsOf: newReactors)
             
         case let .setIsFetchEnable(bool):
             newState.isFetchEnable = bool
@@ -228,34 +242,6 @@ private extension SearchReactor {
                 errorHandler: nil
             )
         }
-    }
-    
-    func searchProducts(
-        query: String,
-        sortValue: Product.SortValue,
-        start: Int,
-        display: Int
-    ) -> Observable<ProductsPage> {
-        return productRemoteFetchUseCase.fetchProducts(
-            productsQuery: ProductQuery(
-                query: query,
-                sortValue: sortValue
-            ),
-            start: start
-        )
-        .do(
-            onSuccess: { [weak self] page in
-                self?.networkEventRelay.accept(.setSearchQuery(query: query))
-            },
-            onError: { [weak self] in
-                self?.networkEventRelay.accept(.error($0))
-            },
-            onDispose: {
-                self.networkEventRelay.accept(.endFetching)
-            }
-        )
-        .catchAndReturn(ProductsPage(start: 1, display: 30, items: []))
-        .asObservable()
     }
     
     func prefetchImages(indexPathes: [IndexPath]) {

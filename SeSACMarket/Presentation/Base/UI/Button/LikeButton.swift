@@ -13,7 +13,6 @@ final class LikeButton: UIButton {
     
     override var isSelected: Bool {
         didSet {
-            print(isSelected)
             switch isSelected {
             case true:
                 DispatchQueue.main.async { [weak self] in
