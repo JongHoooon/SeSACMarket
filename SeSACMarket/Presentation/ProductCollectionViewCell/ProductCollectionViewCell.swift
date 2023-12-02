@@ -167,7 +167,12 @@ private extension ProductCollectionViewCell {
             .bind { [weak self] product in
                 self?.productImageView.kf.setImage(
                     with: URL(string: reactor.initialState.product.imageURL)!,
-                    placeholder: ImageEnum.Placeholer.photo
+                    placeholder: ImageEnum.Placeholer.photo,
+                    options: [
+                        .processor(DownsamplingImageProcessor(size: CGSize(width: 300.0, height: 300.0))),
+                        .cacheOriginalImage,
+                        .scaleFactor(UIScreen.main.scale),
+                    ]
                 )
                 self?.mallNameLabel.text = reactor.initialState.product.mallName
                 self?.titleNameLabel.text = reactor.initialState.product.title
