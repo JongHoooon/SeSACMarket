@@ -51,6 +51,7 @@ final class ProductCollectionViewCellReactor: Reactor {
             product: product, 
             likeButtonIsEnable: true
         )
+        registerNotification()
     }
 }
 
