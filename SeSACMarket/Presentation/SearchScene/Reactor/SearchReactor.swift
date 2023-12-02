@@ -25,12 +25,10 @@ final class SearchReactor: Reactor {
     enum Mutation {
         case setSearchQuery(String)
         case setIndicator(Bool)
-        case setFirstProductsPage(ProductsPage)
-        case setProductsPage(ProductsPage)
+        case setFirstPageProducts([Product])
+        case setNextPageProducts([Product])
         case setIsFetchEnable(Bool)
-        case setCurrentPage(Int)
         case setSelectedSortValue(Product.SortValue)
-        case setEndpage(Bool)
         case scrollToTop
     }
     
@@ -38,10 +36,7 @@ final class SearchReactor: Reactor {
         @Pulse
         var scrollContentOffset: CGPoint = .zero
         var productsCellReactors: [ProductCollectionViewCellReactor] = []
-        var searchBarEndEditting: Void = Void()
         var isShowIndicator: Bool = false
-        var currentPage: Int = 1
-        var isEndPage: Bool = false
         var searchQuery: String? = nil
         var selectedSortValue: Product.SortValue = .similarity
         var isFetchEnable: Bool = true
@@ -49,8 +44,7 @@ final class SearchReactor: Reactor {
     
     enum NetworkEvent {
         case setSearchQuery(query: String)
-        case setCurrentPage(Int)
-        case endFetching
+        case setSortValue(Product.SortValue)
         case error(Error)
     }
     
@@ -104,10 +98,10 @@ extension SearchReactor {
                 .just(.setIsFetchEnable(false)),
                 .just(.setIndicator(true)),
                 
-                searchUseCase.fetchProducts(
-                    productsQuery: ProductQuery(query: query, sortValue: currentState.selectedSortValue),
-                    start: 1
-                )
+                searchUseCase.fetchFirstPageProducts(productsQuery: ProductQuery(
+                    query: query,
+                    sortValue: currentState.selectedSortValue
+                ))
                 .asObservable()
                 .do(
                     onNext: { [weak self] _ in
@@ -115,7 +109,7 @@ extension SearchReactor {
                     },
                     onError: { [weak self] in self?.networkEventRelay.accept(.error($0)) }
                 )
-                .map { page in .setFirstProductsPage(page) },
+                .map { .setFirstPageProducts($0) },
                 
                 .just(.setIndicator(false)),
                 .just(.scrollToTop),
@@ -129,18 +123,18 @@ extension SearchReactor {
                 .just(.setSelectedSortValue(sortValue)),
                 .just(.setIndicator(true)),
                 
-                searchUseCase.fetchProducts(
-                    productsQuery: ProductQuery(query: query, sortValue: sortValue),
-                    start: 1
-                )
+                searchUseCase.fetchFirstPageProducts(productsQuery: ProductQuery(
+                    query: query,
+                    sortValue: sortValue
+                ))
                 .asObservable()
                 .do(
                     onNext: { [weak self] _ in
-                        self?.networkEventRelay.accept(.setSearchQuery(query: query))
+                        self?.networkEventRelay.accept(.setSortValue(sortValue))
                     },
                     onError: { [weak self] in self?.networkEventRelay.accept(.error($0)) }
                 )
-                .map { page in .setFirstProductsPage(page) },
+                .map { .setNextPageProducts($0) },
                 
                 .just(.setIndicator(false)),
                 .just(.scrollToTop),
@@ -153,25 +147,15 @@ extension SearchReactor {
 
         case let .productCollectionViewWillDisplayIndexPath(indexPath):
             guard self.isEnablePrefetch(indexPath: indexPath)
-                  , let query = currentState.searchQuery
             else { return .empty() }
             
             return .concat([
                 .just(.setIsFetchEnable(false)),
                 
-                searchUseCase.fetchProducts(
-                    productsQuery: ProductQuery(query: query, sortValue: currentState.selectedSortValue),
-                    start: currentState.currentPage + 1
-                )
-                .asObservable()
-                .do(
-                    onNext: { [weak self] _ in
-                        guard let self else { return }
-                        self.networkEventRelay.accept(.setCurrentPage(self.currentState.currentPage + 1))
-                    },
-                    onError: { [weak self] in self?.networkEventRelay.accept(.error($0)) }
-                )
-                .map { .setProductsPage($0) },
+                searchUseCase.fetchNextPageProducts()
+                    .asObservable()
+                    .do(onError: { [weak self] in self?.networkEventRelay.accept(.error($0)) })
+                    .map { .setNextPageProducts($0) },
                 
                 .just(.setIsFetchEnable(true)),
             ])
@@ -191,11 +175,8 @@ extension SearchReactor {
             coordinator?.presnetErrorMessageAlert(error: error)
             return .empty()
             
-        case .endFetching:
-            return .just(.setIsFetchEnable(true))
-            
-        case let .setCurrentPage(page):
-            return .just(.setCurrentPage(page))
+        case let .setSortValue(value):
+            return .just(.setSelectedSortValue(value))
         }
     }
     
@@ -219,31 +200,21 @@ extension SearchReactor {
             
         case let .setIndicator(bool):
             newState.isShowIndicator = bool
-            
-        case let .setFirstProductsPage(productsPage):
-            newState.currentPage = 1
-            newState.isEndPage = productsPage.items.isEmpty
-            newState.productsCellReactors = productsToReactors(products: productsPage.items)
-            
+
         case .scrollToTop:
             newState.scrollContentOffset = .zero
-            
-        case let .setProductsPage(productPage):
-            newState.isEndPage = productPage.items.isEmpty
-            let newReactors = productsToReactors(products: productPage.items)
-            newState.productsCellReactors.append(contentsOf: newReactors)
             
         case let .setIsFetchEnable(bool):
             newState.isFetchEnable = bool
             
-        case let .setCurrentPage(page):
-            newState.currentPage = page
-            
         case let .setSelectedSortValue(sortValue):
             newState.selectedSortValue = sortValue
             
-        case let .setEndpage(bool):
-            newState.isEndPage = bool
+        case let .setFirstPageProducts(products):
+            newState.productsCellReactors = productsToReactors(products: products)
+            
+        case let .setNextPageProducts(products):
+            newState.productsCellReactors.append(contentsOf: productsToReactors(products: products))
         }
         
         return newState
@@ -275,7 +246,7 @@ private extension SearchReactor {
     
     func isEnablePrefetch(indexPath: IndexPath) -> Bool {
         let maxIndex = currentState.productsCellReactors.count
-        if currentState.isEndPage == false
+        if searchUseCase.isEndPage == false
             && currentState.isFetchEnable == true
             && maxIndex - 8 <= indexPath.item {
             return true

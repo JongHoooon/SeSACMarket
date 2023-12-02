@@ -38,9 +38,3 @@ extension Product {
         case priceAscending
     }
 }
-
-struct ProductsPage {
-    let start: Int
-    let display: Int
-    var items: [Product]
-}

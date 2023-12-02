@@ -8,5 +8,5 @@
 import RxSwift
 
 protocol ProductRemoteRepository {
-    func fetchProducts(productQuery: ProductQuery, start: Int, display: Int) -> Single<ProductsPage>
+    func fetchProducts(productQuery: ProductQuery, start: Int, display: Int) -> Single<[Product]>
 }

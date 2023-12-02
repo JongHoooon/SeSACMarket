@@ -14,8 +14,8 @@ final class DefaultProductRemoteRepository: ProductRemoteRepository, APIDataTran
         productQuery: ProductQuery,
         start: Int,
         display: Int
-    ) -> Single<ProductsPage> {
-        return Single<ProductsPage>.create { single in
+    ) -> Single<[Product]> {
+        return Single<[Product]>.create { single in
             Task {
                 do {
                     let productPageDTO = try await self.callRequest(
@@ -26,7 +26,8 @@ final class DefaultProductRemoteRepository: ProductRemoteRepository, APIDataTran
                             display: display
                         )
                     )
-                    single(.success(productPageDTO.toDomain()))
+                    let products = productPageDTO.items.map { $0.toDomain() }
+                    single(.success(products))
                 } catch {
                     single(.failure(error))
                 }

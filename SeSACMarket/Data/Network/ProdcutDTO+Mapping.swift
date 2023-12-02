@@ -37,13 +37,5 @@ struct ProductsPageDTO: Decodable {
     let start: Int
     let display: Int
     let items: [ProdcutDTO]
-    
-    func toDomain() -> ProductsPage {
-        return ProductsPage(
-            start: start,
-            display: display,
-            items: items.map { $0.toDomain() }
-        )
-    }
 }
 

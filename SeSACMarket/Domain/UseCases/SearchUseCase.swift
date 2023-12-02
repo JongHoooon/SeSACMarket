@@ -12,7 +12,6 @@ protocol SearchUseCase {
     func fetchFirstPageProducts(productsQuery: ProductQuery) -> Single<[Product]>
     func fetchNextPageProducts() -> Single<[Product]>
     var isEndPage: Bool? { get }
-    func fetchProducts(productsQuery: ProductQuery, start: Int) -> Single<ProductsPage>
 }
 
 final class DefaultSearchUseCase: SearchUseCase {
@@ -42,7 +41,7 @@ final class DefaultSearchUseCase: SearchUseCase {
         )
         .flatMap { [weak self] in
             guard let self else { return .never() }
-            return self.checkIsLike(products: $0.items)
+            return self.checkIsLike(products: $0)
         }
         .do(onSuccess: { [weak self] in
             guard let self else { return }
@@ -58,33 +57,18 @@ final class DefaultSearchUseCase: SearchUseCase {
         
         return productRemoteRepository.fetchProducts(
             productQuery: ProductQuery(query: query, sortValue: sortValue),
-            start: currentPage + 1,
+            start: (currentPage * defaultDisplayCount) + 1,
             display: defaultDisplayCount
         )
         .flatMap { [weak self] in
             guard let self else { return .never() }
-            return self.checkIsLike(products: $0.items)
+            return self.checkIsLike(products: $0)
         }
         .do(onSuccess: { [weak self] in
             guard let self else { return }
             self.isEndPage = $0.count < self.defaultDisplayCount
             self.currentPage = currentPage + 1
         })
-    }
-    
-    func fetchProducts(
-        productsQuery: ProductQuery,
-        start: Int
-    ) -> Single<ProductsPage> {
-        return productRemoteRepository.fetchProducts(
-            productQuery: productsQuery,
-            start: start,
-            display: 30
-        )
-        .flatMap { [weak self] productsPage in
-            guard let self else { return .never() }
-            return self.checkIsLike(productsPage: productsPage)
-        }
     }
 }
 
@@ -101,25 +85,5 @@ private extension DefaultSearchUseCase {
                         return product
                     }
             }
-    }
-    
-    func checkIsLike(productsPage: ProductsPage) -> Single<ProductsPage> {
-        var productsPage = productsPage
-        let products = productsPage.items
-        let isLikes = products.map { productLocalRepository.isLikeProduct(id: $0.id) }
-        let result = Single.zip(isLikes)
-            .map { isLikes -> [Product] in
-                return zip(products, isLikes)
-                    .map { product, isLike in
-                        var product = product
-                        product.isLike = isLike
-                        return product
-                    }
-            }
-            .map {
-                productsPage.items = $0
-                return productsPage
-            }
-        return result
     }
 }
