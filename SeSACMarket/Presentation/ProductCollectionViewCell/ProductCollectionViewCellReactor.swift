@@ -30,19 +30,23 @@ final class ProductCollectionViewCellReactor: Reactor {
     }
     
     let initialState: State
-    let likeUseCase: LikeUseCase
-    let errorHandler: ((_ error: Error) -> Void)?
-    let productsCellEventReplay: PublishRelay<ProductsCellEvent>?
+    private let likeUseCase: LikeUseCase
+    private let errorHandler: ((_ error: Error) -> Void)?
+    private let productsCellEventReplay: PublishRelay<ProductsCellEvent>
+    private let notificationEventRelay: PublishRelay<NotificationEvent>
+    private let disposeBag: DisposeBag
     
     init(
         product: Product,
         likeUseCase: LikeUseCase,
         errorHandler: ((_ error: Error) -> Void)?,
-        productsCellEventReplay: PublishRelay<ProductsCellEvent>? = nil
+        productsCellEventReplay: PublishRelay<ProductsCellEvent>
     ) {
         self.likeUseCase = likeUseCase
         self.errorHandler = errorHandler
         self.productsCellEventReplay = productsCellEventReplay
+        self.notificationEventRelay = PublishRelay()
+        self.disposeBag = DisposeBag()
         self.initialState = State(
             product: product, 
             likeButtonIsEnable: true
@@ -51,6 +55,16 @@ final class ProductCollectionViewCellReactor: Reactor {
 }
 
 extension ProductCollectionViewCellReactor {
+    
+    
+    func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
+        let notificationEventMutation = notificationEventRelay
+            .flatMap { [weak self] notificationEvent in
+                self?.mutate(notificationEvent: notificationEvent) ?? .empty()
+            }
+        
+        return .merge(mutation, notificationEventMutation)
+    }
     
     func mutate(action: Action) -> Observable<Mutation> {
         
@@ -62,7 +76,7 @@ extension ProductCollectionViewCellReactor {
                 
                 likeUseCase.toggleProductLike(product: currentState.product, current: isLike)
                     .asObservable()
-                    .do(onError: { [weak self] in self?.productsCellEventReplay?.accept(.error($0)) })
+                    .do(onError: { [weak self] in self?.productsCellEventReplay.accept(.error($0)) })
                     .map { .setIsLike($0) },
                     
                 .just(.setLikeButtonIsEnable(true))
@@ -71,8 +85,15 @@ extension ProductCollectionViewCellReactor {
         case .checkIsLike:
             return likeUseCase.isLikeProduct(id: currentState.product.id)
                 .asObservable()
-                .do(onError: { [weak self] in self?.productsCellEventReplay?.accept(.error($0)) })
+                .do(onError: { [weak self] in self?.productsCellEventReplay.accept(.error($0)) })
                 .map { .setIsLike($0) }
+        }
+    }
+    
+    func mutate(notificationEvent: NotificationEvent) -> Observable<Mutation> {
+        switch notificationEvent {
+        case let .likeButtonTapped(bool):
+            return .just(.setIsLike(bool))
         }
     }
     
@@ -91,5 +112,22 @@ extension ProductCollectionViewCellReactor {
         }
         
         return newState
+    }
+}
+
+private extension ProductCollectionViewCellReactor {
+    func registerNotification() {
+        NotificationCenter.default.rx.notification(.likeProduct)
+            .bind(with: self, onNext: { owner, notification in
+                let userInfo = notification.userInfo
+                guard let id = userInfo?[Constants.NotificationCenterUserInfoKey.id] as? String,
+                      let isSelected = userInfo?[Constants.NotificationCenterUserInfoKey.isSelected] as? Bool
+                else { return }
+                
+                if self.currentState.product.id == id {
+                    self.notificationEventRelay.accept(.likeButtonTapped(isSelected))
+                }
+            })
+            .disposed(by: disposeBag)
     }
 }
