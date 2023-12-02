@@ -205,6 +205,7 @@
 		ED0297442B18716E0012C07D /* ProductCollectionViewCell */ = {
 			isa = PBXGroup;
 			children = (
+				EDDB53062B14639A003CB7D4 /* ProductCellEvent.swift */,
 				ED2A01362AAAF21E004A346D /* ProductCollectionViewCell.swift */,
 				ED4DACAE2AADFC070095CD77 /* ProductCollectionViewCellReactor.swift */,
 			);
@@ -750,7 +751,6 @@
 			isa = PBXGroup;
 			children = (
 				EDDB53042B145EC1003CB7D4 /* FavoriteReactor.swift */,
-				EDDB53062B14639A003CB7D4 /* ProductCellEvent.swift */,
 			);
 			path = Reactor;
 			sourceTree = "<group>";

@@ -60,6 +60,7 @@ final class SearchReactor: Reactor {
     private let likeUseCase: LikeUseCase
     private weak var coordinator: SearchCoordinator?
     private let networkEventRelay: PublishRelay<NetworkEvent>
+    private let productsCellEventRelay: PublishRelay<ProductsCellEvent>
     let initialState: State
     
     init(
@@ -71,6 +72,7 @@ final class SearchReactor: Reactor {
         self.likeUseCase = likeUseCase
         self.coordinator = coordinator
         self.networkEventRelay = PublishRelay()
+        self.productsCellEventRelay = PublishRelay()
         self.initialState = State()
     }
     
@@ -87,7 +89,12 @@ extension SearchReactor {
                 self?.mutate(networkEvent: networkEvent) ?? .empty()
             }
         
-        return Observable.merge(mutation, networkEventMutation)
+        let productsCellEventMutation = productsCellEventRelay
+            .flatMap { [weak self] productsCellEvent in
+                self?.muate(productsCellEvent: productsCellEvent) ?? .empty()
+            }
+        
+        return Observable.merge(mutation, networkEventMutation, productsCellEventMutation)
     }
     
     func mutate(action: Action) -> Observable<Mutation> {
@@ -192,6 +199,17 @@ extension SearchReactor {
         }
     }
     
+    func muate(productsCellEvent: ProductsCellEvent) -> Observable<Mutation> {
+            switch productsCellEvent {
+            case let .error(error):
+                print(error.localizedDescription)
+                coordinator?.presnetErrorMessageAlert(error: error)
+                return .empty()
+            default:
+                return .empty()
+            }
+        }
+    
     func reduce(state: State, mutation: Mutation) -> State {
         var newState = state
         
@@ -239,7 +257,8 @@ private extension SearchReactor {
             ProductCollectionViewCellReactor(
                 product: $0,
                 likeUseCase: likeUseCase,
-                errorHandler: nil
+                errorHandler: nil,
+                productsCellEventReplay: productsCellEventRelay
             )
         }
     }
