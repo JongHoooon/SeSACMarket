@@ -16,12 +16,11 @@ final class DetailReactor: Reactor {
         case viewDidLoad
         case webViewDidFinish
         case webViewDidFail(Error)
-        case likeButtonTapped(Bool)
+        case likeButtonTapped
     }
     
     enum Mutation {
         case setIsLike(Bool)
-        case setIsLikeWithAnimation(Bool)
         case setURLRequest(URLRequest?)
         case setIndicator(Bool)
     }
@@ -29,8 +28,7 @@ final class DetailReactor: Reactor {
     struct State {
         var webViewRequest: URLRequest?
         var isIndicatorAnimating: Bool
-        var likeButtonIsSelected: Bool
-        var lkieButtonIsSelectedAnimation: Bool
+        var likeButtonIsSelected: Bool?
     }
     
     enum ErrorEvent {
@@ -42,9 +40,10 @@ final class DetailReactor: Reactor {
     private weak var coordinator: DetailCoordinator?
     let title: String
     let initialState: State
+    private let disposeBag: DisposeBag
+    
     private let errorEventRelay: PublishRelay<ErrorEvent>
     private let notificationEventRelay: PublishRelay<NotificationEvent>
-    private let disposeBag: DisposeBag
     
     init(
         product: Product,
@@ -59,9 +58,7 @@ final class DetailReactor: Reactor {
         self.notificationEventRelay = PublishRelay()
         self.disposeBag = DisposeBag()
         self.initialState = State(
-            isIndicatorAnimating: false,
-            likeButtonIsSelected: false,
-            lkieButtonIsSelectedAnimation: false
+            isIndicatorAnimating: false
         )
         registerNotification()
     }
@@ -93,8 +90,13 @@ extension DetailReactor {
         case .viewDidLoad:
             return .concat([
                 .just(.setIndicator(true)),
+                
                 productURLRequest().map { .setURLRequest($0) },
-                isLike().map { .setIsLike($0) },
+                
+                likeUseCase.isLikeProduct(id: product.id)
+                    .asObservable()
+                    .do(onError: { [weak self] in self?.errorEventRelay.accept(.error($0)) })
+                    .map { .setIsLike($0) }
             ])
             
         case .webViewDidFinish:
@@ -104,10 +106,12 @@ extension DetailReactor {
             errorEventRelay.accept(.error(error))
             return .empty()
             
-        case let .likeButtonTapped(bool):
-            return toggleLike(currentSelected: bool)
-                .map { .setIsLikeWithAnimation($0) }
-            
+        case .likeButtonTapped:
+            guard let isSelected = currentState.likeButtonIsSelected else { return .empty() }
+            return likeUseCase.toggleProductLike(product: product, current: isSelected)
+                .asObservable()
+                .do(onError: { [weak self] in self?.errorEventRelay.accept(.error($0)) })
+                .map { .setIsLike($0) }
         }
     }
     
@@ -133,9 +137,6 @@ extension DetailReactor {
         switch mutation {
         case let .setIsLike(bool):
             newState.likeButtonIsSelected = bool
-            
-        case let .setIsLikeWithAnimation(bool):
-            newState.lkieButtonIsSelectedAnimation = bool
             
         case let .setURLRequest(request):
             newState.webViewRequest = request
@@ -172,47 +173,5 @@ private extension DetailReactor {
         } else {
             return .just(nil)
         }
-    }
-    
-    func isLike() -> Observable<Bool> {
-//        return Observable.create { [weak self] observer in
-//            guard let self else { return Disposables.create() }
-//            Task {
-//                let result = await self.likeUseCase.isLikeProduct(productID: self.product.id)
-//                observer.onNext(result)
-//            }
-//            return Disposables.create()
-//        }
-        return .just(false)
-    }
-    
-    func toggleLike(currentSelected: Bool) -> Observable<Bool> {
-        return .just(false)
-//        return Observable.create { [weak self] observer in
-//            guard let self else { return Disposables.create() }
-//            
-//            switch currentSelected {
-//            case true: // 삭제
-//                Task {
-//                    do {
-//                        try await self.likeUseCase.deleteLikeProduct(productID: self.product.id)
-//                        observer.onNext(false)
-//                    } catch {
-//                        self.errorEventRelay.accept(.error(error))
-//                    }
-//                }
-//            case false: // 저장
-//                Task {
-//                    do {
-//                        try await self.likeUseCase.saveLikeProduct(product: self.product)
-//                        observer.onNext(true)
-//                    } catch {
-//                        self.errorEventRelay.accept(.error(error))
-//                    }
-//                }
-//            }
-//            
-//            return Disposables.create()
-//        }
     }
 }

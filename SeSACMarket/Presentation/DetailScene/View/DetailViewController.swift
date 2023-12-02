@@ -101,8 +101,7 @@ private extension DetailViewController {
             .disposed(by: disposeBag)
         
         likeButton.rx.tap
-            .compactMap { [weak self] in self?.likeButton.isSelected }
-            .map { Reactor.Action.likeButtonTapped($0) }
+            .map { Reactor.Action.likeButtonTapped }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
     }
@@ -111,7 +110,6 @@ private extension DetailViewController {
         
         reactor.state.map { $0.webViewRequest }
             .distinctUntilChanged()
-            .debug()
             .compactMap { $0 }
             .bind(to: webView.rx.load)
             .disposed(by: disposeBag)
@@ -121,14 +119,18 @@ private extension DetailViewController {
             .bind(to: indicator.rx.isShowAndAnimating)
             .disposed(by: disposeBag)
         
-        reactor.state.map { $0.likeButtonIsSelected }
-            .skip(1)
+        let likeButtonIsSelectedShared = reactor.state.map { $0.likeButtonIsSelected }
+            .compactMap { $0 }
             .distinctUntilChanged()
+            .share()
+        
+        likeButtonIsSelectedShared
+            .take(1)
             .bind(to: likeButton.rx.isSelected)
             .disposed(by: disposeBag)
         
-        reactor.state.map { $0.lkieButtonIsSelectedAnimation }
-            .distinctUntilChanged()
+        likeButtonIsSelectedShared
+            .skip(1)
             .bind(to: likeButton.rx.selectWithAnimation)
             .disposed(by: disposeBag)
     }
