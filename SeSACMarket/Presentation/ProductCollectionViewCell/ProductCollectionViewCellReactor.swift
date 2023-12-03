@@ -79,13 +79,16 @@ extension ProductCollectionViewCellReactor {
                                let id = self?.currentState.product.id {
                                 self?.productsCellEventReplay.accept(.needDelete(id: id))
                             }
-                        },
-                        onError: { [weak self] in self?.productsCellEventReplay.accept(.error($0)) }
-                       )
+                        }
+                    )
                     .map { .setIsLike($0) },
                     
                 .just(.setLikeButtonIsEnable(true))
             )
+            .catch { [weak self] error in
+                self?.productsCellEventReplay.accept(.error(error))
+                return .just(.setLikeButtonIsEnable(true))
+            }
             
         case .checkIsLike:
             return likeUseCase.isLikeProduct(id: currentState.product.id)
