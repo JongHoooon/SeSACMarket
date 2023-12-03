@@ -68,7 +68,7 @@ extension ProductCollectionViewCellReactor {
         switch action {
         case .likeButtonTapped:
             guard let isLike = currentState.isLike else { return .empty() }
-            return .concat([
+            return .concat(
                 .just(.setLikeButtonIsEnable(false)),
                 
                 likeUseCase.toggleProductLike(product: currentState.product, current: isLike)
@@ -85,7 +85,7 @@ extension ProductCollectionViewCellReactor {
                     .map { .setIsLike($0) },
                     
                 .just(.setLikeButtonIsEnable(true))
-            ])
+            )
             
         case .checkIsLike:
             return likeUseCase.isLikeProduct(id: currentState.product.id)

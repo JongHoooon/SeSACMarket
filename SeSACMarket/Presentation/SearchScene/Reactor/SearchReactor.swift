@@ -80,7 +80,7 @@ extension SearchReactor {
     func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
         let networkEventMutation = networkEventRelay
             .flatMap { [weak self] networkEvent -> Observable<Mutation> in
-                self?.mutate(networkEvent: networkEvent) ?? .empty()
+                self?.mutate(networkEvent: networkEvent) ?? .empty() 
             }
         
         let productsCellEventMutation = productsCellEventRelay
@@ -153,15 +153,15 @@ extension SearchReactor {
             guard self.isEnablePrefetch(indexPath: indexPath)
             else { return .empty() }
             
-            return .concat([
+            return .concat(
                 .just(.setIsFetchEnable(false)),
                 
                 searchUseCase.fetchNextPageProducts()
                     .asObservable()
                     .map { .setNextPageProducts($0) },
                 
-                .just(.setIsFetchEnable(true)),
-            ])
+                .just(.setIsFetchEnable(true))
+            )
             .catch { [weak self] error in
                 self?.networkEventRelay.accept(.error(error))
                 return .just(.setIsFetchEnable(true))

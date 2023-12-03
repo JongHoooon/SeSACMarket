@@ -89,11 +89,11 @@ extension FavoriteReactor {
                 .do(onError: { [weak self] in self?.sideEffectEventRelay.accept(.error($0)) })
             
         case let .searchTextInput(query):
-            return .concat([
+            return .concat(
                 fetchItem(query: query)
                     .map { .setProductsCellViewModels($0) },
                 .just(.scrollToTop)
-            ])
+            )
             
         case let .productCellSelected(product):
             coordinator?.pushToDetail(product: product)

@@ -88,16 +88,17 @@ extension DetailReactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewDidLoad:
-            return .concat([
+            return .concat(
                 .just(.setIndicator(true)),
                 
-                productURLRequest().map { .setURLRequest($0) },
+                productURLRequest()
+                    .map { .setURLRequest($0) },
                 
                 likeUseCase.isLikeProduct(id: product.id)
                     .asObservable()
                     .do(onError: { [weak self] in self?.errorEventRelay.accept(.error($0)) })
                     .map { .setIsLike($0) }
-            ])
+            )
             
         case .webViewDidFinish:
             return .just(.setIndicator(false))
