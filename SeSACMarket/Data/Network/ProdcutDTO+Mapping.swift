@@ -12,14 +12,14 @@ struct ProdcutDTO: Decodable {
     let title: String?
     let imageURL: String?
     let mallName: String?
-    let price: String?
+    let price: String
 
     enum CodingKeys: String, CodingKey {
         case productID = "productId"
         case title
         case imageURL = "image"
         case mallName
-        case price = "lprice"
+        case price = "lpricedd"
     }
     
     func toDomain() -> Product {

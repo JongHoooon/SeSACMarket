@@ -40,7 +40,7 @@ extension FavoriteSceneDIContainer: FavoriteCoordinatorDependencies {
     
     private func makeFavoriteReactor(coordinator: FavoriteCoordinator) -> FavoriteReactor {
         return FavoriteReactor(
-            productLocalUseCase: makeFavoriteUseCase(),
+            favoriteUseCase: makeFavoriteUseCase(),
             likeUseCase: makeLikeUseCase(),
             coordinator: coordinator
         )

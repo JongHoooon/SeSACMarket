@@ -94,7 +94,7 @@ extension SearchReactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {            
         case let .searchButtonClicked(query):
-            return .concat([
+            return .concat(
                 .just(.setIsFetchEnable(false)),
                 .just(.setIndicator(true)),
                 
@@ -103,22 +103,24 @@ extension SearchReactor {
                     sortValue: currentState.selectedSortValue
                 ))
                 .asObservable()
-                .do(
-                    onNext: { [weak self] _ in
-                        self?.networkEventRelay.accept(.setSearchQuery(query: query))
-                    },
-                    onError: { [weak self] in self?.networkEventRelay.accept(.error($0)) }
-                )
+                .do(onNext: { [weak self] _ in self?.networkEventRelay.accept(.setSearchQuery(query: query)) })
                 .map { .setFirstPageProducts($0) },
                 
                 .just(.setIndicator(false)),
                 .just(.scrollToTop),
                 .just(.setIsFetchEnable(true))
-            ])
+            )
+            .catch { [weak self] error in
+                self?.networkEventRelay.accept(.error(error))
+                return .concat(
+                    .just(.setIndicator(false)),
+                    .just(.setIsFetchEnable(true))
+                )
+            }
             
         case let .sortSelected(sortValue):
             guard let query = currentState.searchQuery else { return .empty() }
-            return .concat([
+            return .concat(
                 .just(.setIsFetchEnable(false)),
                 .just(.setSelectedSortValue(sortValue)),
                 .just(.setIndicator(true)),
@@ -128,18 +130,20 @@ extension SearchReactor {
                     sortValue: sortValue
                 ))
                 .asObservable()
-                .do(
-                    onNext: { [weak self] _ in
-                        self?.networkEventRelay.accept(.setSortValue(sortValue))
-                    },
-                    onError: { [weak self] in self?.networkEventRelay.accept(.error($0)) }
-                )
+                .do(onNext: { [weak self] _ in self?.networkEventRelay.accept(.setSortValue(sortValue)) })
                 .map { .setNextPageProducts($0) },
                 
                 .just(.setIndicator(false)),
                 .just(.scrollToTop),
                 .just(.setIsFetchEnable(true))
-            ])
+            )
+            .catch { [weak self] error in
+                self?.networkEventRelay.accept(.error(error))
+                return .concat(
+                    .just(.setIndicator(false)),
+                    .just(.setIsFetchEnable(true))
+                )
+            }
             
         case let .prefetchItems(indexPathes):
             prefetchImages(indexPathes: indexPathes)
@@ -154,11 +158,14 @@ extension SearchReactor {
                 
                 searchUseCase.fetchNextPageProducts()
                     .asObservable()
-                    .do(onError: { [weak self] in self?.networkEventRelay.accept(.error($0)) })
                     .map { .setNextPageProducts($0) },
                 
                 .just(.setIsFetchEnable(true)),
             ])
+            .catch { [weak self] error in
+                self?.networkEventRelay.accept(.error(error))
+                return .just(.setIsFetchEnable(true))
+            }
             
         case let .productsCellSelected(product):
             coordinator?.pushToDetail(product: product)
@@ -172,6 +179,7 @@ extension SearchReactor {
             return .just(.setSearchQuery(query))
             
         case let .error(error):
+            print(error)
             coordinator?.presnetErrorMessageAlert(error: error)
             return .empty()
             
@@ -255,3 +263,4 @@ private extension SearchReactor {
         }
     }
 }
+

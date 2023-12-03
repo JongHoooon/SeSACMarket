@@ -16,7 +16,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "62"
             endingLineNumber = "62"
-            landmarkName = "mutate(action:)"
+            landmarkName = "transform(mutation:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -32,7 +32,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "60"
             endingLineNumber = "60"
-            landmarkName = "mutate(action:)"
+            landmarkName = "transform(mutation:)"
             landmarkType = "7">
             <Locations>
                <Location
@@ -65,6 +65,21 @@
                   endingLineNumber = "60"
                   offsetFromSymbolStart = "948">
                </Location>
+               <Location
+                  uuid = "F2A8006F-D519-4E79-A4D4-C290995714D5 - f554ad14e6b112e8"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (SeSACMarket.NotificationEvent) -&gt; RxSwift.Observable&lt;SeSACMarket.ProductCollectionViewCellReactor.Mutation&gt; in SeSACMarket.ProductCollectionViewCellReactor.transform(mutation: RxSwift.Observable&lt;SeSACMarket.ProductCollectionViewCellReactor.Mutation&gt;) -&gt; RxSwift.Observable&lt;SeSACMarket.ProductCollectionViewCellReactor.Mutation&gt;"
+                  moduleName = "SeSACMarket"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bromp/Desktop/Study/iOS/Sesac/storage/SeSACMarket/SeSACMarket/Presentation/ProductCollectionViewCell/ProductCollectionViewCellReactor.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "60"
+                  endingLineNumber = "60"
+                  offsetFromSymbolStart = "84">
+               </Location>
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>
@@ -80,8 +95,40 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "84"
             endingLineNumber = "84"
-            landmarkName = "reduce(state:mutation:)"
+            landmarkName = "mutate(action:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "39467FD2-1F7E-47C2-89A2-3D407BBBC692 - 30d7e20e5619415"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "SeSACMarket.ProductCollectionViewCellReactor.mutate(action: SeSACMarket.ProductCollectionViewCellReactor.Action) -&gt; RxSwift.Observable&lt;SeSACMarket.ProductCollectionViewCellReactor.Mutation&gt;"
+                  moduleName = "SeSACMarket"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bromp/Desktop/Study/iOS/Sesac/storage/SeSACMarket/SeSACMarket/Presentation/ProductCollectionViewCell/ProductCollectionViewCellReactor.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "85"
+                  endingLineNumber = "85"
+                  offsetFromSymbolStart = "1224">
+               </Location>
+               <Location
+                  uuid = "39467FD2-1F7E-47C2-89A2-3D407BBBC692 - f4a0c89e398ee32e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #3 (Swift.Bool) -&gt; SeSACMarket.ProductCollectionViewCellReactor.Mutation in SeSACMarket.ProductCollectionViewCellReactor.mutate(action: SeSACMarket.ProductCollectionViewCellReactor.Action) -&gt; RxSwift.Observable&lt;SeSACMarket.ProductCollectionViewCellReactor.Mutation&gt;"
+                  moduleName = "SeSACMarket"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bromp/Desktop/Study/iOS/Sesac/storage/SeSACMarket/SeSACMarket/Presentation/ProductCollectionViewCell/ProductCollectionViewCellReactor.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "85"
+                  endingLineNumber = "85"
+                  offsetFromSymbolStart = "24">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -96,6 +143,54 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "83"
             endingLineNumber = "83"
+            landmarkName = "mutate(action:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "781F5457-AC57-4F8E-BB25-A253A566B7AD - 30d7e20e5619453"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "SeSACMarket.ProductCollectionViewCellReactor.mutate(action: SeSACMarket.ProductCollectionViewCellReactor.Action) -&gt; RxSwift.Observable&lt;SeSACMarket.ProductCollectionViewCellReactor.Mutation&gt;"
+                  moduleName = "SeSACMarket"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bromp/Desktop/Study/iOS/Sesac/storage/SeSACMarket/SeSACMarket/Presentation/ProductCollectionViewCell/ProductCollectionViewCellReactor.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "83"
+                  endingLineNumber = "83"
+                  offsetFromSymbolStart = "980">
+               </Location>
+               <Location
+                  uuid = "781F5457-AC57-4F8E-BB25-A253A566B7AD - b744087d1c36cc25"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (Swift.Error) -&gt; () in SeSACMarket.ProductCollectionViewCellReactor.mutate(action: SeSACMarket.ProductCollectionViewCellReactor.Action) -&gt; RxSwift.Observable&lt;SeSACMarket.ProductCollectionViewCellReactor.Mutation&gt;"
+                  moduleName = "SeSACMarket"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/bromp/Desktop/Study/iOS/Sesac/storage/SeSACMarket/SeSACMarket/Presentation/ProductCollectionViewCell/ProductCollectionViewCellReactor.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "83"
+                  endingLineNumber = "83"
+                  offsetFromSymbolStart = "36">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "013E9335-224E-4856-BFC7-50F07A93D7E4"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SeSACMarket/Presentation/SearchScene/Reactor/SearchReactor.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "210"
+            endingLineNumber = "210"
             landmarkName = "reduce(state:mutation:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -103,15 +198,31 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "56336ABF-FC29-41C5-8A50-6EA904E7772B"
+            uuid = "EA2127E5-C8B3-4855-B14C-9A009F428EAB"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SeSACMarket/Presentation/SearchScene/Reactor/SearchReactor.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "202"
-            endingLineNumber = "202"
+            startingLineNumber = "213"
+            endingLineNumber = "213"
+            landmarkName = "reduce(state:mutation:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "DAD93B27-A7FA-47BC-A134-DF1AAB691F64"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SeSACMarket/Presentation/SearchScene/Reactor/SearchReactor.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "207"
+            endingLineNumber = "207"
             landmarkName = "reduce(state:mutation:)"
             landmarkType = "7">
          </BreakpointContent>

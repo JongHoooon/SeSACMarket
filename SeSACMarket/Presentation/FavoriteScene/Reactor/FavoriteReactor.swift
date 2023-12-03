@@ -41,7 +41,7 @@ final class FavoriteReactor: Reactor {
         case setQuery(String)
     }
         
-    private let productLocalUseCase: FavoriteUseCase
+    private let favoriteUseCase: FavoriteUseCase
     private let likeUseCase: LikeUseCase
     private weak var coordinator: FavoriteCoordinator?
     let initialState: State
@@ -50,11 +50,11 @@ final class FavoriteReactor: Reactor {
     private let sideEffectEventRelay: PublishRelay<SideEffectEvent>
     
     init(
-        productLocalUseCase: FavoriteUseCase,
+        favoriteUseCase: FavoriteUseCase,
         likeUseCase: LikeUseCase,
         coordinator: FavoriteCoordinator
     ) {
-        self.productLocalUseCase = productLocalUseCase
+        self.favoriteUseCase = favoriteUseCase
         self.likeUseCase = likeUseCase
         self.coordinator = coordinator
         self.productsCellEventRelay = PublishRelay()
@@ -82,7 +82,7 @@ extension FavoriteReactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewWillAppear:
-            return productLocalUseCase.fetchAllLikeProducts()
+            return favoriteUseCase.fetchAllLikeProducts()
                 .asObservable()
                 .compactMap { [weak self] in self?.productsToReactors(products: $0)}
                 .map { .setProductsCellViewModels($0) }
@@ -163,9 +163,9 @@ private extension FavoriteReactor {
     
     func fetchItem(query: String) -> Observable<[ProductCollectionViewCellReactor]> {
         let products = if query.isEmpty {
-            productLocalUseCase.fetchAllLikeProducts()
+            favoriteUseCase.fetchAllLikeProducts()
         } else {
-            productLocalUseCase.fetchQueryLikeProducts(query: query)
+            favoriteUseCase.fetchQueryLikeProducts(query: query)
         }
         
         return products
